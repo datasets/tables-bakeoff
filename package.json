@@ -1,0 +1,26 @@
+{
+  "name": "tables-evaluation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/measure-bundles.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "data": "node scripts/prepare-data.mjs"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "vitest": "^3.0.0",
+    "@playwright/test": "^1.50.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "gzip-size": "^7.0.0"
+  },
+  "dependencies": {
+    "hyparquet": "1.29.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

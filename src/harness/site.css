@@ -1,0 +1,190 @@
+/* ------------------------------------------------------------------ *
+ *  tables-evaluation — shared theme tokens + chart chrome
+ *  Palette is the validated dataviz reference palette (light + dark),
+ *  slots 1–5. Every demo library is fed these same values so the
+ *  comparison is about the library, not the colours.
+ * ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: light;
+
+  --bg:              #f9f9f7;
+  --surface:         #fcfcfb;
+  --text-primary:    #0b0b0b;
+  --text-secondary:  #52514e;
+  --text-muted:      #898781;
+  --gridline:        #e1e0d9;
+  --baseline:        #c3c2b7;
+  --border:          rgba(11, 11, 11, 0.10);
+
+  /* categorical slots 1–5 (validated: light surface) */
+  --series-1: #2a78d6; /* blue   */
+  --series-2: #eb6834; /* orange */
+  --series-3: #1baf7a; /* aqua   */
+  --series-4: #eda100; /* yellow */
+  --series-5: #e87ba4; /* magenta */
+
+  --accent:   #2a78d6;
+  --good:     #0ca30c;
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+
+    --bg:              #0d0d0d;
+    --surface:         #1a1a19;
+    --text-primary:    #ffffff;
+    --text-secondary:  #c3c2b7;
+    --text-muted:      #898781;
+    --gridline:        #2c2c2a;
+    --baseline:        #383835;
+    --border:          rgba(255, 255, 255, 0.10);
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+
+    --accent:   #3987e5;
+    --good:     #0ca30c;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg:              #0d0d0d;
+  --surface:         #1a1a19;
+  --text-primary:    #ffffff;
+  --text-secondary:  #c3c2b7;
+  --text-muted:      #898781;
+  --gridline:        #2c2c2a;
+  --baseline:        #383835;
+  --border:          rgba(255, 255, 255, 0.10);
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+
+  --accent:   #3987e5;
+  --good:     #0ca30c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.55;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+
+/* ---- chart card -------------------------------------------------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card__head { padding: 16px 18px 4px; }
+.card__title { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+.card__desc  { margin: 2px 0 0; font-size: 12.5px; color: var(--text-secondary); }
+
+.chart-host {
+  padding: 10px 14px 16px;
+  min-height: 300px;
+}
+.chart-host svg { max-width: 100%; height: auto; display: block; }
+
+/* ---- source disclosure ---------------------------------------- */
+
+.src { border-top: 1px solid var(--border); }
+.src > summary {
+  cursor: pointer;
+  padding: 9px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  list-style: none;
+  user-select: none;
+}
+.src > summary::-webkit-details-marker { display: none; }
+.src > summary::before { content: "› "; color: var(--text-muted); }
+.src[open] > summary::before { content: "⌄ "; }
+.src pre {
+  margin: 0;
+  padding: 14px 18px 18px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  background: color-mix(in srgb, var(--text-primary) 4%, var(--surface));
+  color: var(--text-secondary);
+  tab-size: 2;
+}
+
+/* ---- perf badge ---------------------------------------------- */
+.metric {
+  display: inline-flex; align-items: baseline; gap: 5px;
+  font-size: 12px; color: var(--text-secondary);
+}
+.metric b { font-size: 13px; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+/* ---- scorecard table --------------------------------------- */
+table.scores { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.scores th, table.scores td {
+  border-bottom: 1px solid var(--border);
+  padding: 9px 10px;
+  text-align: center;
+}
+table.scores th:first-child, table.scores td:first-child { text-align: left; }
+table.scores thead th { color: var(--text-secondary); font-weight: 600; }
+table.scores tbody tr:hover { background: color-mix(in srgb, var(--text-primary) 3%, transparent); }
+.s5 { color: var(--good); font-weight: 700; }
+.s1 { color: var(--series-2); }
+
+/* theme toggle */
+.toggle {
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-secondary); border-radius: 8px;
+  padding: 5px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.toggle:hover { color: var(--text-primary); }
+
+/* shared crosshair tooltip used by hand-rolled demos (d3, uplot helpers) */
+.lc-tip {
+  position: absolute; pointer-events: none; z-index: 20;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 9px; font-size: 12px;
+  color: var(--text-primary); box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  white-space: nowrap; opacity: 0; transition: opacity .08s;
+}
+.lc-tip b { font-variant-numeric: tabular-nums; }
+
+/* Table-specific tokens, shared by every demo so the comparison is of the
+   library and not of someone's styling effort. */
+:root {
+  --table-row-h: 32px;
+  --table-font-size: 13px;
+  --table-header-bg: var(--surface);
+  --table-stripe: color-mix(in srgb, var(--text-primary) 3%, transparent);
+  --table-num-font: var(--font-mono);
+}
+.demo-host { height: 460px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+.demo-host--tall { height: 620px; }
