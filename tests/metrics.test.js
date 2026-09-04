@@ -37,4 +37,13 @@ describe("peakMemoryMB", () => {
     expect(peakMemoryMB()).toBe(50);
     vi.unstubAllGlobals();
   });
+
+  it("returns null for Chrome's quantized placeholder rather than a fake 10 MB", () => {
+    vi.stubGlobal("performance", {
+      now: () => 0,
+      memory: { usedJSHeapSize: 10_000_000, totalJSHeapSize: 10_000_000 },
+    });
+    expect(peakMemoryMB()).toBeNull();
+    vi.unstubAllGlobals();
+  });
 });

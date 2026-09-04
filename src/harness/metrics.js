@@ -13,11 +13,24 @@ export function formatMs(ms) {
   return `${Math.round(ms)} ms`;
 }
 
-/** Chromium-only. Returns null elsewhere rather than substituting a worse
- *  proxy — an absent number is more honest than a misleading one. */
+/* Chrome reports performance.memory at reduced precision unless it was started
+ * with --enable-precise-memory-info, and the reduction is not rounding: every
+ * field comes back as exactly 10,000,000 bytes, before and after loading
+ * 50,000 rows. Measured in Chromium 2026-09: default build reported
+ * used = total = 10,000,000 throughout; the same page with precise memory info
+ * reported 2.2 MB before and 16.5 MB after. */
+const QUANTIZED_HEAP_BYTES = 10_000_000;
+
+/** Chromium-only. Returns null elsewhere — and null, too, when Chrome is
+ *  serving the quantized placeholder, because printing an identical invented
+ *  "10 MB" against every library on every dataset would look like a
+ *  measurement. An absent number is more honest than a misleading one. */
 export function peakMemoryMB() {
   const m = performance.memory;
   if (!m || typeof m.usedJSHeapSize !== "number") return null;
+  if (m.usedJSHeapSize === QUANTIZED_HEAP_BYTES && m.totalJSHeapSize === QUANTIZED_HEAP_BYTES) {
+    return null;
+  }
   return Math.round(m.usedJSHeapSize / 1_048_576);
 }
 
