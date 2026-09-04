@@ -67,9 +67,10 @@ Each dataset stresses a different axis. Every library renders all four.
 3. **Medium (~50,000 rows)** — the point where naive full-DOM rendering starts to
    fall over but has not yet collapsed. Separates "has virtualization" from
    "has good virtualization".
-4. **Large (~500,000 rows, real data)** — UK Land Registry price-paid or NYC taxi,
-   served as **Parquet** (roughly 5–15 MB, versus 40–80 MB as CSV). Stresses load
-   time, scroll performance, memory, and sorting/filtering at scale.
+4. **Large (~500,000 rows, real data)** — UK Land Registry price-paid, served as
+   **Parquet** (roughly 5–15 MB, versus 40–80 MB as CSV). Stresses load time, scroll
+   performance, memory, and sorting/filtering at scale. See "Decisions and recorded
+   alternatives" for why this source and what the alternative is.
 
 Data is prepared by `scripts/prepare-data.mjs`, which fetches upstream sources and
 writes the four files into `public/data/`. Prepared files are committed so the site
@@ -171,6 +172,36 @@ is a static `dist/`, so this is a configuration step, not a design constraint.
 4. A draft post, incorporating research into what practitioners in the data
    visualization and data publishing community actually recommend.
 5. `TODO.md` — deferred libraries and follow-up ideas.
+
+## Decisions and recorded alternatives
+
+Two calls were left open at design review. Both are settled below, with the road not
+taken recorded so it can be picked up cheaply later.
+
+### Large dataset source — decided: UK Land Registry price-paid
+
+Chosen because it is a table a human would actually *read*: addresses, place names,
+dates, prices. That matters here, because half of what this evaluation measures is
+the reading experience — text overflow, column width behaviour, date and currency
+formatting. A table of anonymous trip IDs and float durations exercises none of it.
+
+**Alternative, if we want it later: NYC taxi trips.** Its advantage is recognition —
+it is the dataset nearly every published grid benchmark uses, so our numbers would be
+directly comparable to theirs. Switching is cheap by construction: `prepare-data.mjs`
+is the only file that knows where the large dataset comes from, and the harness sees
+nothing but columnar arrays. If we ever want to argue with someone else's benchmark
+numbers, switch to taxi; until then, Land Registry makes a better demo.
+
+### Plain `<table>` baseline — decided: keep it
+
+Kept because a scorecard without a floor is unreadable. "AG Grid scores 5 on large
+data" means nothing until you can see what 1 looks like, and the honest answer is
+that a plain table is genuinely fine — often *better* — for the small rich dataset,
+which is a real finding and not a joke entry. Cost is about twenty lines.
+
+**Alternative, if it reads as clutter later:** drop entry 7 and let Observable Inputs
+serve as the low end. This costs nothing to reverse — the baseline is one directory
+under `src/demos/` and one card on the hub, with no other module depending on it.
 
 ## Risks
 
