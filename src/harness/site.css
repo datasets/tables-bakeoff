@@ -188,3 +188,26 @@ table.scores tbody tr:hover { background: color-mix(in srgb, var(--text-primary)
 }
 .demo-host { height: 460px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
 .demo-host--tall { height: 620px; }
+
+/* ---- demo card chrome (harness) ------------------------------- */
+
+.card__head + .demo-host { margin: 10px 18px 0; }
+.card__actions {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  padding: 10px 18px 14px;
+}
+.fps-out { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+button {
+  font: inherit; font-size: 12px; padding: 5px 11px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); color: inherit; cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--baseline); }
+button:disabled { opacity: 0.5; cursor: default; }
+
+/* A demo that throws prints its stack here rather than blanking the page. */
+.err {
+  color: var(--series-2); font-size: 12px; white-space: pre-wrap;
+  padding: 12px; margin: 0; font-family: var(--font-mono);
+}
