@@ -43,7 +43,9 @@ function renderTable(host, data, ctx, rowLimit = Infinity) {
     .join("");
 
   // A cap has to be visible where the table is, not only in the page notes —
-  // otherwise the card reads as a fair 500,000-row render.
+  // otherwise the card reads as a fair 500,000-row render. reportRows tells the
+  // harness too, so the metric line above cannot claim rows we never built.
+  ctx.reportRows(rows.length);
   const capped =
     rows.length < data.rows.length
       ? `<p class="cap-note">Showing ${rows.length.toLocaleString()} of ${data.rows.length.toLocaleString()} rows — uncapped, this never finished rendering.</p>`
@@ -64,4 +66,8 @@ export const tables = {
   large: (host, data, ctx) => renderTable(host, data, ctx, 100000),
 };
 
-mountDemo({ meta, tables });
+/* All four entries above are one-line delegations, so without this the source
+ * panel would show only the delegation. */
+export const source = renderTable;
+
+mountDemo({ meta, tables, source });

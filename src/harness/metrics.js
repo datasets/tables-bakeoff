@@ -13,24 +13,32 @@ export function formatMs(ms) {
   return `${Math.round(ms)} ms`;
 }
 
-/* Chrome reports performance.memory at reduced precision unless it was started
- * with --enable-precise-memory-info, and the reduction is not rounding: every
- * field comes back as exactly 10,000,000 bytes, before and after loading
- * 50,000 rows. Measured in Chromium 2026-09: default build reported
- * used = total = 10,000,000 throughout; the same page with precise memory info
- * reported 2.2 MB before and 16.5 MB after. */
-const QUANTIZED_HEAP_BYTES = 10_000_000;
+/* Chrome pins performance.memory.usedJSHeapSize to exactly 10,000,000 bytes
+ * unless it was started with --enable-precise-memory-info. Measured in this
+ * repo's headless Chromium, 2026-09:
+ *
+ *   fresh page                     used 10,000,000   total 10,000,000
+ *   after decoding 500,000 rows    used 10,000,000   total 10,000,000
+ *   holding 177 MB of live strings used 10,000,000   total 14,300,000
+ *   ...with --enable-precise-memory-info:  used 2.2 MB → 16.5 MB
+ *
+ * Only `used` is the fixed sentinel. `total` is quantized on a different, much
+ * coarser scale and does move once the heap really grows, so it must stay out
+ * of the test: an earlier version of this guard required both to equal the
+ * sentinel and therefore stopped firing exactly when memory pressure was
+ * highest — the large dataset still printed a fabricated "heap 10 MB". */
+const QUANTIZED_USED_HEAP_BYTES = 10_000_000;
 
-/** Chromium-only. Returns null elsewhere — and null, too, when Chrome is
- *  serving the quantized placeholder, because printing an identical invented
- *  "10 MB" against every library on every dataset would look like a
- *  measurement. An absent number is more honest than a misleading one. */
+/** Chromium-only, and only with --enable-precise-memory-info. Returns null both
+ *  where performance.memory is absent and where Chrome is serving its fixed
+ *  placeholder, because printing an identical invented "10 MB" against every
+ *  library on every dataset would look like a measurement. Callers should say
+ *  the number is unavailable rather than omit it silently — an absent number is
+ *  honest, a silently missing one looks like an oversight. */
 export function peakMemoryMB() {
   const m = performance.memory;
   if (!m || typeof m.usedJSHeapSize !== "number") return null;
-  if (m.usedJSHeapSize === QUANTIZED_HEAP_BYTES && m.totalJSHeapSize === QUANTIZED_HEAP_BYTES) {
-    return null;
-  }
+  if (m.usedJSHeapSize === QUANTIZED_USED_HEAP_BYTES) return null;
   return Math.round(m.usedJSHeapSize / 1_048_576);
 }
 

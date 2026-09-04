@@ -38,10 +38,23 @@ describe("peakMemoryMB", () => {
     vi.unstubAllGlobals();
   });
 
-  it("returns null for Chrome's quantized placeholder rather than a fake 10 MB", () => {
+  // Both cases are real readings from headless Chromium: `total` sits at the
+  // sentinel on an idle page and moves to 14,300,000 under memory pressure
+  // while `used` stays pinned. The second case is the one that matters — it is
+  // the state the large dataset actually produces.
+  it("returns null for Chrome's placeholder heap rather than a fake 10 MB", () => {
     vi.stubGlobal("performance", {
       now: () => 0,
       memory: { usedJSHeapSize: 10_000_000, totalJSHeapSize: 10_000_000 },
+    });
+    expect(peakMemoryMB()).toBeNull();
+    vi.unstubAllGlobals();
+  });
+
+  it("still detects the placeholder once totalJSHeapSize has grown past it", () => {
+    vi.stubGlobal("performance", {
+      now: () => 0,
+      memory: { usedJSHeapSize: 10_000_000, totalJSHeapSize: 14_300_000 },
     });
     expect(peakMemoryMB()).toBeNull();
     vi.unstubAllGlobals();

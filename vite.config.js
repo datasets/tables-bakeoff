@@ -13,14 +13,28 @@ export const DEMOS = [
   { key: "perspective",name: "Perspective",        react: false },
 ];
 
-/* The demos are built one task at a time, so the six pages that do not exist
- * yet would fail the whole build as unresolved rollup entries. Build the pages
- * that are on disk and say out loud which ones were skipped — a silent omission
- * would let a demo ship with its main.js but no HTML and still go green. */
-const demoPages = DEMOS.map((d) => [d.key, resolve(process.cwd(), `demos/${d.key}.html`)]);
-const built = demoPages.filter(([, path]) => existsSync(path));
-const missing = demoPages.filter(([, path]) => !existsSync(path)).map(([key]) => key);
-if (missing.length) console.info(`[vite.config] demo pages not built yet: ${missing.join(", ")}`);
+/* The demos are built one task at a time, so the pages that do not exist yet
+ * would fail the whole build as unresolved rollup entries. A demo counts as
+ * started once src/demos/<key>/main.js exists; from that moment its page is
+ * required. Anything else lets a finished demo drop out of the site over a
+ * missing HTML file with a green build — and the entry point of a static site
+ * failing silently is the one failure nobody notices. */
+const demoFiles = DEMOS.map((d) => ({
+  key: d.key,
+  page: resolve(process.cwd(), `demos/${d.key}.html`),
+  main: resolve(process.cwd(), `src/demos/${d.key}/main.js`),
+}));
+
+const orphaned = demoFiles.filter((d) => existsSync(d.main) && !existsSync(d.page));
+if (orphaned.length) {
+  throw new Error(
+    `Demo(s) with a main.js but no page: ${orphaned.map((d) => d.key).join(", ")}. ` +
+      `Create ${orphaned.map((d) => `demos/${d.key}.html`).join(", ")} — without it the ` +
+      `demo is absent from the built site and nothing else reports it.`
+  );
+}
+
+const built = demoFiles.filter((d) => existsSync(d.page)).map((d) => [d.key, d.page]);
 
 export default {
   plugins: [react()],

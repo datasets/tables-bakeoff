@@ -49,6 +49,10 @@ export async function loadDataset(key) {
       timings: { fetchMs: t1 - t0, decodeMs: t2 - t1 },
     };
   })();
+  // Cache the promise, but only while it can still succeed. Keeping a rejected
+  // one would make a transient network failure permanent for the life of the
+  // page, so the demo card's Retry button could never work.
+  p.catch(() => { if (cache.get(key) === p) cache.delete(key); });
   cache.set(key, p);
   return p;
 }

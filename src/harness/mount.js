@@ -9,23 +9,55 @@
  *
  *   export const meta   = { name, version, license, docs, tagline, notes?, npm };
  *   export const tables = { small, wide, medium, large };
- *   mountDemo({ meta, tables });
+ *   export const source = renderFn;   // optional, see (3) — usually wanted
+ *   mountDemo({ meta, tables, source });
  *
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
  *   dataset — Task 3's { key, rows, numRows, columns, timings }; `columns` are
  *             { name, type: 'string'|'number'|'date', align: 'left'|'right' }.
- *   ctx     — { theme, key, formatCell }:
- *               theme      the live token object from theme.js — `theme.dark`
- *                          is the light/dark discriminator, plus palette,
- *                          surface, page, text, grid, fontSans, fontMono.
+ *   ctx     — { theme, key, formatCell, reportRows }:
+ *               theme      a snapshot of theme.js's tokens taken just before
+ *                          this render — `theme.dark` is the light/dark
+ *                          discriminator, plus palette, surface, page, text,
+ *                          grid, fontSans, fontMono. It does not update by
+ *                          itself; the harness re-renders the card on a theme
+ *                          change and passes a fresh snapshot.
  *               key        the dataset key, for demos that share one function.
  *               formatCell the single shared formatter; use it for every cell
  *                          so differences on screen come from the library.
+ *               reportRows see (2).
  * It may return nothing, or a cleanup function, or a promise of either. The
  * promise is awaited inside the timed region, so async mounts (a React root,
  * Perspective's viewer.load) report their true cost. Cleanup runs before the
- * card re-renders on a theme change. */
+ * card re-renders on a theme change.
+ *
+ * THREE THINGS A DEMO MUST OPT INTO. Each is invisible if you skip it, and
+ * each produces a number on the page that is wrong rather than missing.
+ *
+ * (1) data-scroller — REQUIRED if the library owns its own viewport.
+ *     "Measure scroll FPS" scrolls the .demo-host. AG Grid, Tabulator, Glide
+ *     and Perspective all size themselves to 100% of the host and scroll an
+ *     element *inside* it, so the host itself never moves. Omit this and the
+ *     card reports a flat 60fps for an element that never scrolled — a
+ *     fabricated number, not an absent one. Inside your render function:
+ *         host.querySelector(".ag-body-viewport").setAttribute("data-scroller", "");
+ *     The harness scrolls the first [data-scroller] descendant if there is one.
+ *
+ * (2) ctx.reportRows(n) — REQUIRED if you did not present the whole dataset.
+ *     The metric line otherwise claims the dataset's full row count. Call this
+ *     when you cap or window the data, as the baseline does at 100,000 of
+ *     500,000 rows; the card then reads "100,000 of 500,000 rows".
+ *     Virtualization is NOT capping: a grid that keeps 30 rows in the DOM but
+ *     lets the user scroll all 500,000 has presented all 500,000 and must not
+ *     call this.
+ *
+ * (3) export const source — the source panel's subject.
+ *     The panel prints tables[key] verbatim. Nearly every demo shares one
+ *     implementation across the four datasets, so tables[key] is a one-line
+ *     delegating stub and the panel shows nothing worth reading. Export the
+ *     function that does the work — one function, or a per-key map — and the
+ *     panel shows the stub followed by that implementation. */
 
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
@@ -34,7 +66,7 @@ import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.
 
 restoreTheme();
 
-export async function mountDemo({ meta, tables }) {
+export async function mountDemo({ meta, tables, source }) {
   document.title = `${meta.name} — tables-evaluation`;
   const root = document.getElementById("app");
   root.innerHTML = shell(meta);
@@ -42,9 +74,11 @@ export async function mountDemo({ meta, tables }) {
 
   const cleanups = {};
 
+  // Wire every card before rendering any of them, so the large card's Load
+  // button is live while the eager cards are still working.
   for (const key of DATASET_KEYS) {
     const card = root.querySelector(`[data-card="${key}"]`);
-    card.querySelector(".src pre").textContent = sourceOf(tables[key]);
+    card.querySelector(".src pre").textContent = sourceOf(tables[key], sourceFor(source, key));
 
     const fpsBtn = card.querySelector(".fps-btn");
     // Nothing to scroll until a table exists; an FPS number for an empty box
@@ -52,15 +86,22 @@ export async function mountDemo({ meta, tables }) {
     fpsBtn.disabled = true;
     fpsBtn.addEventListener("click", () => runFps(card));
 
-    if (DATASETS[key].eager) {
-      render(key, card);
-    } else {
+    if (!DATASETS[key].eager) {
       card.querySelector(".load-btn").addEventListener("click", (e) => {
         e.target.disabled = true;
         e.target.textContent = "loading…";
         render(key, card);
       });
     }
+  }
+
+  // Sequentially, not concurrently. These timings are the product; one card's
+  // parquet decode interleaving with another card's timed render on the same
+  // thread would inflate whichever card lost the race, and the site would
+  // publish the result as if it were the library's cost.
+  for (const key of DATASET_KEYS) {
+    if (!DATASETS[key].eager) continue;
+    await render(key, root.querySelector(`[data-card="${key}"]`));
   }
 
   async function render(key, card) {
@@ -74,6 +115,13 @@ export async function mountDemo({ meta, tables }) {
     } catch (err) {
       host.innerHTML = `<pre class="err">could not load ${DATASETS[key].file}\n${escapeHtml(String(err))}</pre>`;
       badge.textContent = "load failed";
+      // An on-demand card would otherwise be left with a disabled button
+      // reading "loading…" for ever, with no way back.
+      const loadBtn = card.querySelector(".load-btn");
+      if (loadBtn) {
+        loadBtn.disabled = false;
+        loadBtn.textContent = "Retry";
+      }
       return;
     }
 
@@ -81,17 +129,24 @@ export async function mountDemo({ meta, tables }) {
     cleanups[key] = null;
     host.innerHTML = "";
 
-    const ctx = { theme: theme(), key, formatCell };
+    // A demo that presents the whole dataset says nothing; one that caps or
+    // windows it must say so, or the metric line claims rows it never showed.
+    let renderedRows = data.rows.length;
+    const ctx = {
+      theme: theme(),
+      key,
+      formatCell,
+      reportRows: (n) => { renderedRows = n; },
+    };
     try {
       const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
       cleanups[key] = typeof result === "function" ? result : null;
       badge.textContent = formatMs(ms);
       card.querySelector(".fps-btn").disabled = false;
-      const mem = peakMemoryMB();
       detail.textContent =
-        `${data.numRows.toLocaleString()} rows · ` +
-        `load ${formatMs(data.timings.fetchMs + data.timings.decodeMs)}` +
-        (mem === null ? "" : ` · heap ${mem} MB`);
+        `${rowsLabel(renderedRows, data.numRows)} · ` +
+        `load ${formatMs(data.timings.fetchMs + data.timings.decodeMs)} · ` +
+        `${heapLabel()}`;
     } catch (err) {
       // A demo that throws reports it in its own card and does not take the
       // page down. A library failing on a dataset IS a result.
@@ -143,10 +198,38 @@ async function timeRender(fn, host) {
 
 /** Libraries that own their own viewport (AG Grid, Glide) scroll an element
  *  inside the host, not the host itself. Such a demo marks that element with
- *  `data-scroller` and the FPS run drives the right thing. */
+ *  `data-scroller` — see (1) in the contract at the top of this file. */
 function scrollerOf(card) {
   const host = card.querySelector(".demo-host");
   return host.querySelector("[data-scroller]") || host;
+}
+
+/** Say what was actually put on screen. A demo that showed everything gets the
+ *  plain count; one that capped gets both numbers, because "500,000 rows" next
+ *  to a render time is a claim about work that was not done. */
+function rowsLabel(rendered, total) {
+  return rendered < total
+    ? `${rendered.toLocaleString()} of ${total.toLocaleString()} rows`
+    : `${total.toLocaleString()} rows`;
+}
+
+/** Chrome serves a fixed placeholder heap unless it is started with
+ *  --enable-precise-memory-info, so on an ordinary browser there is no number
+ *  to show. Say that, rather than dropping the clause: a missing figure with no
+ *  explanation reads as an oversight, and the next task along needs to know the
+ *  measurement is unavailable rather than zero. */
+function heapLabel() {
+  const mb = peakMemoryMB();
+  return mb === null
+    ? "heap n/a (needs Chrome --enable-precise-memory-info)"
+    : `heap ${mb} MB`;
+}
+
+/** Resolve the optional `source` export — one shared function, or a per-key
+ *  map — to the implementation behind this dataset's entry point. */
+function sourceFor(source, key) {
+  if (!source) return null;
+  return typeof source === "function" ? source : source[key] || null;
 }
 
 function shell(meta) {
@@ -198,9 +281,21 @@ function cardHTML(key) {
   </section>`;
 }
 
-/** Print a render function's source with the common indent stripped, so the
- *  source panel shows what you would actually write. */
-function sourceOf(fn) {
+/** Build the source panel. `entry` is tables[key]; `impl` is the optional
+ *  `source` export. Nearly every demo shares one implementation across the four
+ *  datasets, which makes `entry` a one-line delegating stub — on its own it
+ *  shows the reader nothing about how the table is built. Printing both keeps
+ *  the per-dataset arguments visible (the baseline's 100,000-row cap is only in
+ *  the stub) while the body below it is the code that actually runs. */
+function sourceOf(entry, impl) {
+  const head = printFn(entry);
+  if (!impl || impl === entry) return head;
+  return `${head}\n\n${printFn(impl)}`;
+}
+
+/** Print a function's source with the common indent stripped, so the panel
+ *  shows what you would actually write. */
+function printFn(fn) {
   const lines = fn.toString().replace(/\t/g, "  ").split("\n");
   const indents = lines.slice(1).filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length);
   const min = Math.min(...indents, Infinity);
