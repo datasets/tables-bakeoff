@@ -44,18 +44,17 @@
 </style>
 </head>
 <body>
-<div class="wrap" style="padding-top:30px">
-
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
-    <div>
-      <h1>Tables Bakeoff</h1>
-      <p class="lede">
-        A 2026 bake-off of JavaScript table and data-grid libraries. Every library renders the
-        <strong>same four datasets</strong> — up to 500,000 rows of real property-sale data —
-        through the <strong>same harness</strong>, with the <strong>same theme tokens</strong> and the
-        <strong>same shared cell formatter</strong>. So what you are comparing is the library, not
-        someone's styling effort. The source of every render function is on its own page.
-      </p>
+<nav style="border-bottom:1px solid var(--border);padding:12px 0">
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+    <a href="/index.html" style="font-size:16px;font-weight:600;color:var(--text-primary);text-decoration:none">Tables Bakeoff</a>
+    <div style="display:flex;gap:12px;align-items:center;font-size:13px">
+      <a href="/demos/baseline.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Plain &lt;table&gt;</a>
+      <a href="/demos/observable.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Observable</a>
+      <a href="/demos/tabulator.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Tabulator</a>
+      <a href="/demos/aggrid.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">AG Grid</a>
+      <a href="/demos/tanstack.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">TanStack</a>
+      <a href="/demos/glide.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Glide</a>
+      <a href="/demos/perspective.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Perspective</a>
     </div>
     <div class="header-links">
       <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
@@ -65,6 +64,19 @@
       </a>
       <button class="toggle"></button>
     </div>
+  </div>
+</nav>
+<div class="wrap" style="padding-top:30px">
+
+  <div>
+    <h1>Tables Bakeoff</h1>
+    <p class="lede">
+      A 2026 bake-off of JavaScript table and data-grid libraries. Every library renders the
+      <strong>same four datasets</strong> — up to 500,000 rows of real property-sale data —
+      through the <strong>same harness</strong>, with the <strong>same theme tokens</strong> and the
+      <strong>same shared cell formatter</strong>. So what you are comparing is the library, not
+      someone's styling effort. The source of every render function is on its own page.
+    </p>
   </div>
 
   <p class="lede" style="margin-top:10px">
@@ -441,6 +453,13 @@
   </p>
 
 </div>
+
+<footer style="border-top:1px solid var(--border);margin-top:60px;padding:40px 0;color:var(--text-muted);font-size:12px">
+  <div class="wrap" style="text-align:center">
+    Built with care by <a href="https://datopian.com" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">Datopian</a>
+  </div>
+</footer>
+
 <script type="module" src="/src/harness/hub.js"></script>
 </body>
 </html>
