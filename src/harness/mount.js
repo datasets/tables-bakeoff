@@ -295,6 +295,13 @@ function shell(meta) {
   // meta values are escaped: the baseline's own name is literally "Plain
   // <table>", which would otherwise open a real element in the header.
   const e = escapeHtml;
+  const links = [
+    meta.homepage ? `<a href="${e(meta.homepage)}" target="_blank" rel="noopener">home</a>` : null,
+    meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener">github${meta.stars ? ` · ${meta.stars.toLocaleString()} ★` : ""}</a>` : null,
+    `<a href="${e(meta.docs)}" target="_blank" rel="noopener">docs</a>`,
+    meta.npm ? `<code>${e(meta.npm)}</code>` : null,
+  ].filter(Boolean).join(" &nbsp;·&nbsp; ");
+
   return `
   ${navbar()}
   <header class="wrap" style="padding-top:22px;padding-bottom:10px">
@@ -303,9 +310,7 @@ function shell(meta) {
     </h1>
     <p style="margin:0;max-width:70ch;color:var(--text-secondary);font-size:14px">${e(meta.tagline)}</p>
     <p style="margin:10px 0 0;font-size:12.5px;color:var(--text-muted)">
-      <a href="${e(meta.docs)}" target="_blank" rel="noopener">docs</a>
-      ${meta.npm ? `&nbsp;·&nbsp; <code>${e(meta.npm)}</code>` : ""}
-      &nbsp;·&nbsp; ${e(meta.license)}
+      ${links} &nbsp;·&nbsp; ${e(meta.license)}
     </p>
     ${meta.notes ? `<p style="margin:8px 0 0;font-size:12.5px;color:var(--text-secondary);max-width:75ch">${e(meta.notes)}</p>` : ""}
   </header>
