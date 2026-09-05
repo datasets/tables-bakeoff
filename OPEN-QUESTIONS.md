@@ -36,7 +36,26 @@ in red on the card itself.
 which arguably makes the point more viscerally but breaks the page for everyone
 who scrolls to it.
 
-## 3. Task 14 was deliberately not done
+## 3. Perspective is demoed from `@perspective-dev`, not `@finos`
+
+Both package families are live. `@finos/perspective@3.8.0` was last published
+2026-07-28; `@perspective-dev/{client,viewer,viewer-datagrid}@5.3.1` were
+published 2026-09-04, `perspective.finos.org` now redirects to
+`perspective-dev.github.io`, and the repository behind the new scope is the
+same one with the same maintainers (texodus, timkpaine). Everything the current
+documentation shows — the install commands, the bootstrap, the Vite recipe — is
+written against `@perspective-dev`.
+
+**Decided:** `@perspective-dev` 5.3.1. Demoing the deprecated scope would have
+measured a version nobody starting today would install, and would have made the
+demo disagree with the only docs a reader can follow.
+
+**If you disagree:** the cost of switching back is real but bounded — 3.x has the
+same `worker()`/`load()`/`restore()` shape, a smaller wasm payload, and does not
+need the two-binary `init_server`/`init_client` bootstrap. The risk you would be
+buying is that 5.3.1 was one day old when it was measured.
+
+## 4. Task 14 was deliberately not done
 
 The write-up, the scorecard scores, `EVALUATION.md` and the post draft are left for
 you. They are the actual deliverable and they are judgment calls about which table
@@ -50,7 +69,9 @@ Everything needed to write them is measured and on the site.
 ## Answered by measurement, recorded here so you do not have to re-ask
 
 - **Can a hand-written `<table>` do 500k rows?** No. Not close. See above.
-- **Does Perspective belong in the comparison?** Pending — see the ledger for how
-  Task 11 resolved. It has two live package homes as of 2026-09-04
-  (`@finos/perspective@3.8.0` vs `@perspective-dev/client@5.3.1`) and the FINOS
-  docs site now redirects to the latter.
+- **Does Perspective belong in the comparison?** Yes, with a caveat printed on its
+  own page. It integrated cleanly — its Vite recipe worked first try — and it
+  renders 500,000 rows in ~2.1s at 60fps. But it downloads 3.9 MB of WebAssembly
+  first, so its bundle and load figures are not comparable to the six JavaScript
+  libraries and the scorecard must not average them together. See question 3 for
+  which package family was used.
