@@ -126,8 +126,8 @@
         <td data-bundle="baseline">—</td>
         <td data-wasm="baseline">—</td>
         <td data-loc="baseline">—</td>
-        <td>2,658 ms</td>
-        <td>never finished<span class="sub">capped at 100,000 → 7.1 s</span></td>
+        <td>2,625 ms</td>
+        <td>never finished<span class="sub">capped at 100,000 → 6.9 s</span></td>
         <td>n/a<span class="sub">15 fps at 50,000</span></td>
         <td class="no">No</td>
         <td>n/a</td>
@@ -229,8 +229,11 @@
     <li>
       <strong>Render and FPS are one machine's observations</strong>, taken in headless Chromium at
       1400×1000 on the dev server, and are typed into this page from the build notes rather than
-      generated. They are stable to within a few per cent across runs, but treat them as orders of
-      magnitude, not benchmarks. The clock covers building the DOM <em>and</em> forcing layout —
+      generated. Small renders are stable to within a few per cent across runs; the plain
+      <code>&lt;table&gt;</code>'s capped 100,000-row render varied by over 10% across eight runs on
+      this machine, and by closer to 20% at 200,000 sampled separately — variance grows with render
+      cost, not just harness noise. Treat every figure here as an order of magnitude, not a
+      benchmark. The clock covers building the DOM <em>and</em> forcing layout —
       without the layout flush the plain <code>&lt;table&gt;</code> would report a fifth of its
       real cost. Bundle and line counts, by contrast, are read from the build at page load.
     </li>
@@ -285,10 +288,11 @@
     <li>
       <strong>A plain <code>&lt;table&gt;</code> cannot render 500,000 rows at all.</strong>
       Uncapped it was abandoned after ten minutes with the tab unresponsive; the demo caps at
-      100,000. And the cost is <em>layout</em>, not string building: 2.0 s at 50,000 rows, 6.2 s at
-      100,000, 34.2 s at 200,000 — superlinear, because auto table layout must measure every cell in
-      a column before it can size that column. Building the HTML string is linear and cheap by
-      comparison.
+      100,000. And the cost is <em>layout</em>, not string building: measured on this machine at
+      2.6 s at 50,000 rows, 6.9 s at 100,000, roughly 27 s at 200,000 — superlinear, because auto
+      table layout must measure every cell in a column before it can size that column, and the
+      larger renders swing 10–20% run to run (see the methodology note below). Building the HTML
+      string is linear and cheap by comparison.
     </li>
     <li>
       <strong>The most dangerous configuration in this bake-off came from a library's own docs.</strong>

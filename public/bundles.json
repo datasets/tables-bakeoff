@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T08:08:43.833Z",
+  "generatedAt": "2026-09-05T08:31:21.491Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -23,25 +23,25 @@
     "baseline": {
       "name": "Plain <table>",
       "react": false,
-      "jsKB": 22.8,
+      "jsKB": 22.9,
       "cssKB": 1.6,
       "otherKB": 0,
-      "totalKB": 24.3,
+      "totalKB": 24.4,
       "reactKB": 0,
-      "libKB": 24.3,
+      "libKB": 24.4,
       "harnessKB": 23.4,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 68.7,
+        "jsKB": 68.9,
         "cssKB": 4.6,
         "wasmKB": 0,
-        "totalKB": 73.3
+        "totalKB": 73.4
       },
-      "loc": 46,
+      "loc": 49,
       "files": {
         "js": [
-          "assets/baseline-B3JkQUCJ.js",
+          "assets/baseline-DJ0BjK8A.js",
           "assets/mount-BSR13t4U.js",
           "assets/theme-T6DuPqEQ.js"
         ],

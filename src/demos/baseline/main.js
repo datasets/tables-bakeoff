@@ -19,8 +19,11 @@ export const meta = {
     "failure is the measurement, not a bug in the demo. CAPPED: the large card " +
     "renders the first 100,000 of 500,000 rows. Uncapped it never finished — " +
     "abandoned after 10 minutes with the tab unresponsive. Table layout, not " +
-    "string building, is what collapses: 2.0s at 50,000 rows, 6.2s at 100,000, " +
-    "34.2s at 200,000. Every other library on this site renders all 500,000.",
+    "string building, is what collapses: measured on this machine at 2.6s at " +
+    "50,000 rows (eight runs, 2.60–2.65s), 6.9s at 100,000 (eight runs, " +
+    "6.6–7.5s), and roughly 27s at 200,000 (four runs, 23–28s) — the bigger " +
+    "the render, the more the wall-clock swings run to run. Every other " +
+    "library on this site renders all 500,000.",
 };
 
 /** One implementation, used for all four datasets. Building the whole table as
@@ -59,10 +62,11 @@ export const tables = {
   wide: (host, data, ctx) => renderTable(host, data, ctx),
   medium: (host, data, ctx) => renderTable(host, data, ctx),
   // Capped at 100,000 of 500,000 rows. Uncapped this never completed — the
-  // cost is table layout, which goes superlinear past ~100k rows (2.0s / 6.2s
-  // / 34.2s at 50k / 100k / 200k). The cap is stated in meta.notes and on the
-  // card, so the reader sees the baseline is being shown at its best case and
-  // still loses.
+  // cost is table layout, which goes superlinear past ~100k rows (measured on
+  // this machine: 2.6s / 6.9s / ~27s at 50k / 100k / 200k, see meta.notes for
+  // the run-to-run spread). The cap is stated in meta.notes and on the card,
+  // so the reader sees the baseline is being shown at its best case and still
+  // loses.
   large: (host, data, ctx) => renderTable(host, data, ctx, 100000),
 };
 
