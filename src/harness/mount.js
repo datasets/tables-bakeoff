@@ -261,7 +261,7 @@ const DEMOS = [
   { key: "perspective", name: "Perspective" },
 ];
 
-function navbar() {
+export function navbar() {
   return `
   <nav style="border-bottom:1px solid var(--border);padding:12px 0">
     <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
@@ -287,7 +287,7 @@ function navbar() {
   </nav>`;
 }
 
-function footer() {
+export function footer() {
   return `
   <footer style="border-top:1px solid var(--border);margin-top:60px;padding:40px 0;color:var(--text-muted);font-size:12px">
     <div class="wrap" style="text-align:center">
@@ -328,7 +328,7 @@ function shell(meta) {
 function cardHTML(key) {
   const d = DATASETS[key];
   return `
-  <section class="card" data-card="${key}" style="margin-top:24px">
+  <section class="card" id="${key}" data-card="${key}" style="margin-top:24px;scroll-margin-top:16px">
     <div class="card__head">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
         <h2 class="card__title">${d.title}</h2>
