@@ -1,11 +1,43 @@
-# Tables Bakeoff — sharing & announcement
+# Tables Bakeoff — announcement blurbs
 
-A bake-off of seven open-source JavaScript table/grid libraries, run over the same four datasets and measured in a rigorous, reproducible way. The site itself is a scroll-through evaluation, not a written report.
+Copy to paste when announcing publicly. Three lengths; pick per channel. The dated record of the launch is `changelog/2026-09-05-tables-bakeoff.md`.
 
-## What exists
+Live: https://tables.datahub.io/
 
-All seven demos complete and measured:
-- Plain `<table>` — baseline, no library
+---
+
+## Short (social / one-liner)
+
+We built the same data table seven times — plain `<table>`, Observable Inputs, Tabulator, AG Grid, TanStack Table, Glide Data Grid, Perspective — over the same datasets (up to 500k rows), same harness, same formatter. Measured bundle size, lines of code, render time, scroll FPS. No marketing copy, just the numbers → https://tables.datahub.io/
+
+---
+
+## Medium (newsletter / LinkedIn / post intro)
+
+Which JavaScript table library should you actually reach for? We stopped reading feature pages and built the same table seven times instead: plain `<table>`, Observable Inputs, Tabulator, AG Grid Community, TanStack Table, Glide Data Grid, and Perspective — each rendering the same four datasets (up to 500,000 rows of UK Land Registry price-paid data) through one shared harness, one theme, and one per-cell formatter, so what you compare is the library and not someone's styling effort.
+
+The site publishes only what was measured on one machine: gzipped bundle size, lines of code, render time at 50k and 500k rows, and scroll FPS. No 1–5 ratings — the subjective "which one feels good" verdict is left to the reader.
+
+A few things that surprised us:
+
+- A plain `<table>` **cannot** render 500,000 rows — uncapped it never finishes.
+- Tabulator's own documented `height: "100%"` pattern silently disables virtualization: 62 seconds at 50k rows instead of 68 ms.
+- Glide renders 500k rows faster than 1,000, because canvas paints a fixed viewport — but its text is invisible to find-in-page and copy-paste.
+- Headless isn't free: TanStack has the smallest React bundle but needs nearly triple AG Grid's lines of code, because you write the virtualizer yourself.
+
+Read it: https://tables.datahub.io/
+
+---
+
+## Long (blog post / full writeup intro)
+
+**Comparing table libraries by building, not by reading.**
+
+There are a lot of JavaScript table and grid libraries, and every one of them has a feature page that says it is fast and flexible. That is not much to go on. So this is a bake-off: the same table, built seven times, over the same data, measured the same way. It is a deliberate sibling of our [line-charts bake-off](https://linecharts.datahub.io/) — same structure, same idea.
+
+**The seven entries**
+
+- Plain `<table>` — the control, no library at all
 - Observable Inputs
 - Tabulator
 - AG Grid Community
@@ -13,13 +45,11 @@ All seven demos complete and measured:
 - Glide Data Grid
 - Perspective
 
-Four shared datasets: small (1,000 rows, 16 columns), wide (1,000 rows, 80 columns), medium (50,000 rows), large (500,000 rows).
+**The setup**
 
-Branch `build/tables-bakeoff`, 22 commits off main. All build tasks complete and reviewed. `npm install && npm run dev` works end-to-end; `npm run build` is green.
+Every library renders the same four datasets — a small rich sample, a wide 80-column variant, a 50,000-row set, and a 500,000-row set (UK Land Registry price-paid data) — inside the same page shell, the same light/dark theme, and the same per-cell formatter. The intent is that what you see on screen is the library's own rendering and interaction behaviour, not seven different amounts of styling effort. Perspective is the one exception: it exposes no per-cell formatting hook, so its cells are formatted by its own plugin config — disclosed on its page.
 
-## What it measured
-
-Bundle size (gzipped "own code", shared harness netted out), lines of code, render time on 50k and 500k rows, scroll FPS at 500k rows.
+The hub publishes only what was actually measured: gzipped "own code" bundle size (shared harness netted out), lines of code, render time, and scroll FPS. There are no subjective ratings anywhere on the site.
 
 | Library | Bundle | LOC | 500k render | 500k FPS |
 |---|---|---|---|---|
@@ -31,39 +61,21 @@ Bundle size (gzipped "own code", shared harness netted out), lines of code, rend
 | AG Grid Community | ~304 kB | 62 | 248 ms | 60 fps |
 | Perspective | ~99 kB JS + 3.9 MB WASM | 76 | 2.1–2.7 s | 60 fps |
 
-## Key findings
+**What came out of it**
 
-- **A plain `<table>` cannot render 500,000 rows.** Uncapped it never finishes (abandoned at 10 minutes). The cost is table layout, not HTML building.
-- **Tabulator's own documented `height: "100%"` pattern silently destroys virtualization** — 62 seconds at 50k rows instead of 68 ms. A ~200× performance cliff hidden in the docs.
-- **Glide renders 500k faster than 1,000 rows** (24.6 ms vs. slower single-card render) because canvas paints a fixed viewport. Trade-off: text is invisible to find-in-page and selection-copy.
+- **A plain `<table>` cannot render 500,000 rows.** Uncapped it never finishes (abandoned at 10 minutes). The cost is table layout, not building the HTML.
+- **Tabulator's own documented `height: "100%"` pattern silently destroys virtualization** — 62 seconds at 50k rows instead of 68 ms. A ~200× cliff hidden in the docs.
+- **Glide renders 500k faster than 1,000 rows** because canvas paints a fixed viewport. Trade-off: text is invisible to find-in-page and selection-copy.
 - **Headless is not free.** TanStack has the smallest React bundle but needs 166 lines of code (nearly triple AG Grid's 62) because you write the virtualizer yourself.
-- **Perspective cannot use shared formatting.** No per-cell callback exists; it formats through Intl option bags only. Its 2.1s on 500k is also not a ceiling — it's dominated by marshalling 500k JS objects to a worker.
-- **Heap is unmeasurable by default.** Chrome pins `performance.memory.usedJSHeapSize` to exactly 10M without `--enable-precise-memory-info`, so no heap column appears.
+- **Perspective cannot use shared formatting.** No per-cell callback exists; its 2.1s on 500k is also not a ceiling — it is dominated by marshalling 500k JS objects to a worker.
+- **Heap is unmeasurable by default.** Chrome pins `performance.memory.usedJSHeapSize` to exactly 10M without `--enable-precise-memory-info`, so there is no heap column.
 
-## Method
+**What we deliberately did not do**
 
-Every library renders the same four datasets through the same harness, same theme tokens, same per-cell formatter. This ensures what you're comparing is the library's rendering and interaction, not someone's styling effort.
+Score them. Which table actually feels good to use — API ergonomics, docs quality, default look — is a judgment call, and it is left for the reader to make after spending time with the seven pages.
 
-**Exception:** Perspective has no per-cell formatting hook, so its cells are formatted by its own plugin config — disclosed on its page.
+Method and full caveats: `ANALYSIS.md` in the repo.
 
-The hub publishes measured columns only (bundle, LOC, render, FPS). No subjective 1–5 ratings; the verdict is deliberately left for evaluation by the repo owner, not invented here.
-
-## Decisions made
-
-Full reasoning in `OPEN-QUESTIONS.md`; build-time rulings in `docs/reports/build-ledger.md`.
-
-- No subjective scores on the hub (measured columns only; gap is stated and linked to future `EVALUATION.md`).
-- Perspective demoed from `@perspective-dev` 5.3.1 (FINOS redirects there; same maintainers).
-- Large dataset is UK Land Registry price-paid data, 500k rows sampled across 2024.
-- Baseline stays in the scorecard, capped and disclosed, as a floor.
-
-## Known gaps
-
-- `ANALYSIS.md` and `EVALUATION.md` don't exist — that's Task 14.
-- No automated test for scroll FPS correctness; established per-library by manual review.
-- Deployment is local only (Cloudflare Pages pending).
-- Minor findings triaged in `docs/reports/build-ledger.md`.
-
-## Data attribution
+**Data attribution**
 
 Contains HM Land Registry data © Crown copyright and database right 2026, licensed under the Open Government Licence v3.0.
