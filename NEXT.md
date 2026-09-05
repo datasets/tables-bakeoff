@@ -4,12 +4,17 @@ The site is built, measured and reviewed. **The verdict is not written — that 
 
 ## What to do
 
-Write **Task 14**:
+`ANALYSIS.md` is done — the method, every metric, and its caveats. What's left is
+the part that's a judgment call about which table feels good to use, and was
+deliberately not written for you (see `OPEN-QUESTIONS.md` #4):
 
-1. **`ANALYSIS.md`** — document the method, metrics, and their caveats. How is each measurement taken? What are the edge cases and limitations?
-2. **`EVALUATION.md`** — write the verdict with recommendations per use case (small rich table, 500k-row grid, dataset preview, editable spreadsheet).
-3. **The subjective scorecard** — add taste axes (default look, API ergonomics, docs quality) to the hub once you've formed your view.
-4. **The announcement post** — see `SHARING.md` for the base; incorporate your practitioner research.
+1. **`EVALUATION.md`** — the verdict, with recommendations per use case (small
+   rich table, 500k-row grid, dataset preview, editable spreadsheet).
+2. **The subjective scorecard** — add taste axes (default look, API ergonomics,
+   docs quality) to the hub once you've formed your view.
+3. **The announcement post** — see `SHARING.md` for the base; incorporate your
+   practitioner research (your old criteria list with Ola — see issue #3 in the
+   GitHub repo).
 
 ## Raw material
 

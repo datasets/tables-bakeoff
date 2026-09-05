@@ -61,10 +61,10 @@ machine — bundle size, lines of code, render time, scroll FPS. There are no
 
 `docs/plans/` holds the original design and implementation plan.
 `OPEN-QUESTIONS.md` records the judgment calls made while building this,
-in case any should be revisited. `ANALYSIS.md` and `EVALUATION.md` do not
-exist yet — the subjective verdict (which library actually feels good to use,
-which one you'd reach for) is deliberately left for the repo's owner to write,
-not invented here.
+in case any should be revisited. `ANALYSIS.md` documents the measurement
+method and its caveats. `EVALUATION.md` does not exist yet — the subjective
+verdict (which library actually feels good to use, which one you'd reach for)
+is deliberately left for the repo's owner to write, not invented here.
 
 ## Data attribution
 
