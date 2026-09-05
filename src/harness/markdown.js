@@ -22,7 +22,8 @@ function inline(text) {
     const rel = external ? ' target="_blank" rel="noopener"' : "";
     return `<a href="${href}"${rel}>${label}</a>`;
   });
-  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/\*([^*\n]+)\*/g, "<em>$1</em>"); // bold already consumed; lone * is emphasis
   s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
   return s;
 }
