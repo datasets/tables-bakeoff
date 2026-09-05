@@ -69,7 +69,7 @@ restoreTheme();
 export async function mountDemo({ meta, tables, source }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const pageUrl = window.location.href.split('?')[0];
-  const screenshotUrl = `https://screenshotit.app/@social/${encodeURIComponent(pageUrl)}`;
+  const screenshotUrl = `https://screenshotit.app/${pageUrl}@social`;
   document.querySelector('meta[property="og:image"]')?.setAttribute('content', screenshotUrl);
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${meta.name} — Tables Bakeoff`);
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', meta.tagline);
