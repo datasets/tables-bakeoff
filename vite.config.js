@@ -63,9 +63,10 @@ export default {
       input: {
         index: resolve(process.cwd(), "index.html"),
         ...Object.fromEntries(built),
-        // Exploratory spike, not a bakeoff entry (see GitHub issue #6) — built
-        // and measured separately from the seven DEMOS-driven library cards.
+        // Exploratory spikes, not bakeoff entries (see GitHub issues #4 and #6)
+        // — built and measured separately from the seven DEMOS-driven cards.
         "duckdb-query": resolve(process.cwd(), "demos/duckdb-query.html"),
+        "tanstack-summary": resolve(process.cwd(), "demos/tanstack-summary.html"),
       },
       output: {
         /* Rollup already hoists React into a chunk shared by the two React

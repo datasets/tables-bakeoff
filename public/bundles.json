@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T13:07:08.732Z",
+  "generatedAt": "2026-09-05T13:10:14.001Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -13,7 +13,7 @@
   "harness": {
     "files": [
       "assets/frontmatter-BYBBUU76.js",
-      "assets/mount-K9usdFCI.js",
+      "assets/mount-CqacikuX.js",
       "assets/theme-T6DuPqEQ.js",
       "assets/theme-IcMNclCD.css"
     ],
@@ -42,9 +42,9 @@
       "loc": 34,
       "files": {
         "js": [
-          "assets/baseline-DQr0FTI4.js",
+          "assets/baseline-CJfjbjPr.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js"
         ],
         "css": [
@@ -75,9 +75,9 @@
       "loc": 32,
       "files": {
         "js": [
-          "assets/observable-DxLHbrI7.js",
+          "assets/observable-Cx3VLAu3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js"
         ],
         "css": [
@@ -108,9 +108,9 @@
       "loc": 69,
       "files": {
         "js": [
-          "assets/tabulator-CpH59YHU.js",
+          "assets/tabulator-Dda1qVSJ.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js"
         ],
         "css": [
@@ -142,9 +142,9 @@
       "loc": 39,
       "files": {
         "js": [
-          "assets/aggrid-BRlPm3d2.js",
+          "assets/aggrid-KujeVco-.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js"
         ],
         "css": [
@@ -175,12 +175,12 @@
       "loc": 146,
       "files": {
         "js": [
-          "assets/tanstack-6nKzrG2n.js",
+          "assets/tanstack-Dh2N5UdZ.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/Table-DonZ9grR.js",
           "assets/react-DNTIaZct.js",
           "assets/react-host-BFBb6EjG.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js"
         ],
         "css": [
@@ -196,7 +196,7 @@
       "jsKB": 186.4,
       "cssKB": 3.8,
       "otherKB": 0,
-      "totalKB": 190.2,
+      "totalKB": 190.3,
       "reactKB": 60.3,
       "libKB": 129.9,
       "harnessKB": 24.9,
@@ -211,11 +211,11 @@
       "loc": 123,
       "files": {
         "js": [
-          "assets/glide-Drhm5Gc-.js",
+          "assets/glide-BZJEBYi0.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/react-host-BFBb6EjG.js",
           "assets/react-DNTIaZct.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js"
         ],
         "css": [
@@ -224,8 +224,8 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/number-overlay-editor-DTu7qz2G.js",
-          "assets/data-grid-overlay-editor-Bjmlktfa.js"
+          "assets/number-overlay-editor-C9-8szeG.js",
+          "assets/data-grid-overlay-editor-eNKJzlP2.js"
         ]
       }
     },
@@ -250,8 +250,8 @@
       "loc": 48,
       "files": {
         "js": [
-          "assets/perspective-CM0irjcb.js",
-          "assets/mount-K9usdFCI.js",
+          "assets/perspective-D83pCymD.js",
+          "assets/mount-CqacikuX.js",
           "assets/theme-T6DuPqEQ.js",
           "assets/frontmatter-BYBBUU76.js"
         ],
