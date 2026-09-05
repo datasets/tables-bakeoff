@@ -12,7 +12,7 @@ export const ALL_DEMO_KEYS = [
   "glide",
   "perspective",
 ];
-const BUILT = ["baseline", "observable", "tabulator", "aggrid", "tanstack"]; // extend as each demo lands
+const BUILT = ["baseline", "observable", "tabulator", "aggrid", "tanstack", "glide"]; // extend as each demo lands
 
 /* A token that appears only in the demo's real render implementation, never in
  * the one-line delegating stub that tables[key] usually is. Asserting on it is
@@ -24,6 +24,7 @@ const SOURCE_TOKEN = {
   tabulator: "tableBuilt", // the event build() awaits before resolving
   aggrid: "ag-grid-viewport", // the real internal scroll class build() marks data-scroller on
   tanstack: "tr[data-row]", // the paint predicate mount() holds the clock open for
+  glide: "dvn-scroller", // Glide's real internal scroll class, marked data-scroller
 };
 
 for (const key of BUILT) {

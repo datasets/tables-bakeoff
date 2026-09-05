@@ -17,7 +17,15 @@
     "vite": "^7.0.0",
     "vitest": "^3.0.0"
   },
+  "comment:overrides": "glide-data-grid 6.0.3 — the current release — still caps its React peer at 18.x, so a plain `npm install` fails against the React 19 the TanStack demo brought in. The override pins its peer to the one React in this tree rather than installing a second copy or requiring --legacy-peer-deps on every clone. Recorded in the Glide demo's meta.notes as a real friction point.",
+  "overrides": {
+    "@glideapps/glide-data-grid": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "dependencies": {
+    "@glideapps/glide-data-grid": "6.0.3",
     "@observablehq/inputs": "0.12.0",
     "@tanstack/react-table": "^9.2.4",
     "@tanstack/react-virtual": "^3.14.10",
