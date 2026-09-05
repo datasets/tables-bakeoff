@@ -27,7 +27,7 @@ be directly comparable to what a normal visitor's browser does.
 
 Uncapped it never finished rendering 500,000 rows — abandoned after 10 minutes
 with the tab unresponsive. The cost is table *layout*, not string building:
-2.0s at 50k, 6.2s at 100k, 34.2s at 200k.
+2.6s at 50k, 6.9s at 100k, ~27s at 200k (re-measured; see the note on variance below).
 
 **Decided:** cap at 100,000, disclosed in the demo's notes, in a code comment, and
 in red on the card itself.

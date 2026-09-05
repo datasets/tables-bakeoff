@@ -1,74 +1,103 @@
 # Next steps
 
-Live handover note — rewritten after each task, so a fresh session can resume from
-here at any moment. Last updated: Task 5 fix round 1, re-review in flight.
+The site is built, measured and reviewed. **The verdict is not written — that part is
+yours.** This note says what exists, what it measured, and what I decided on your
+behalf while you were away.
 
-## How to resume
+## What to do next
 
-1. Read `.superpowers/sdd/2026-09-04-tables-evaluation-implementation/progress.md`
-   — the SDD ledger. Tasks with a `Task N: complete` line are DONE; never redo them.
-   It also holds every ruling made so far, with the cost of each being wrong.
-2. `git log --oneline` on branch `build/tables-bakeoff` to confirm against reality.
-3. Read `OPEN-QUESTIONS.md` for decisions taken on the user's behalf.
-4. Continue with `superpowers:subagent-driven-development` against
-   `docs/plans/2026-09-04-tables-evaluation-implementation.md`.
+Write **Task 14** — the part deliberately left undone:
 
-## State
+1. **`ANALYSIS.md`** — the method. Same four datasets, same theme, same shared cell
+   formatter, same harness, so what is compared is the library rather than styling
+   effort. Document how each metric is taken and its caveats: heap is unmeasurable by
+   default (see below), Perspective's numbers are not like-for-like, scroll FPS is a
+   scripted scroll on one machine, and render variance grows with render size.
+2. **`EVALUATION.md`** — the verdict, with a recommendation per use case: a small rich
+   table in a data story; a 500k-row exploratory grid; a DataHub dataset preview; an
+   editable spreadsheet-like grid.
+3. **The subjective scorecard.** The hub deliberately ships measured columns only.
+   Add the taste axes (default look, API ergonomics, docs quality) once you have
+   formed your own view.
+4. **The post draft**, incorporating the practitioner research.
 
-Branch `build/tables-bakeoff`, off `main` at 5a46631.
+**The raw material is in `docs/reports/`** — one report per task, written by the agent
+that built each demo, with per-library observations, timings, API friction and honest
+caveats. `docs/reports/build-ledger.md` holds every decision made during the build.
 
-| Task | State |
-|---|---|
-| 1 scaffold | complete, review clean |
-| 2 datasets | complete, review clean |
-| 3 loader | complete, review clean |
-| 4 metrics | complete, review clean |
-| 5 harness + baseline | fix round 1 done, scoped re-review in flight |
-| 6 Observable Inputs | not started |
-| 7 Tabulator | not started |
-| 8 AG Grid | not started |
-| 9 TanStack Table | not started |
-| 10 Glide Data Grid | not started |
-| 11 Perspective | not started |
-| 12 bundle measurement | not started |
-| 13 hub + scorecard | not started |
-| 14 write-up | **deliberately left for the user** |
+Run `npm run dev` and look at the seven pages before you score anything.
 
-Working now: `npx vitest run` (25), `npx playwright test` (5), `npx vite build`.
-`npm run build` fails on its second half until Task 12 creates
-`scripts/measure-bundles.mjs`. That is expected, not a defect.
+## What exists
 
-## Measured findings so far
+Branch `build/tables-bakeoff`, 22 commits off `main`. All 13 build tasks complete and
+individually reviewed; final whole-branch review clean.
 
-- **A plain `<table>` cannot render 500,000 rows.** Uncapped it never finished
-  (abandoned at 10 min, tab unresponsive). Capped at 100,000, disclosed on the card.
-  Cost is table *layout*, not string building: 2.0s @ 50k, 6.2s @ 100k, 34.2s @ 200k.
+`npm install && npm run dev` · `npm test` (36) · `npm run test:e2e` (39) ·
+`npm run build` (green end to end)
+
+Seven demos over four shared datasets: plain `<table>` baseline, Observable Inputs,
+Tabulator, AG Grid Community, TanStack Table v9, Glide Data Grid, Perspective.
+
+## What it measured
+
+Bundle is gzip, "own code" — the 23.3 kB shared-harness floor netted out. LOC counts
+non-blank non-comment lines in the demo's own implementation.
+
+| Library | Own code | LOC | 500k rows |
+|---|---|---|---|
+| Plain `<table>` | ~0.9 kB | 46 | **cannot** — capped at 100k |
+| Observable Inputs | ~6 kB | 50 | survives; memory grows unboundedly while scrolling |
+| TanStack Table v9 | 44.4 kB (+60.3 React) | 166 | 141 ms, 59 fps |
+| Tabulator | ~109 kB | 89 | 280 ms, 60 fps |
+| Glide Data Grid | 128.3 kB (+60.3 React) | 148 | 24.6 ms, 60 fps |
+| AG Grid Community | ~304 kB | 62 | fastest; 248 ms, 60 fps |
+| Perspective | ~99 kB JS + 3.9 MB WASM | 76 | 2.1–2.7 s, 60 fps |
+
+### Findings worth building the write-up around
+
+- **A plain `<table>` cannot do 500k rows.** Uncapped it never finished (abandoned at
+  10 minutes). Capped at 100k. Re-measured: 2.6 s @ 50k, 6.9 s @ 100k, ~27 s @ 200k —
+  sharply superlinear, and the cost is table *layout*, not building the HTML string.
+- **Tabulator's own documented `height: "100%"` pattern silently destroys its
+  virtualization.** The viewport measures 0 px, so it renders every row: 62 s at 50k,
+  projected hours at 500k. Removing that one option took 500k to ~280 ms. A ~200×
+  cliff hidden behind a documentation example.
+- **Glide renders 500k faster than its own 1,000-row card** (24.6 ms) because canvas
+  paints a fixed viewport. The cost: its text is invisible to find-in-page and
+  selection-copy. It does expose a viewport-bounded `role="grid"` mirror, so it is not
+  screen-reader-blind — an earlier draft of this project claimed otherwise and was wrong.
+- **Headless is not free.** TanStack has the smallest React bundle but needs 166 lines
+  — nearly triple AG Grid's 62 — because you write the virtualization yourself.
+- **Perspective cannot use the shared formatter at all.** No per-cell hook exists, only
+  Intl option bags. Its dates render `7/26/24`, nulls render blank, numerics are tinted
+  blue. It is the one library whose columns genuinely do not match the other six.
+  Its 2.1 s on 500k is also *not* a ceiling — it is dominated by marshalling 500k JS
+  objects into the worker, and our shared `Array<Object>` is its worst input format.
 - **Heap is unmeasurable by default.** Chrome pins `performance.memory.usedJSHeapSize`
-  to exactly 10,000,000 without `--enable-precise-memory-info`. With the flag the
-  same page reads 6/5/17/115 MB. Heap is therefore NOT a scorecard column.
-- Data: 500,000 rows / 17.4 MB Parquet, sampled evenly across all 12 months of 2024.
+  to exactly 10,000,000 without `--enable-precise-memory-info`; with the flag the same
+  page reads 5/4/15/115 MB. There is no heap column anywhere, deliberately.
 
-## Standing rulings — carry into every remaining demo dispatch (Tasks 6-11)
+## Decisions I made for you
 
-These are NOT in the plan text. A dispatch missing them will produce broken or
-dishonest demos.
+Full reasoning and reversal cost for each is in `OPEN-QUESTIONS.md`; the complete list
+of build-time rulings is in `docs/reports/build-ledger.md`.
 
-- **`ctx.theme` is a token object, not a string.** `ctx.theme.dark` is the
-  discriminator. The plan's AG Grid code says `ctx.theme === "dark"` — always false.
-- A render function **may return a promise**; it is awaited inside the timed region.
-- A demo owning its own scrolling viewport **must** mark it `data-scroller`, or the
-  FPS run reports a fake flat 60fps on an element that never moved.
-- **`ctx.reportRows(n)`** reports rows actually rendered, for demos that cap.
-  Virtualization is NOT capping — a virtualized demo must not call it.
-- Each demo joining the Playwright `BUILT` list must add its own `SOURCE_TOKEN`.
-- **Perspective (Task 11)** has two live package homes as of 2026-09-04:
-  `@finos/perspective@3.8.0` and `@perspective-dev/client@5.3.1` (the FINOS docs
-  site now redirects to the latter). Verify before installing. If it cannot be made
-  to work in reasonable time, that is a FINDING: record it in `TODO.md` and
-  `EVALUATION.md`, drop it from `BUILT`, and continue — it must not block Task 12.
+- **No subjective scores on the hub.** The plan said to ship provisional 1–5 ratings
+  and fix them later; that would have published invented taste under your name.
+  Measured columns only, with the gap stated and linked to `EVALUATION.md`.
+- **Perspective is demoed from `@perspective-dev` 5.3.1, not `@finos` 3.8.0.** The
+  FINOS docs site redirects there, same maintainers and repo, and it was one day old
+  when measured.
+- **Large dataset is UK Land Registry price-paid**, 500k rows sampled evenly across all
+  12 months of 2024. NYC taxi is the recorded alternative.
+- **The baseline stays in, capped and disclosed.** A scorecard needs a floor.
 
-## Do not do Task 14 autonomously
+## Known gaps, none blocking
 
-The scorecard scores, `EVALUATION.md` and the post draft are the user's to write.
-They are judgment about which table feels good to a human. Build and measure
-everything through Task 13, then stop.
+- `ANALYSIS.md` and `EVALUATION.md` do not exist — that is Task 14, above.
+- No automated test clicks "Measure scroll FPS" and asserts the element moved. FPS
+  correctness was established per-demo by manual checks and by reviewers reading each
+  library's own CSS. Worth an e2e fixture if FPS is to carry weight in your scorecard.
+- Deployment is local only. Cloudflare Pages later; the build is a static `dist/`.
+- Remaining minor findings are triaged in `docs/reports/build-ledger.md` — the final
+  review judged all of them cosmetic.
