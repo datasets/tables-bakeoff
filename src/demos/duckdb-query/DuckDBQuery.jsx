@@ -3,12 +3,18 @@ import { TanStackTable } from "../tanstack/Table.jsx";
 import { formatCell } from "../../data/load.js";
 import { registerDataset, runQuery } from "./duckdb-client.js";
 
+const DATASET = "small";
+
 const EXAMPLES = [
+  {
+    label: "Whole table",
+    sql: `SELECT * FROM ${DATASET}`,
+  },
   {
     label: "Top districts by average price",
     sql:
-      "SELECT district, COUNT(*) AS sales, ROUND(AVG(price)) AS avg_price\n" +
-      "FROM small\nGROUP BY district\nORDER BY avg_price DESC\nLIMIT 20",
+      `SELECT district, COUNT(*) AS sales, ROUND(AVG(price)) AS avg_price\n` +
+      `FROM ${DATASET}\nGROUP BY district\nORDER BY avg_price DESC\nLIMIT 20`,
   },
   {
     label: "Price distribution buckets",
@@ -21,11 +27,7 @@ const EXAMPLES = [
       "    ELSE '£500k+'\n" +
       "  END AS price_band,\n" +
       "  COUNT(*) AS sales\n" +
-      "FROM small\nGROUP BY price_band\nORDER BY sales DESC",
-  },
-  {
-    label: "Raw rows (first 50)",
-    sql: "SELECT * FROM small LIMIT 50",
+      `FROM ${DATASET}\nGROUP BY price_band\nORDER BY sales DESC`,
   },
 ];
 
@@ -39,7 +41,7 @@ export function DuckDBQuery() {
 
   useEffect(() => {
     let cancelled = false;
-    registerDataset("small")
+    registerDataset(DATASET)
       .then(() => {
         if (cancelled) return;
         ready.current = true;

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T13:25:44.016Z",
+  "generatedAt": "2026-09-05T13:26:52.488Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
