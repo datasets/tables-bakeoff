@@ -274,6 +274,7 @@ export function navbar() {
         <a href="/demos/tanstack.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">TanStack</a>
         <a href="/demos/glide.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Glide</a>
         <a href="/demos/perspective.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Perspective</a>
+        <a href="/index.html#experiments" style="color:var(--text-muted);text-decoration:none;padding:4px 8px;border-left:1px solid var(--border);margin-left:4px;padding-left:12px">Experiments</a>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository" style="display:flex;align-items:center;color:var(--text-primary);text-decoration:none">
