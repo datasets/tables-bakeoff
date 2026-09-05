@@ -28,6 +28,41 @@ const SOURCE_TOKEN = {
   perspective: "regular-table", // the scroller two shadow roots down that build() marks
 };
 
+test.describe("hub", () => {
+  test("links to every demo page", async ({ page }) => {
+    await page.goto("/index.html");
+    for (const key of ALL_DEMO_KEYS) {
+      await expect(page.locator(`a[href="/demos/${key}.html"]`)).toHaveCount(1);
+    }
+  });
+
+  test("shows measured bundle sizes rather than hardcoded ones", async ({ page }) => {
+    await page.goto("/index.html");
+    const cell = page.locator('[data-bundle="aggrid"]');
+    await expect(cell).not.toHaveText("—", { timeout: 10000 });
+    await expect(cell).toContainText("KB");
+  });
+
+  test("shows measured line counts for every demo", async ({ page }) => {
+    await page.goto("/index.html");
+    for (const key of ALL_DEMO_KEYS) {
+      const cell = page.locator(`[data-loc="${key}"]`);
+      await expect(cell).not.toHaveText("—", { timeout: 10000 });
+    }
+  });
+
+  // The scorecard carries only measured columns (bundle, LOC, render time,
+  // scroll FPS, 500k survival, licence) — no invented 1-5 ratings — so "no
+  // empty cells" is satisfiable by real data alone, never by filler numbers.
+  test("has no empty cells in the scorecard", async ({ page }) => {
+    await page.goto("/index.html");
+    // Let hub.js finish filling the bundle/LOC cells before asserting.
+    await expect(page.locator('[data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
+    const empties = page.locator("table.scores td:empty");
+    await expect(empties).toHaveCount(0);
+  });
+});
+
 for (const key of BUILT) {
   test.describe(key, () => {
     test("renders the eager datasets with no console error", async ({ page }) => {

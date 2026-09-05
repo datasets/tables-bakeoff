@@ -3,13 +3,409 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tables-evaluation</title>
+<meta name="description" content="Seven JavaScript table libraries — a plain <table>, Observable Inputs, Tabulator, AG Grid, TanStack Table, Glide Data Grid and Perspective — each rendering the same four datasets, up to 500,000 rows, through the same harness and the same shared cell formatter.">
+<title>tables-evaluation — a 2026 bake-off of JavaScript table libraries</title>
 <link rel="stylesheet" href="/src/harness/site.css">
+<style>
+  h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0 0 6px; }
+  .lede { font-size: 15px; color: var(--text-secondary); max-width: 74ch; }
+  h2 { font-size: 19px; letter-spacing: -0.01em; margin: 44px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 14px; }
+  .lib {
+    display: block; padding: 15px 16px; border: 1px solid var(--border);
+    border-radius: 12px; background: var(--surface); color: inherit;
+  }
+  .lib:hover { border-color: var(--accent); text-decoration: none; }
+  .lib h3 { margin: 0 0 3px; font-size: 15px; }
+  .lib p { margin: 0; font-size: 12.5px; color: var(--text-secondary); }
+  .lib .meta { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+  .scroll { overflow-x: auto; }
+  table.scores td, table.scores th { white-space: nowrap; }
+  table.scores td { font-variant-numeric: tabular-nums; }
+  .sub { display: block; font-size: 10.5px; color: var(--text-muted); font-variant-numeric: normal; }
+  .no { color: var(--series-2); font-weight: 600; }
+  .yes { color: var(--good); font-weight: 600; }
+  ul.tight { margin: 8px 0; padding-left: 20px; font-size: 13.5px; color: var(--text-secondary); max-width: 90ch; }
+  ul.tight li { margin: 5px 0; }
+  .notes { font-size: 12px; color: var(--text-muted); max-width: 90ch; margin: 8px 0 0; padding-left: 20px; }
+  .notes li { margin: 4px 0; }
+  code { font-family: var(--font-mono); font-size: 0.92em; background: color-mix(in srgb, var(--text-primary) 6%, transparent); padding: 1px 4px; border-radius: 4px; }
+  .foot { margin: 60px 0 40px; font-size: 12px; color: var(--text-muted); max-width: 90ch; }
+  .gap {
+    border: 1px solid var(--border); border-left: 3px solid var(--series-4);
+    background: var(--surface); border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: var(--text-secondary);
+    max-width: 90ch; margin-top: 14px;
+  }
+</style>
 </head>
 <body>
 <div class="wrap" style="padding-top:30px">
-  <h1>tables-evaluation</h1>
-  <p>Hub page is built in Task 13.</p>
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1>tables-evaluation</h1>
+      <p class="lede">
+        A 2026 bake-off of JavaScript table and data-grid libraries. Every library renders the
+        <strong>same four datasets</strong> — up to 500,000 rows of real property-sale data —
+        through the <strong>same harness</strong>, with the <strong>same theme tokens</strong> and the
+        <strong>same shared cell formatter</strong>. So what you are comparing is the library, not
+        someone's styling effort. The source of every render function is on its own page.
+      </p>
+    </div>
+    <button class="toggle"></button>
+  </div>
+
+  <p class="lede" style="margin-top:10px">
+    A sibling of <a href="https://linecharts.datahub.io/" target="_blank" rel="noopener">line-charts</a>,
+    built the same way. Numbers below are measured, not quoted: bundle sizes and line counts are read
+    from <a href="/bundles.json">bundles.json</a>, which this build writes.
+  </p>
+
+  <h2>The seven contenders</h2>
+  <div class="grid">
+    <a class="lib" href="/demos/baseline.html">
+      <h3>Plain &lt;table&gt;</h3>
+      <p>No library. Hand-built DOM, sticky header, ~20 lines. The control.</p>
+      <div class="meta">no dependency · n/a</div>
+    </a>
+    <a class="lib" href="/demos/observable.html">
+      <h3>Observable Inputs</h3>
+      <p>One function call. Strong defaults, built for data exploration.</p>
+      <div class="meta">v0.12.0 · ISC</div>
+    </a>
+    <a class="lib" href="/demos/tabulator.html">
+      <h3>Tabulator</h3>
+      <p>Vanilla, batteries-included: grouping, tree data, editing, export.</p>
+      <div class="meta">v6.5.2 · MIT</div>
+    </a>
+    <a class="lib" href="/demos/aggrid.html">
+      <h3>AG Grid Community</h3>
+      <p>The enterprise default. Vanilla core, row + column virtualization.</p>
+      <div class="meta">v36.1.0 · MIT (Community tier)</div>
+    </a>
+    <a class="lib" href="/demos/tanstack.html">
+      <h3>TanStack Table</h3>
+      <p>Headless. It computes rows and sorting; you write every element.</p>
+      <div class="meta">v9.2.4 · MIT · React</div>
+    </a>
+    <a class="lib" href="/demos/glide.html">
+      <h3>Glide Data Grid</h3>
+      <p>Canvas-rendered, React-only. Spreadsheet feel at any row count.</p>
+      <div class="meta">v6.0.3 · MIT · React</div>
+    </a>
+    <a class="lib" href="/demos/perspective.html">
+      <h3>Perspective</h3>
+      <p>WASM + Arrow columnar engine in a worker, with a grid attached.</p>
+      <div class="meta">v5.3.1 · Apache-2.0</div>
+    </a>
+  </div>
+
+  <h2>What was measured</h2>
+  <p style="font-size:13px;color:var(--text-secondary);margin:0 0 6px;max-width:90ch">
+    Facts only. Every column here is something this project actually measured — no ratings, no
+    stars, no scores out of five. The judgement calls (default look, API ergonomics, documentation
+    quality) are deliberately <strong>not</strong> on this page; see the gap note below.
+  </p>
+  <div class="scroll">
+  <table class="scores">
+    <thead><tr>
+      <th>Library</th>
+      <th>Bundle<br>(gzip, own code)</th>
+      <th>WASM</th>
+      <th>Lines<br>written</th>
+      <th>Render<br>50,000</th>
+      <th>Render<br>500,000</th>
+      <th>Scroll FPS<br>at 500,000</th>
+      <th>Survived<br>500,000?</th>
+      <th>Licence</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>Plain &lt;table&gt;</td>
+        <td data-bundle="baseline">—</td>
+        <td data-wasm="baseline">—</td>
+        <td data-loc="baseline">—</td>
+        <td>2,658 ms</td>
+        <td>never finished<span class="sub">capped at 100,000 → 7.1 s</span></td>
+        <td>n/a<span class="sub">15 fps at 50,000</span></td>
+        <td class="no">No</td>
+        <td>n/a</td>
+      </tr>
+      <tr>
+        <td>Observable Inputs</td>
+        <td data-bundle="observable">—</td>
+        <td data-wasm="observable">—</td>
+        <td data-loc="observable">—</td>
+        <td>5.8 ms<sup>a</sup></td>
+        <td>6.7 ms<sup>a</sup></td>
+        <td>60 fps</td>
+        <td class="yes">Yes<sup>a</sup></td>
+        <td>ISC</td>
+      </tr>
+      <tr>
+        <td>Tabulator</td>
+        <td data-bundle="tabulator">—</td>
+        <td data-wasm="tabulator">—</td>
+        <td data-loc="tabulator">—</td>
+        <td>68 ms<sup>b</sup></td>
+        <td>280 ms<sup>b</sup></td>
+        <td>60 fps</td>
+        <td class="yes">Yes</td>
+        <td>MIT</td>
+      </tr>
+      <tr>
+        <td>AG Grid Community</td>
+        <td data-bundle="aggrid">—</td>
+        <td data-wasm="aggrid">—</td>
+        <td data-loc="aggrid">—</td>
+        <td>35 ms</td>
+        <td>248 ms</td>
+        <td>60 fps</td>
+        <td class="yes">Yes</td>
+        <td>MIT (Community)</td>
+      </tr>
+      <tr>
+        <td>TanStack Table</td>
+        <td data-bundle="tanstack">—</td>
+        <td data-wasm="tanstack">—</td>
+        <td data-loc="tanstack">—</td>
+        <td>20.0 ms</td>
+        <td>141 ms</td>
+        <td>59 fps</td>
+        <td class="yes">Yes</td>
+        <td>MIT</td>
+      </tr>
+      <tr>
+        <td>Glide Data Grid</td>
+        <td data-bundle="glide">—</td>
+        <td data-wasm="glide">—</td>
+        <td data-loc="glide">—</td>
+        <td>17.4 ms</td>
+        <td>24.6 ms</td>
+        <td>60 fps</td>
+        <td class="yes">Yes<sup>c</sup></td>
+        <td>MIT</td>
+      </tr>
+      <tr>
+        <td>Perspective</td>
+        <td data-bundle="perspective">—</td>
+        <td data-wasm="perspective">—</td>
+        <td data-loc="perspective">—</td>
+        <td>274 ms</td>
+        <td>2,100–2,700 ms<sup>d</sup></td>
+        <td>60 fps</td>
+        <td class="yes">Yes</td>
+        <td>Apache-2.0</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="notes">
+    <li>
+      <strong>Bundle</strong> is gzipped JS + CSS, <strong>with the harness netted out</strong>.
+      Every demo page loads the same <span data-harness>—</span> of shared code — the mount
+      harness (which pulls in <code>hyparquet</code> to read the Parquet files) plus
+      <code>site.css</code> — and that is not any library's doing. The React demos also have
+      <span data-react>—</span> of React subtracted, because it is shared between them and is a
+      cost you may already be paying. That is why the plain <code>&lt;table&gt;</code> row reads
+      under a kilobyte: its own code really is about twenty lines. The full page weight, with the
+      harness included, is in <a href="/bundles.json">bundles.json</a> as <code>totalKB</code>.
+    </li>
+    <li>
+      <strong>WASM</strong> is a separate column on purpose. Perspective ships a compiled-Rust
+      engine and viewer that gzip barely compresses (~1%); adding it to a column of six JavaScript
+      bundles, or averaging it against them, would be comparing different kinds of thing.
+      Perspective's JavaScript is genuinely the fourth-lightest here — the WebAssembly beside it is
+      the actual cost.
+    </li>
+    <li>
+      <strong>Lines written</strong> counts non-blank, non-comment lines under
+      <code>src/demos/&lt;key&gt;/</code>. It is a build-cost proxy, not a quality measure, and it
+      is crude: it counts JSX markup the same as logic, so the React demos are structurally
+      penalised against a demo that hands a config object to a constructor.
+    </li>
+    <li>
+      <strong>Render and FPS are one machine's observations</strong>, taken in headless Chromium at
+      1400×1000 on the dev server, and are typed into this page from the build notes rather than
+      generated. They are stable to within a few per cent across runs, but treat them as orders of
+      magnitude, not benchmarks. The clock covers building the DOM <em>and</em> forcing layout —
+      without the layout flush the plain <code>&lt;table&gt;</code> would report a fifth of its
+      real cost. Bundle and line counts, by contrast, are read from the build at page load.
+    </li>
+    <li>
+      <sup>a</sup> Observable Inputs does not window: it <em>appends</em> rows lazily as you scroll
+      and never removes them. The 6.7 ms is the first ~60-row batch, not 500,000 rows, and scrolling
+      to the bottom would leave all 500,000 live in the DOM with memory that never comes back down.
+      It has no column windowing either, so all 80 columns of the wide dataset are built for every
+      row it appends.
+    </li>
+    <li>
+      <sup>b</sup> Tabulator's own documented <code>height: "100%"</code> pattern — the one its docs
+      give for filling a container — silently zeroes its viewport measurement, so it renders every
+      row instead of the visible ones: <strong>62 seconds at 50,000 rows</strong>, and 500,000
+      effectively never. Removing that one option gives the 280 ms above. Nothing warned.
+    </li>
+    <li>
+      <sup>c</sup> Glide's 500,000 rows render <em>faster than its own 1,000-row card</em>, because
+      canvas paints a fixed viewport and the grid never touches the data. The bill is that nothing
+      on screen is in the DOM: selecting the grid and copying yields an empty string, and
+      find-in-page cannot match a value plainly visible. It does keep a hidden
+      <code>role="grid"</code> mirror of the ~15 visible rows, so a screen reader gets the viewport
+      — but not the other 499,985.
+    </li>
+    <li>
+      <sup>d</sup> Perspective's large figure is dominated by moving 500,000 JavaScript objects
+      across a worker boundary and rebuilding them as Arrow columns. The shared loader hands every
+      library the same <code>Array&lt;Object&gt;</code>, which is fair but is Perspective's worst
+      input format; an Arrow buffer or CSV would very likely cut it hard. Once loaded, sorting and
+      filtering 500,000 rows happen in the worker and the UI thread never notices.
+    </li>
+    <li>
+      <strong>Heap is not a column.</strong> Chrome pins <code>performance.memory</code> to a
+      placeholder unless it is started with <code>--enable-precise-memory-info</code>, so any memory
+      figure gathered here would have been invented. The demo pages say <em>heap n/a</em> for the
+      same reason.
+    </li>
+  </ul>
+
+  <div class="gap">
+    <strong>The verdict is not written yet.</strong> The subjective axes — how good the default
+    output looks, how the API feels to use, how good the documentation is, accessibility in practice
+    — are the whole reason to run a bake-off, and they are not on this page because nobody has
+    written them yet. They belong in <a href="/EVALUATION.md">EVALUATION.md</a>, which does not
+    exist at the time of writing. A measured table with an honest gap beats a confident table of
+    invented ratings, so the gap is left visible. Until then: read the notes on each demo page,
+    which record what actually happened while building it.
+  </div>
+
+  <h2>What the measurements showed</h2>
+  <ul class="tight">
+    <li>
+      <strong>A plain <code>&lt;table&gt;</code> cannot render 500,000 rows at all.</strong>
+      Uncapped it was abandoned after ten minutes with the tab unresponsive; the demo caps at
+      100,000. And the cost is <em>layout</em>, not string building: 2.0 s at 50,000 rows, 6.2 s at
+      100,000, 34.2 s at 200,000 — superlinear, because auto table layout must measure every cell in
+      a column before it can size that column. Building the HTML string is linear and cheap by
+      comparison.
+    </li>
+    <li>
+      <strong>The most dangerous configuration in this bake-off came from a library's own docs.</strong>
+      Tabulator's <code>height: "100%"</code> turns a 40 ms render into a 62 second one at 50,000
+      rows, with no error, no warning, and nothing on screen to suggest anything is wrong. It is
+      exactly the kind of thing you copy from a tutorial and never notice on a page of 200 rows.
+    </li>
+    <li>
+      <strong>Canvas wins the row-count race and loses the text.</strong> Glide renders 500,000 rows
+      in 24.6 ms because it never sees the data — it is handed a row count and a
+      <code>getCellContent(col, row)</code> callback. Whether that trade is acceptable depends
+      entirely on whether your users need to search, select or copy what they can see.
+    </li>
+    <li>
+      <strong>Headless means you write the virtualizer.</strong> TanStack Table has the smallest
+      React bundle here, and the most lines of code — 166, nearly triple AG Grid's 62. The row
+      virtualizer, the column virtualizer, the spacer cells, the <code>&lt;colgroup&gt;</code>, the
+      sticky header and the sort arrows are all hand-written. What you get back is an ordinary
+      <code>&lt;table&gt;</code> of your own elements: dark mode is just CSS variables, text is
+      selectable, and find-in-page works.
+    </li>
+    <li>
+      <strong>Perspective is not a grid library and should not be picked as one.</strong> It is the
+      only demo whose cells cannot go through the shared formatter at all — formatting lives inside
+      the plugin, configured as <code>Intl</code> option bags with no callback to hand a function
+      to and no locale field, so its dates render as <code>7/26/24</code> where every other demo
+      shows <code>2024-07-26</code>. Its columns genuinely do not match the other six. Judge it as a
+      query interface over data too large for the main thread, which is what it is.
+    </li>
+  </ul>
+
+  <h2>The four datasets</h2>
+  <p style="font-size:13px;color:var(--text-secondary);margin:0;max-width:90ch">
+    Real HM Land Registry Price Paid data, converted to Parquet and served as static files. Every
+    library gets all four, from the same loader, as the same array of row objects.
+  </p>
+  <ul class="tight">
+    <li>
+      <strong>Small &amp; rich — 1,000 property sales.</strong> Sixteen columns of mixed types:
+      prices, dates, postcodes, street names, nulls.
+      <em>Stresses typography, alignment, number and date formatting, null rendering, text
+      overflow.</em>
+    </li>
+    <li>
+      <strong>Wide — 80 columns.</strong> The same 1,000 sales plus 64 derived numeric columns.
+      <em>Stresses horizontal scrolling, column virtualization, header behaviour, column
+      pinning.</em>
+    </li>
+    <li>
+      <strong>Medium — 50,000 rows.</strong> Where rendering every row as real DOM starts to hurt
+      but has not yet collapsed.
+      <em>Stresses row virtualization quality, sort and filter responsiveness.</em>
+    </li>
+    <li>
+      <strong>Large — 500,000 rows.</strong> A full year of English and Welsh property sales, loaded
+      on demand rather than on page load.
+      <em>Stresses load time, sustained scroll FPS, memory, sorting at scale.</em>
+    </li>
+  </ul>
+
+  <h2>Method</h2>
+  <p style="font-size:13.5px;color:var(--text-secondary);max-width:90ch">
+    Same four datasets, same theme tokens, same shared cell formatter, same mounting harness for all
+    seven. Each demo supplies four render functions and nothing else; the harness owns the page, the
+    card layout, the clock and the FPS run, and empties the host between renders. The render clock
+    awaits async work and forces layout before stopping, so a library that returns early cannot
+    report a scheduling call as a render. The FPS run scrolls the element that actually moves —
+    each demo marks its own internal viewport — because measuring a container that never scrolls
+    returns a flat 60 fps for nothing.
+  </p>
+  <p style="font-size:13.5px;color:var(--text-secondary);max-width:90ch">
+    <strong>The one exception:</strong> Perspective's cells do not pass through the shared formatter,
+    because it exposes no per-cell hook — only <code>Intl</code> option bags per column. That is a
+    finding about the library rather than a flaw in the method, but it means its columns are the one
+    place on this site where a visible difference is not attributable to the library's rendering
+    alone.
+  </p>
+
+  <h2>Considered, not included</h2>
+  <ul class="tight">
+    <li>
+      <strong>Handsontable</strong> — capable and popular, but not free for commercial use since
+      v8; commercial deployment needs a paid licence. Everything here is permissive open source.
+    </li>
+    <li>
+      <strong>Grid.js</strong> — unmaintained. No release since March 2024. A table library that has
+      stopped shipping is not a choice worth recommending for new work, whatever its merits were.
+    </li>
+    <li>
+      <strong>RevoGrid</strong> — genuinely virtualized and framework-agnostic, but a much smaller
+      community than AG Grid or Tabulator and no advantage over them on any axis measured here. A
+      reasonable addition later; not a gap in the current set.
+    </li>
+    <li>
+      <strong>MUI X DataGrid</strong> — the MIT core is real, but it assumes MUI: theming runs
+      through MUI's system rather than plain CSS tokens, so it could not be fed this site's theme
+      the way the other seven were. Column pinning, tree data and aggregation sit in the paid
+      Pro/Premium tiers.
+    </li>
+    <li>
+      <strong>DataTables</strong> — the jQuery-era incumbent. The core is MIT, but the API and its
+      ecosystem still assume jQuery and its headline editing features are commercial add-ons.
+      Excluded as a legacy path rather than on quality.
+    </li>
+  </ul>
+
+  <p class="foot">
+    Contains HM Land Registry data © Crown copyright and database right 2026. This data is licensed
+    under the Open Government Licence v3.0.
+    <br><br>
+    Add a library: copy <code>demos/baseline.html</code> and
+    <code>src/demos/baseline/main.js</code>, export <code>meta</code> and four render functions,
+    add the key to <code>DEMOS</code> in <code>vite.config.js</code>, and add a card and a row here.
+    Bundle size and line count then appear by themselves.
+  </p>
+
 </div>
+<script type="module" src="/src/harness/hub.js"></script>
 </body>
 </html>
