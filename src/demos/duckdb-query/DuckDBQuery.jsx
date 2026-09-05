@@ -3,7 +3,7 @@ import { TanStackTable } from "../tanstack/Table.jsx";
 import { formatCell } from "../../data/load.js";
 import { registerDataset, runQuery } from "./duckdb-client.js";
 
-const DATASET = "small";
+const DATASET = "large";
 
 const EXAMPLES = [
   {
