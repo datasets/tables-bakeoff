@@ -198,10 +198,24 @@ async function timeRender(fn, host) {
 
 /** Libraries that own their own viewport (AG Grid, Glide) scroll an element
  *  inside the host, not the host itself. Such a demo marks that element with
- *  `data-scroller` — see (1) in the contract at the top of this file. */
+ *  `data-scroller` — see (1) in the contract at the top of this file.
+ *
+ *  Perspective's scroller is two open shadow roots down inside a web
+ *  component, where an ordinary querySelector cannot see it, so the search
+ *  descends into any shadow root it meets. Every other demo marks an element
+ *  in the light DOM and is found by the first query. */
 function scrollerOf(card) {
   const host = card.querySelector(".demo-host");
-  return host.querySelector("[data-scroller]") || host;
+  return host.querySelector("[data-scroller]") || findInShadow(host) || host;
+}
+
+function findInShadow(root) {
+  for (const el of root.querySelectorAll("*")) {
+    if (!el.shadowRoot) continue;
+    const hit = el.shadowRoot.querySelector("[data-scroller]") || findInShadow(el.shadowRoot);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 /** Say what was actually put on screen. A demo that showed everything gets the

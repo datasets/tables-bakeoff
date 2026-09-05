@@ -45,7 +45,15 @@ export default {
   test: {
     include: ["tests/**/*.test.js"],
   },
+  /* Perspective's ESM build uses top-level await to bootstrap its WASM, which
+     Vite's default browser target cannot emit. Its own Vite guide asks for
+     esnext here; without it `vite build` fails outright on the Perspective
+     entry, and the dev server pre-bundles its deps to a target that chokes on
+     the same syntax. Applies to every demo, but only Perspective needs it. */
+  esbuild: { target: "esnext" },
+  optimizeDeps: { esbuildOptions: { target: "esnext" } },
   build: {
+    target: "esnext",
     rollupOptions: {
       input: {
         index: resolve(process.cwd(), "index.html"),
