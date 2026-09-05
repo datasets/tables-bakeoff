@@ -26,6 +26,9 @@ export const meta = {
   version: "5.3.1",
   license: "Apache-2.0",
   docs: "https://perspective-dev.github.io/guide/",
+  homepage: "https://perspective-dev.github.io/",
+  github: "https://github.com/finos/perspective",
+  stars: 11167,
   npm: "@perspective-dev/viewer",
   tagline: "WASM + Arrow columnar engine in a worker, with a grid attached.",
   notes:

@@ -7,6 +7,9 @@ export const meta = {
   version: "9.2.4",
   license: "MIT",
   docs: "https://tanstack.com/table/latest",
+  homepage: "https://tanstack.com/table",
+  github: "https://github.com/TanStack/table",
+  stars: 28409,
   npm: "@tanstack/react-table",
   tagline: "Headless. It computes rows and sorting; you write every element.",
   notes:

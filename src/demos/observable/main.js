@@ -9,7 +9,10 @@ export const meta = {
   name: "Observable Inputs",
   version: "0.12.0",
   license: "ISC",
-  docs: "https://observablehq.com/documentation/inputs/table",
+  docs: "https://observablehq.github.io/framework/inputs/table",
+  homepage: "https://observablehq.com/framework/lib/inputs",
+  github: "https://github.com/observablehq/inputs",
+  stars: 171,
   npm: "@observablehq/inputs",
   tagline: "One function call. Strong defaults, built for data exploration.",
   notes:

@@ -8,6 +8,9 @@ export const meta = {
   version: "6.0.3",
   license: "MIT",
   docs: "https://docs.grid.glideapps.com/",
+  homepage: "https://grid.glideapps.com",
+  github: "https://github.com/glideapps/glide-data-grid",
+  stars: 5326,
   npm: "@glideapps/glide-data-grid",
   tagline: "Canvas-rendered, React-only. Spreadsheet feel at any row count.",
   notes:

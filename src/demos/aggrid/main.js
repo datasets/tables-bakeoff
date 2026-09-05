@@ -12,6 +12,9 @@ export const meta = {
   version: "36.1.0",
   license: "MIT (Community tier)",
   docs: "https://www.ag-grid.com/javascript-data-grid/",
+  homepage: "https://www.ag-grid.com",
+  github: "https://github.com/ag-grid/ag-grid",
+  stars: 15584,
   npm: "ag-grid-community",
   tagline: "The enterprise default. Vanilla core, row + column virtualization.",
   notes:
