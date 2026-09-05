@@ -22,10 +22,12 @@ export const DEMOS = [
 const demoFiles = DEMOS.map((d) => ({
   key: d.key,
   page: resolve(process.cwd(), `demos/${d.key}.html`),
-  main: resolve(process.cwd(), `src/demos/${d.key}/main.js`),
+  // The React demos are main.jsx, the vanilla ones main.js. Checking only one
+  // extension would quietly exempt half the site from the guard below.
+  mains: ["main.js", "main.jsx"].map((f) => resolve(process.cwd(), `src/demos/${d.key}/${f}`)),
 }));
 
-const orphaned = demoFiles.filter((d) => existsSync(d.main) && !existsSync(d.page));
+const orphaned = demoFiles.filter((d) => d.mains.some(existsSync) && !existsSync(d.page));
 if (orphaned.length) {
   throw new Error(
     `Demo(s) with a main.js but no page: ${orphaned.map((d) => d.key).join(", ")}. ` +

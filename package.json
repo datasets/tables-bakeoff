@@ -19,9 +19,13 @@
   },
   "dependencies": {
     "@observablehq/inputs": "0.12.0",
+    "@tanstack/react-table": "^9.2.4",
+    "@tanstack/react-virtual": "^3.14.10",
     "ag-grid-community": "36.1.0",
     "hyparquet": "1.29.2",
     "hyparquet-writer": "^0.16.9",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "tabulator-tables": "6.5.2"
   },
   "allowScripts": {
