@@ -67,7 +67,9 @@ import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.
 restoreTheme();
 
 export async function mountDemo({ meta, tables, source }) {
-  document.title = `${meta.name} — tables-evaluation`;
+  document.title = `${meta.name} — Tables Bakeoff`;
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${meta.name} — Tables Bakeoff`);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', meta.tagline);
   const root = document.getElementById("app");
   root.innerHTML = shell(meta);
   installThemeToggle(root.querySelector(".toggle"));
