@@ -12,7 +12,7 @@ export const ALL_DEMO_KEYS = [
   "glide",
   "perspective",
 ];
-const BUILT = ["baseline", "observable"]; // extend as each demo lands
+const BUILT = ["baseline", "observable", "tabulator"]; // extend as each demo lands
 
 /* A token that appears only in the demo's real render implementation, never in
  * the one-line delegating stub that tables[key] usually is. Asserting on it is
@@ -21,6 +21,7 @@ const BUILT = ["baseline", "observable"]; // extend as each demo lands
 const SOURCE_TOKEN = {
   baseline: "rowLimit", // the parameter renderTable caps the large dataset with
   observable: "data-scroller", // marks Inputs.table's inner scrolling element
+  tabulator: "tableBuilt", // the event build() awaits before resolving
 };
 
 for (const key of BUILT) {
