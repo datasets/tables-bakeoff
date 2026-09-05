@@ -62,6 +62,7 @@ export default {
     rollupOptions: {
       input: {
         index: resolve(process.cwd(), "index.html"),
+        changelog: resolve(process.cwd(), "changelog.html"),
         ...Object.fromEntries(built),
         // Exploratory spikes, not bakeoff entries (see GitHub issues #4 and #6)
         // — built and measured separately from the seven DEMOS-driven cards.
