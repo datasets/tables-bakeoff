@@ -294,6 +294,26 @@
     which record what actually happened while building it.
   </div>
 
+  <h2>Quick picks</h2>
+  <ul class="tight">
+    <li>
+      <strong>Large datasets (50k–500k rows), speed is critical:</strong>
+      <strong class="yes">Glide Data Grid</strong> — renders 500,000 rows in 24.6ms. Trade-off: text isn't selectable, find-in-page doesn't work, canvas-only rendering. Use when you're scrolling through data, not copying or searching it.
+    </li>
+    <li>
+      <strong>General purpose, any size, any data:</strong>
+      <strong class="yes">AG Grid Community</strong> — 35–248ms renders, 60 fps, mature API, handles sorting and filtering smoothly. The safest default if you're not sure what you need.
+    </li>
+    <li>
+      <strong>Maximum customization, small datasets:</strong>
+      <strong class="yes">TanStack Table</strong> — lightest React bundle (13 KB), renders via plain <code>&lt;table&gt;</code> so text is selectable, find-in-page works, dark mode is just CSS. Cost: you write the virtualizer and styling yourself (166 lines vs AG Grid's 62).
+    </li>
+    <li>
+      <strong>One-liner, data exploration:</strong>
+      <strong class="yes">Observable Inputs</strong> — one function call, no configuration, sorts on header click. Doesn't window rows, so memory grows as you scroll; fine for &lt;10k rows.
+    </li>
+  </ul>
+
   <h2>What the measurements showed</h2>
   <ul class="tight">
     <li>
