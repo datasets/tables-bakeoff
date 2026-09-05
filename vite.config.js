@@ -54,10 +54,27 @@ export default {
   optimizeDeps: { esbuildOptions: { target: "esnext" } },
   build: {
     target: "esnext",
+    /* scripts/measure-bundles.mjs needs the real chunk graph — which entry pulls
+       which shared chunk, and which CSS/WASM assets ride along — to attribute a
+       shared runtime to every entry that loads it. Reading the flat file list in
+       dist/assets cannot tell you that. */
+    manifest: true,
     rollupOptions: {
       input: {
         index: resolve(process.cwd(), "index.html"),
         ...Object.fromEntries(built),
+      },
+      output: {
+        /* Rollup already hoists React into a chunk shared by the two React
+           demos, but it names that chunk after whichever module happened to be
+           its facade ("index"), which no honest heuristic can recognise as the
+           React runtime. Naming the chunk ourselves is what lets
+           scripts/measure-bundles.mjs report reactKB and libKB as separate,
+           checkable numbers instead of guessing from a filename. It also keeps
+           the split stable if a demo is added or removed. */
+        manualChunks(id) {
+          if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "react";
+        },
       },
     },
   },
