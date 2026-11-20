@@ -12,7 +12,7 @@
   --surface:         #fcfcfb;
   --text-primary:    #0b0b0b;
   --text-secondary:  #52514e;
-  --text-muted:      #898781;
+  --text-muted:      #6f6d68;
   --gridline:        #e1e0d9;
   --baseline:        #c3c2b7;
   --border:          rgba(11, 11, 11, 0.10);
@@ -25,7 +25,7 @@
   --series-5: #e87ba4; /* magenta */
 
   --accent:   #2a78d6;
-  --good:     #0ca30c;
+  --good:     #0a7f0a;
 
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -253,7 +253,8 @@ button:disabled { opacity: 0.5; cursor: default; }
 .nav { border-bottom: 1px solid var(--border); padding: 12px 0; }
 .nav__inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .nav__brand { font-size: 16px; font-weight: 600; color: var(--text-primary); text-decoration: none; }
-.nav__links { display: flex; gap: 2px; align-items: center; font-size: 13px; }
+/* The link row shrinks and scrolls sideways before it ever wraps the bar. */
+.nav__links { display: flex; gap: 2px; align-items: center; font-size: 12.5px; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .nav__links a { color: var(--text-secondary); text-decoration: none; padding: 4px 6px; white-space: nowrap; }
 .nav__links a.nav__sep { color: var(--text-muted); border-left: 1px solid var(--border); margin-left: 4px; padding-left: 12px; }
 .nav__links a.is-current { color: var(--text-primary); font-weight: 600; }
@@ -271,3 +272,12 @@ button:disabled { opacity: 0.5; cursor: default; }
   .nav__tools { order: 2; }
   .nav__links { order: 3; flex: 0 0 100%; overflow-x: auto; gap: 4px; padding-bottom: 2px; scrollbar-width: thin; }
 }
+
+/* ---- bare embed (demos/<key>.html?bare=1) ---------------------------- */
+/* The front page gallery loads each demo as an iframe showing one dataset
+ * and nothing else. The host fills the frame; the page behind it is the
+ * same surface colour as the gallery cell, so there is no visible seam. */
+html.bare, html.bare body { height: 100%; }
+html.bare body { margin: 0; background: var(--surface); overflow: hidden; }
+html.bare #app { height: 100%; }
+html.bare .bare-host { height: 100%; border: 0; border-radius: 0; }

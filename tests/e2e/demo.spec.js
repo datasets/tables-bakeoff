@@ -33,37 +33,44 @@ const SOURCE_TOKEN = {
 };
 
 test.describe("hub", () => {
-  test("links to every demo page", async ({ page }) => {
+  test("links to every demo page from the measured table", async ({ page }) => {
     await page.goto("/index.html");
     for (const key of ALL_DEMO_KEYS) {
-      // The navbar, the card and the scorecard row each link a demo, so this
-      // asks for at least one link rather than exactly one.
-      expect(await page.locator(`a[href="/demos/${key}.html"]`).count()).toBeGreaterThan(0);
+      await expect(page.locator(`#measured a[href="/demos/${key}.html"]`)).toHaveCount(1);
     }
+  });
+
+  test("embeds every demo in the gallery in bare mode and gets a render time back", async ({ page }) => {
+    await page.goto("/index.html");
+    for (const key of ALL_DEMO_KEYS) {
+      await expect(page.locator(`#gallery iframe[src^="/demos/${key}.html?bare=1"]`)).toHaveCount(1);
+    }
+    // The first cell is eager; its iframe reports a measured render time.
+    await expect(page.locator('#gallery .cell[data-lib="baseline"] [data-ms]')).toContainText("ms", { timeout: 30000 });
   });
 
   test("shows measured bundle sizes rather than hardcoded ones", async ({ page }) => {
     await page.goto("/index.html");
-    const cell = page.locator('[data-bundle="aggrid"]');
+    // Bundle figures appear in the picks, the gallery and the table; check the table's.
+    const cell = page.locator('#measured [data-bundle="aggrid"]');
     await expect(cell).not.toHaveText("—", { timeout: 10000 });
-    await expect(cell).toContainText("KB");
+    await expect(cell).toContainText("kB");
   });
 
   test("shows measured line counts for every demo", async ({ page }) => {
     await page.goto("/index.html");
     for (const key of ALL_DEMO_KEYS) {
-      const cell = page.locator(`[data-loc="${key}"]`);
+      const cell = page.locator(`#measured [data-loc="${key}"]`);
       await expect(cell).not.toHaveText("—", { timeout: 10000 });
     }
   });
 
-  // The scorecard carries only measured columns (bundle, LOC, render time,
-  // scroll FPS, 500k survival, licence) — no invented 1-5 ratings — so "no
-  // empty cells" is satisfiable by real data alone, never by filler numbers.
-  test("has no empty cells in the scorecard", async ({ page }) => {
+  // Both tables render from results.js; an empty cell means an entry is
+  // missing a field, which would otherwise ship silently.
+  test("has no empty cells in the measured table or the scorecard", async ({ page }) => {
     await page.goto("/index.html");
     // Let hub.js finish filling the bundle/LOC cells before asserting.
-    await expect(page.locator('[data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
+    await expect(page.locator('#measured [data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
     const empties = page.locator("table.scores td:empty");
     await expect(empties).toHaveCount(0);
   });

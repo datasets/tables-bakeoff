@@ -252,7 +252,11 @@ function main() {
     harness: { files: harnessFiles, ...sizes(harnessFiles) },
     demos,
   };
-  writeFileSync(OUT, JSON.stringify(out, null, 2));
+  const json = JSON.stringify(out, null, 2);
+  writeFileSync(OUT, json);
+  // vite build copied the previous public/bundles.json into dist/ before this
+  // script ran, so without this a deploy serves the last build's numbers.
+  writeFileSync(`${DIST}/bundles.json`, json);
 
   console.table(
     Object.fromEntries(
@@ -269,7 +273,7 @@ function main() {
   for (const [k, v] of Object.entries(demos)) {
     console.log(`${k}: ${[...v.files.js, ...v.files.css, ...v.files.wasm].join(", ")}`);
   }
-  console.log(`\nwrote ${OUT}`);
+  console.log(`\nwrote ${OUT} and ${DIST}/bundles.json`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();

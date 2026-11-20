@@ -70,6 +70,12 @@ restoreTheme();
 export async function mountDemo({ meta, tables, source }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
+
+  // ?bare=1: the front page embeds each demo as an iframe showing only the
+  // small dataset, no page chrome. Same loader, same formatter, same clock.
+  const params = new URLSearchParams(location.search);
+  if (params.get("bare") === "1") return mountBare({ meta, tables, root, dataset: params.get("dataset") || "small" });
+
   root.innerHTML = shell(meta);
   installThemeToggle(root.querySelector(".toggle"));
 
@@ -177,6 +183,54 @@ export async function mountDemo({ meta, tables, source }) {
 
 /* ---------------------------------------------------------------- */
 
+/** The embed used by the front page gallery: one dataset, one host filling
+ *  the iframe, nothing else. Reports the render time to the parent window
+ *  (`{ type: "tb:rendered", key, ms }`) and follows the parent's theme
+ *  (`{ type: "tb:theme", value: "light" | "dark" | null }`). */
+async function mountBare({ meta, tables, root, dataset }) {
+  const key = DATASETS[dataset] ? dataset : "small";
+  document.documentElement.classList.add("bare");
+  root.innerHTML = `<div class="demo-host bare-host"></div>`;
+  const host = root.querySelector(".demo-host");
+  let cleanup = null;
+
+  const post = (msg) => { if (parent !== window) parent.postMessage({ demo: meta.name, key, ...msg }, "*"); };
+
+  async function render() {
+    let data;
+    try {
+      data = await loadDataset(key);
+    } catch (err) {
+      host.innerHTML = `<pre class="err">${escapeHtml(String(err))}</pre>`;
+      post({ type: "tb:failed" });
+      return;
+    }
+    try { cleanup?.(); } catch {}
+    cleanup = null;
+    host.innerHTML = "";
+    const ctx = { theme: theme(), key, formatCell, reportRows: () => {} };
+    try {
+      const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
+      cleanup = typeof result === "function" ? result : null;
+      post({ type: "tb:rendered", ms });
+    } catch (err) {
+      host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
+      post({ type: "tb:failed" });
+    }
+  }
+
+  addEventListener("message", (e) => {
+    if (!e.data || e.data.type !== "tb:theme") return;
+    if (e.data.value === "light" || e.data.value === "dark") {
+      document.documentElement.setAttribute("data-theme", e.data.value);
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+  });
+  onThemeChange(() => render());
+  await render();
+}
+
 /** What the badge should report is the wait a user actually experiences, so the
  *  measured span covers two things time() alone would miss:
  *
@@ -283,7 +337,7 @@ export function navbar() {
           <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
         </svg>
       </a>
-      <button class="toggle"></button>
+      <button class="toggle" type="button" aria-label="Theme"></button>
     </div>
   </div>
 </nav>`;
@@ -293,7 +347,8 @@ export function footer() {
   return `
   <footer style="border-top:1px solid var(--border);margin-top:60px;padding:40px 0;color:var(--text-muted);font-size:12px">
     <div class="wrap" style="text-align:center">
-      Built with care by <a href="https://datopian.com" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">Datopian</a>
+      Built by <a href="https://datahub.io" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">DataHub</a>, which needed a table and picked one.
+      Verdict and numbers on the <a href="/index.html" style="color:var(--text-secondary);font-weight:500">front page</a>.
     </div>
   </footer>`;
 }
