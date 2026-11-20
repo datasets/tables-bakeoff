@@ -267,3 +267,12 @@ button:disabled { opacity: 0.5; cursor: default; }
   .nav__tools { order: 2; }
   .nav__links { order: 3; flex: 0 0 100%; overflow-x: auto; gap: 4px; padding-bottom: 2px; scrollbar-width: thin; }
 }
+
+/* ---- bare embed (demos/<key>.html?bare=1) ---------------------------- */
+/* The front page gallery loads each demo as an iframe showing one dataset
+ * and nothing else. The host fills the frame; the page behind it is the
+ * same surface colour as the gallery cell, so there is no visible seam. */
+html.bare, html.bare body { height: 100%; }
+html.bare body { margin: 0; background: var(--surface); overflow: hidden; }
+html.bare #app { height: 100%; }
+html.bare .bare-host { height: 100%; border: 0; border-radius: 0; }

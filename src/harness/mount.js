@@ -69,6 +69,12 @@ restoreTheme();
 export async function mountDemo({ meta, tables, source }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
+
+  // ?bare=1: the front page embeds each demo as an iframe showing only the
+  // small dataset, no page chrome. Same loader, same formatter, same clock.
+  const params = new URLSearchParams(location.search);
+  if (params.get("bare") === "1") return mountBare({ meta, tables, root, dataset: params.get("dataset") || "small" });
+
   root.innerHTML = shell(meta);
   installThemeToggle(root.querySelector(".toggle"));
 
@@ -175,6 +181,54 @@ export async function mountDemo({ meta, tables, source }) {
 }
 
 /* ---------------------------------------------------------------- */
+
+/** The embed used by the front page gallery: one dataset, one host filling
+ *  the iframe, nothing else. Reports the render time to the parent window
+ *  (`{ type: "tb:rendered", key, ms }`) and follows the parent's theme
+ *  (`{ type: "tb:theme", value: "light" | "dark" | null }`). */
+async function mountBare({ meta, tables, root, dataset }) {
+  const key = DATASETS[dataset] ? dataset : "small";
+  document.documentElement.classList.add("bare");
+  root.innerHTML = `<div class="demo-host bare-host"></div>`;
+  const host = root.querySelector(".demo-host");
+  let cleanup = null;
+
+  const post = (msg) => { if (parent !== window) parent.postMessage({ demo: meta.name, key, ...msg }, "*"); };
+
+  async function render() {
+    let data;
+    try {
+      data = await loadDataset(key);
+    } catch (err) {
+      host.innerHTML = `<pre class="err">${escapeHtml(String(err))}</pre>`;
+      post({ type: "tb:failed" });
+      return;
+    }
+    try { cleanup?.(); } catch {}
+    cleanup = null;
+    host.innerHTML = "";
+    const ctx = { theme: theme(), key, formatCell, reportRows: () => {} };
+    try {
+      const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
+      cleanup = typeof result === "function" ? result : null;
+      post({ type: "tb:rendered", ms });
+    } catch (err) {
+      host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
+      post({ type: "tb:failed" });
+    }
+  }
+
+  addEventListener("message", (e) => {
+    if (!e.data || e.data.type !== "tb:theme") return;
+    if (e.data.value === "light" || e.data.value === "dark") {
+      document.documentElement.setAttribute("data-theme", e.data.value);
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+  });
+  onThemeChange(() => render());
+  await render();
+}
 
 /** What the badge should report is the wait a user actually experiences, so the
  *  measured span covers two things time() alone would miss:
@@ -288,7 +342,8 @@ export function footer() {
   return `
   <footer style="border-top:1px solid var(--border);margin-top:60px;padding:40px 0;color:var(--text-muted);font-size:12px">
     <div class="wrap" style="text-align:center">
-      Built with care by <a href="https://datopian.com" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">Datopian</a>
+      Built by <a href="https://datahub.io" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">DataHub</a>, which needed a table and picked one.
+      Verdict and numbers on the <a href="/index.html" style="color:var(--text-secondary);font-weight:500">front page</a>.
     </div>
   </footer>`;
 }
