@@ -9,7 +9,7 @@ written report. It is a deliberate sibling of the
 shared harness pattern, same idea of comparing libraries by building the same
 thing seven times instead of reading seven sets of marketing copy.
 
-The seven entries:
+The nine entries:
 
 - Plain `<table>` — the baseline/control, no library at all
 - [Observable Inputs](https://observablehq.com/framework/inputs/table)
@@ -18,6 +18,8 @@ The seven entries:
 - [TanStack Table](https://tanstack.com/table) (v9)
 - [Glide Data Grid](https://grid.glideapps.com/)
 - [Perspective](https://perspective.finos.org/)
+- [DataTables](https://datatables.net/) (v3, jQuery-free)
+- [RevoGrid](https://rv-grid.com/)
 
 ## Running it
 
