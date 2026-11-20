@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-20T23:24:41.061Z",
+  "generatedAt": "2026-11-20T23:34:10.777Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -13,12 +13,12 @@
   "harness": {
     "files": [
       "assets/frontmatter-BYBBUU76.js",
-      "assets/mount-B9A0gHM7.js",
-      "assets/theme-BKHeTl9u.js",
-      "assets/theme-DVm0BsDm.css"
+      "assets/mount-DVMb0x7K.js",
+      "assets/theme-BaTKTz54.js",
+      "assets/theme-B-OTod6n.css"
     ],
-    "rawKB": 77.3,
-    "gzipKB": 25.5
+    "rawKB": 77.4,
+    "gzipKB": 25.6
   },
   "demos": {
     "baseline": {
@@ -30,25 +30,25 @@
       "totalKB": 26.6,
       "reactKB": 0,
       "libKB": 26.6,
-      "harnessKB": 25.5,
+      "harnessKB": 25.6,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 72.8,
+        "jsKB": 72.9,
         "cssKB": 6.3,
         "wasmKB": 0,
-        "totalKB": 79.1
+        "totalKB": 79.2
       },
       "loc": 34,
       "files": {
         "js": [
-          "assets/baseline-ovBLH9Sa.js",
+          "assets/baseline-FFD-DX4X.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js"
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js"
         ],
         "css": [
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [],
         "lazy": []
@@ -60,28 +60,28 @@
       "jsKB": 30.7,
       "cssKB": 2,
       "otherKB": 0,
-      "totalKB": 32.6,
+      "totalKB": 32.7,
       "reactKB": 0,
-      "libKB": 32.6,
-      "harnessKB": 25.5,
+      "libKB": 32.7,
+      "harnessKB": 25.6,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 88.2,
+        "jsKB": 88.3,
         "cssKB": 6.3,
         "wasmKB": 0,
-        "totalKB": 94.5
+        "totalKB": 94.6
       },
       "loc": 32,
       "files": {
         "js": [
-          "assets/observable-C4Nzvrv8.js",
+          "assets/observable-Cbz6cQR_.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js"
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js"
         ],
         "css": [
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [],
         "lazy": []
@@ -96,26 +96,26 @@
       "totalKB": 137.7,
       "reactKB": 0,
       "libKB": 137.7,
-      "harnessKB": 25.5,
+      "harnessKB": 25.6,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
         "jsKB": 533,
         "cssKB": 35.5,
         "wasmKB": 0,
-        "totalKB": 568.5
+        "totalKB": 568.6
       },
       "loc": 69,
       "files": {
         "js": [
-          "assets/tabulator-C26gNaKz.js",
+          "assets/tabulator-CAfWnksW.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js"
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js"
         ],
         "css": [
           "assets/tabulator-doaAObDj.css",
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [],
         "lazy": []
@@ -124,13 +124,13 @@
     "aggrid": {
       "name": "AG Grid Community",
       "react": false,
-      "jsKB": 356.1,
+      "jsKB": 356.2,
       "cssKB": 2,
       "otherKB": 0,
-      "totalKB": 358.1,
+      "totalKB": 358.2,
       "reactKB": 0,
-      "libKB": 358.1,
-      "harnessKB": 25.5,
+      "libKB": 358.2,
+      "harnessKB": 25.6,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
@@ -142,13 +142,13 @@
       "loc": 39,
       "files": {
         "js": [
-          "assets/aggrid-4PNRhhu2.js",
+          "assets/aggrid-LTtY8KQd.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js"
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js"
         ],
         "css": [
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [],
         "lazy": []
@@ -160,31 +160,31 @@
       "jsKB": 116.5,
       "cssKB": 2,
       "otherKB": 0,
-      "totalKB": 118.4,
+      "totalKB": 118.5,
       "reactKB": 69,
       "libKB": 49.4,
-      "harnessKB": 25.5,
+      "harnessKB": 25.6,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
         "jsKB": 368.1,
         "cssKB": 6.3,
         "wasmKB": 0,
-        "totalKB": 374.4
+        "totalKB": 374.5
       },
       "loc": 146,
       "files": {
         "js": [
-          "assets/tanstack-DUHtLQcf.js",
+          "assets/tanstack-DaEKhDBG.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/Table-PD40gSNB.js",
           "assets/react-XG3B2r_u.js",
           "assets/react-host-CTZUpMtF.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js"
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js"
         ],
         "css": [
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [],
         "lazy": []
@@ -194,70 +194,70 @@
       "name": "Glide Data Grid",
       "react": true,
       "jsKB": 195.4,
-      "cssKB": 4.2,
+      "cssKB": 4.3,
       "otherKB": 0,
-      "totalKB": 199.6,
+      "totalKB": 199.7,
       "reactKB": 69,
       "libKB": 130.6,
-      "harnessKB": 25.5,
+      "harnessKB": 25.6,
       "wasmKB": 0,
       "lazyKB": 8.1,
       "raw": {
         "jsKB": 596,
         "cssKB": 19,
         "wasmKB": 0,
-        "totalKB": 615
+        "totalKB": 615.1
       },
       "loc": 123,
       "files": {
         "js": [
-          "assets/glide-Bfc1k_Kf.js",
+          "assets/glide-y57ZzYbT.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/react-host-CTZUpMtF.js",
           "assets/react-XG3B2r_u.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js"
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js"
         ],
         "css": [
           "assets/glide-Bhzk72UY.css",
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [],
         "lazy": [
-          "assets/number-overlay-editor-c7fVpRae.js",
-          "assets/data-grid-overlay-editor-CMtKf0cf.js"
+          "assets/number-overlay-editor-Dvv4e41E.js",
+          "assets/data-grid-overlay-editor-Cpu3yNaI.js"
         ]
       }
     },
     "perspective": {
       "name": "Perspective",
       "react": false,
-      "jsKB": 104.4,
+      "jsKB": 104.5,
       "cssKB": 28.3,
       "otherKB": 0,
-      "totalKB": 132.7,
+      "totalKB": 132.8,
       "reactKB": 0,
-      "libKB": 132.7,
-      "harnessKB": 25.5,
+      "libKB": 132.8,
+      "harnessKB": 25.6,
       "wasmKB": 4348.9,
       "lazyKB": 0,
       "raw": {
         "jsKB": 373.8,
-        "cssKB": 170.6,
+        "cssKB": 170.7,
         "wasmKB": 4388.9,
-        "totalKB": 544.4
+        "totalKB": 544.5
       },
       "loc": 48,
       "files": {
         "js": [
-          "assets/perspective-D4Z8Cv7O.js",
-          "assets/mount-B9A0gHM7.js",
-          "assets/theme-BKHeTl9u.js",
+          "assets/perspective-BB-go8ua.js",
+          "assets/mount-DVMb0x7K.js",
+          "assets/theme-BaTKTz54.js",
           "assets/frontmatter-BYBBUU76.js"
         ],
         "css": [
           "assets/perspective-BysslngG.css",
-          "assets/theme-DVm0BsDm.css"
+          "assets/theme-B-OTod6n.css"
         ],
         "wasm": [
           "assets/perspective-server-CCyhYRhp.wasm",

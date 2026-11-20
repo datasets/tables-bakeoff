@@ -97,7 +97,7 @@ if (scoreHead && scoreBody) {
     `<th class="why">In one line</th>`;
   scoreBody.innerHTML = ENTRIES.map((d) => `
     <tr>
-      <td><a href="${demoHref(d.key)}">${e(d.name)}</a></td>
+      <td><a href="${demoHref(d.key)}">${e(d.name)}</a><span class="sub why-inline">${e(d.line)}</span></td>
       ${AXES.map((a) => {
         const s = d.scores[a.key];
         return `<td class="${s === 5 ? "s5" : s === 1 ? "s1" : ""}">${s}</td>`;
@@ -120,11 +120,23 @@ fetch("/bundles.json")
       if (reactDemo) el.textContent = `${fmt(reactDemo.reactKB)} kB`;
     }
 
+    // An entry in results.js whose demo is not in this build is said so,
+    // in place, rather than shown with dashes or dropped.
+    for (const d of ENTRIES) {
+      if (demos[d.key]) continue;
+      const c = document.querySelector(`#gallery .cell[data-lib="${d.key}"]`);
+      if (c) c.querySelector("iframe").replaceWith(Object.assign(document.createElement("p"), { className: "cell__missing", textContent: "Demo not in this build yet." }));
+      for (const el of document.querySelectorAll(`[data-bundle="${d.key}"],[data-loc="${d.key}"],[data-wasm="${d.key}"]`)) el.textContent = "not built";
+    }
+
     for (const [key, d] of Object.entries(demos)) {
       // "Own code" nets out the shared harness (mount + hyparquet + site.css,
-      // paid by every demo) and, for the React demos, React itself.
+      // paid by every demo) and, for the React demos, React itself. Code
+      // fetched on demand after load is shown beside it, not summed: for
+      // RevoGrid most of it arrives on first render, for Glide it is editors.
       for (const el of document.querySelectorAll(`[data-bundle="${key}"]`)) {
         el.textContent = `${fmt(d.libKB - d.harnessKB)} kB`;
+        if (d.lazyKB > 0 && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">+ ${fmt(d.lazyKB)} kB lazy</span>`);
       }
       // Rounded variant for prose: "21 kB over React".
       for (const el of document.querySelectorAll(`[data-bundle-round="${key}"]`)) {

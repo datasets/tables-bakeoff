@@ -15,8 +15,8 @@
 
 /** Where the typed-in render and FPS numbers come from. */
 export const MEASURED = {
-  machine: "one laptop, headless Chromium, 1400×1000, dev server", // VERIFY after the re-measure
-  when: "Sep 2026 build, versions as of Nov 2026", // VERIFY after the re-measure
+  machine: "one laptop, headless Chromium, 1400×1000", // VERIFY after the re-measure
+  when: "Sep 2026 run; the Nov 2026 re-measure is in progress", // VERIFY after the re-measure
 };
 
 /** Scorecard axes, 1 (worst) to 5 (best). Subjective, from doing the build. */
@@ -79,7 +79,7 @@ export const ENTRIES = [
     version: "36.3.0",
     license: "MIT",
     released: "2026-11-04",
-    paywalled: "Enterprise: row grouping, pivot, range selection, clipboard, Excel export, server-side row model",
+    paywalled: "Enterprise: grouping, pivot, range selection, clipboard, Excel export",
     framework: "none",
     render50k: { text: "35 ms", verify: true },
     render500k: { text: "248 ms", verify: true },
@@ -131,8 +131,44 @@ export const ENTRIES = [
     scores: { look: 3, api: 3, firstTry: 4, docs: 2, escape: 1 },
     line: "Worked on the first run. No per-cell formatter, no locale option, and two WASM URLs to wire up by hand.",
   },
-  // Entries 8 and 9 (DataTables 3, RevoGrid) land from their own branch: one
-  // object each here, same shape, and the page picks them up.
+  // Entries 8 and 9. Numbers are from docs/reports/datatables-revogrid-report.md,
+  // measured on a busy machine; all of them are being re-measured.
+  {
+    key: "datatables",
+    name: "DataTables",
+    version: "3.1.5",
+    license: "MIT (core)",
+    released: "2026-10-30",
+    paywalled: "Editor, SearchPanes, StateRestore (DataTables Plus, $219 per developer)",
+    framework: "none",
+    note: "e",
+    render50k: { text: "957 ms", verify: true },
+    render500k: { text: "10.1 s", verify: true },
+    fps: { text: "52 fps", sub: "48 fps on 80 columns", verify: true },
+    scores: { look: 3, api: 4, firstTry: 2, docs: 4, escape: 4 },
+    line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. It builds its whole model before showing anything, so 500,000 rows is ten seconds.",
+  },
+  {
+    key: "revogrid",
+    name: "RevoGrid",
+    version: "4.31.8",
+    license: "MIT (core)",
+    released: "2026-11-19",
+    paywalled: "Pro ($199 to $499 per developer per year): pivot, Excel, master-detail, richer filters. The free core shows a RevoGrid link",
+    framework: "none (web component)",
+    note: "f",
+    render50k: { text: "59 ms", verify: true },
+    render500k: { text: "55 ms", verify: true },
+    fps: { text: "60 fps", sub: "1 dropped", verify: true },
+    scores: { look: 3, api: 4, firstTry: 3, docs: 3, escape: 3 },
+    line: "The fastest DOM grid at 500,000 rows, in any framework. Its render event fires before any cell exists, its columns do not auto-size, and its community is a quarter of AG Grid's.",
+  },
 ];
 
+/* Things to confirm before launch that are not numbers in ENTRIES:
+ * - index.html Method: "the numbers were checked against the build and the
+ *   live pages" must be literally true of whoever did it.
+ * - "Considered, not included": MUI X 100-row page cap, react-data-grid beta
+ *   status, SlickGrid 6.0 date.
+ * - The editable-grid pick is provisional until the edit test lands. */
 export const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];

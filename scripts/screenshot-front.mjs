@@ -24,13 +24,13 @@ async function shoot(width, scheme) {
   const h = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < h; y += 700) { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(150); }
   await page.waitForFunction(
-    () => [...document.querySelectorAll("#gallery [data-ms]")].filter((b) => /ms|failed/.test(b.textContent)).length >= document.querySelectorAll("#gallery .cell").length,
+    () => [...document.querySelectorAll("#gallery [data-ms]")].filter((b) => /ms|failed/.test(b.textContent)).length >= document.querySelectorAll("#gallery iframe").length,
     null, { timeout: 90000 }
   ).catch(() => console.log("not all gallery cells reported"));
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForTimeout(500);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  const ms = await page.evaluate(() => [...document.querySelectorAll("#gallery .cell")].map((c) => `${c.dataset.lib}=${c.querySelector("[data-ms]").textContent}`).join(" "));
+  const ms = await page.evaluate(() => [...document.querySelectorAll("#gallery .cell")].map((c) => `${c.dataset.lib}=${c.querySelector("iframe") ? c.querySelector("[data-ms]").textContent : "not built"}`).join(" "));
   const tag = `${width}-${scheme}`;
   await page.screenshot({ path: `${out}/front-${tag}-fold.png` });
   await page.screenshot({ path: `${out}/front-${tag}-full.png`, fullPage: true });
