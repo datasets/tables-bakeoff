@@ -2,13 +2,15 @@ import { describe, it, expect } from "vitest";
 import { DEMOS } from "../vite.config.js";
 
 describe("demo registry", () => {
-  it("lists all seven demos with unique keys", () => {
-    expect(DEMOS).toHaveLength(7);
+  it("lists all nine demos with unique keys", () => {
+    expect(DEMOS).toHaveLength(9);
     const keys = DEMOS.map((d) => d.key);
-    expect(new Set(keys).size).toBe(7);
+    expect(new Set(keys).size).toBe(9);
     expect(keys).toContain("baseline");
     expect(keys).toContain("tanstack");
     expect(keys).toContain("perspective");
+    expect(keys).toContain("datatables");
+    expect(keys).toContain("revogrid");
   });
 
   it("gives every demo a react flag", () => {
