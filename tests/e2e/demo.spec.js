@@ -29,11 +29,20 @@ const SOURCE_TOKEN = {
 };
 
 test.describe("hub", () => {
-  test("links to every demo page", async ({ page }) => {
+  test("links to every demo page from the measured table", async ({ page }) => {
     await page.goto("/index.html");
     for (const key of ALL_DEMO_KEYS) {
-      await expect(page.locator(`a[href="/demos/${key}.html"]`)).toHaveCount(1);
+      await expect(page.locator(`#measured a[href="/demos/${key}.html"]`)).toHaveCount(1);
     }
+  });
+
+  test("embeds every demo in the gallery in bare mode and gets a render time back", async ({ page }) => {
+    await page.goto("/index.html");
+    for (const key of ALL_DEMO_KEYS) {
+      await expect(page.locator(`#gallery iframe[src^="/demos/${key}.html?bare=1"]`)).toHaveCount(1);
+    }
+    // The first cell is eager; its iframe reports a measured render time.
+    await expect(page.locator('#gallery .cell[data-lib="baseline"] [data-ms]')).toContainText("ms", { timeout: 30000 });
   });
 
   test("shows measured bundle sizes rather than hardcoded ones", async ({ page }) => {
@@ -51,10 +60,9 @@ test.describe("hub", () => {
     }
   });
 
-  // The scorecard carries only measured columns (bundle, LOC, render time,
-  // scroll FPS, 500k survival, licence) — no invented 1-5 ratings — so "no
-  // empty cells" is satisfiable by real data alone, never by filler numbers.
-  test("has no empty cells in the scorecard", async ({ page }) => {
+  // Both tables render from results.js; an empty cell means an entry is
+  // missing a field, which would otherwise ship silently.
+  test("has no empty cells in the measured table or the scorecard", async ({ page }) => {
     await page.goto("/index.html");
     // Let hub.js finish filling the bundle/LOC cells before asserting.
     await expect(page.locator('[data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
