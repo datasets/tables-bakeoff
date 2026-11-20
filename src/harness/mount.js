@@ -68,11 +68,6 @@ restoreTheme();
 
 export async function mountDemo({ meta, tables, source }) {
   document.title = `${meta.name} — Tables Bakeoff`;
-  const pageUrl = window.location.href.split('?')[0];
-  const screenshotUrl = `https://screenshotit.app/${pageUrl}@social`;
-  document.querySelector('meta[property="og:image"]')?.setAttribute('content', screenshotUrl);
-  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${meta.name} — Tables Bakeoff`);
-  document.querySelector('meta[property="og:description"]')?.setAttribute('content', meta.tagline);
   const root = document.getElementById("app");
   root.innerHTML = shell(meta);
   installThemeToggle(root.querySelector(".toggle"));
@@ -263,29 +258,30 @@ const DEMOS = [
 
 export function navbar() {
   return `
-  <nav style="border-bottom:1px solid var(--border);padding:12px 0">
-    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-      <a href="/index.html" style="font-size:16px;font-weight:600;color:var(--text-primary);text-decoration:none">Tables Bakeoff</a>
-      <div style="display:flex;gap:12px;align-items:center;font-size:13px">
-        <a href="/demos/baseline.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Plain &lt;table&gt;</a>
-        <a href="/demos/observable.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Observable</a>
-        <a href="/demos/tabulator.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Tabulator</a>
-        <a href="/demos/aggrid.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">AG Grid</a>
-        <a href="/demos/tanstack.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">TanStack</a>
-        <a href="/demos/glide.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Glide</a>
-        <a href="/demos/perspective.html" style="color:var(--text-secondary);text-decoration:none;padding:4px 8px">Perspective</a>
-        <a href="/index.html#experiments" style="color:var(--text-muted);text-decoration:none;padding:4px 8px;border-left:1px solid var(--border);margin-left:4px;padding-left:12px">Experiments</a>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository" style="display:flex;align-items:center;color:var(--text-primary);text-decoration:none">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-        </a>
-        <button class="toggle"></button>
-      </div>
+<nav class="nav">
+  <div class="wrap nav__inner">
+    <a class="nav__brand" href="/index.html">Tables Bakeoff</a>
+    <div class="nav__links">
+      <a href="/demos/baseline.html">Plain &lt;table&gt;</a>
+      <a href="/demos/observable.html">Observable</a>
+      <a href="/demos/tabulator.html">Tabulator</a>
+      <a href="/demos/aggrid.html">AG Grid</a>
+      <a href="/demos/tanstack.html">TanStack</a>
+      <a href="/demos/glide.html">Glide</a>
+      <a href="/demos/perspective.html">Perspective</a>
+      <a class="nav__sep" href="/index.html#experiments">Experiments</a>
+      <a href="/changelog.html">Changelog</a>
     </div>
-  </nav>`;
+    <div class="nav__tools">
+      <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </a>
+      <button class="toggle"></button>
+    </div>
+  </div>
+</nav>`;
 }
 
 export function footer() {
