@@ -47,15 +47,16 @@ test.describe("hub", () => {
 
   test("shows measured bundle sizes rather than hardcoded ones", async ({ page }) => {
     await page.goto("/index.html");
-    const cell = page.locator('[data-bundle="aggrid"]');
+    // Bundle figures appear in the picks, the gallery and the table; check the table's.
+    const cell = page.locator('#measured [data-bundle="aggrid"]');
     await expect(cell).not.toHaveText("—", { timeout: 10000 });
-    await expect(cell).toContainText("KB");
+    await expect(cell).toContainText("kB");
   });
 
   test("shows measured line counts for every demo", async ({ page }) => {
     await page.goto("/index.html");
     for (const key of ALL_DEMO_KEYS) {
-      const cell = page.locator(`[data-loc="${key}"]`);
+      const cell = page.locator(`#measured [data-loc="${key}"]`);
       await expect(cell).not.toHaveText("—", { timeout: 10000 });
     }
   });
@@ -65,7 +66,7 @@ test.describe("hub", () => {
   test("has no empty cells in the measured table or the scorecard", async ({ page }) => {
     await page.goto("/index.html");
     // Let hub.js finish filling the bundle/LOC cells before asserting.
-    await expect(page.locator('[data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
+    await expect(page.locator('#measured [data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
     const empties = page.locator("table.scores td:empty");
     await expect(empties).toHaveCount(0);
   });
