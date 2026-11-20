@@ -40,7 +40,7 @@ export function TanStackTable({ data, formatCell }) {
     () =>
       data.columns.map((c) => ({
         accessorKey: c.name,
-        header: c.name,
+        header: c.label ?? c.name,
         meta: { align: c.align },
         cell: (info) => formatCell(info.getValue(), c),
         // Keys of the sortFns registry passed to tableFeatures above; a name

@@ -17,6 +17,52 @@ export function inferColumns(rows) {
   });
 }
 
+/** Display order and header label for every Land Registry column. Shared, like
+ *  the formatter, so all nine tables lead with the same human columns: the
+ *  address and the sale first, codes and the transaction GUID last. `id` stays
+ *  in the table because it is real data; it is just not what a reader wants in
+ *  the first column. */
+export const COLUMN_LABELS = {
+  street: "Street",
+  town: "Town",
+  price: "Price",
+  date: "Date",
+  propertyType: "Property type",
+  oldNew: "New build",
+  duration: "Tenure",
+  postcode: "Postcode",
+  paon: "House",
+  saon: "Flat",
+  locality: "Locality",
+  district: "District",
+  county: "County",
+  ppdCategory: "Category",
+  recordStatus: "Status",
+  id: "Transaction ID",
+};
+const COLUMN_ORDER = Object.keys(COLUMN_LABELS);
+
+/** Order columns as COLUMN_LABELS lists them and give each a `label`. Columns
+ *  not in the list (the wide set's metric_01..metric_64) keep their own order
+ *  after the known ones, and `id` always goes last. */
+export function arrangeColumns(columns) {
+  const rank = (c) => {
+    if (c.name === "id") return Number.MAX_SAFE_INTEGER;
+    const i = COLUMN_ORDER.indexOf(c.name);
+    return i === -1 ? COLUMN_ORDER.length : i;
+  };
+  return columns
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => rank(a.c) - rank(b.c) || a.i - b.i)
+    .map(({ c }) => ({ ...c, label: COLUMN_LABELS[c.name] ?? humanize(c.name) }));
+}
+
+/** metric_01 -> "Metric 01". */
+function humanize(name) {
+  const s = name.replace(/_/g, " ");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 /** The one formatter every demo uses. Shared on purpose: differences you see
  *  between libraries should come from the library, not from formatting. */
 export function formatCell(value, col) {
@@ -45,7 +91,7 @@ export async function loadDataset(key) {
       key,
       rows,
       numRows: Number(meta.num_rows),
-      columns: inferColumns(rows),
+      columns: arrangeColumns(inferColumns(rows)),
       timings: { fetchMs: t1 - t0, decodeMs: t2 - t1 },
     };
   })();

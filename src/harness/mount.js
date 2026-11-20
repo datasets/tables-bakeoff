@@ -15,7 +15,9 @@
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
  *   dataset — Task 3's { key, rows, numRows, columns, timings }; `columns` are
- *             { name, type: 'string'|'number'|'date', align: 'left'|'right' }.
+ *             { name, label, type: 'string'|'number'|'date', align: 'left'|'right' },
+ *             already in the shared display order (src/data/load.js). Use
+ *             `label` for the header and `name` as the field.
  *   ctx     — { theme, key, formatCell, reportRows }:
  *               theme      a snapshot of theme.js's tokens taken just before
  *                          this render — `theme.dark` is the light/dark

@@ -18,7 +18,7 @@ function renderTable(host, data, ctx, rowLimit = Infinity) {
   const rows = data.rows.length > rowLimit ? data.rows.slice(0, rowLimit) : data.rows;
   const cols = data.columns;
 
-  const head = cols.map((c) => `<th>${c.name}</th>`).join("");
+  const head = cols.map((c) => `<th class="${c.align === "right" ? "num" : ""}">${c.label}</th>`).join("");
   const body = rows
     .map(
       (r) =>

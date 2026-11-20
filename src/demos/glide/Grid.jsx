@@ -34,7 +34,7 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
   const columns = useMemo(
     () =>
       data.columns.map((c) => ({
-        title: c.name,
+        title: c.label,
         id: c.name,
         width: WIDTH_FOR[c.type] ?? WIDTH_FOR.string,
       })),

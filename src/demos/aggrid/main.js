@@ -38,6 +38,7 @@ function build(host, data, ctx) {
     rowData: data.rows,
     columnDefs: data.columns.map((c) => ({
       field: c.name,
+      headerName: c.label,
       type: c.type === "number" ? "rightAligned" : undefined,
       sortable: true,
       filter: true,

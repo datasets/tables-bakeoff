@@ -27,7 +27,7 @@ function build(host, data, ctx, opts = {}) {
       renderVertical: "virtual",
       rowHeight: 32,
       columns: data.columns.map((c) => ({
-        title: c.name,
+        title: c.label,
         field: c.name,
         hozAlign: c.align,
         headerSort: true,

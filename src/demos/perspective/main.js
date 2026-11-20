@@ -64,9 +64,12 @@ async function build(host, data, ctx) {
   // empty grid first. restore() resolves after the plugin has drawn, so the
   // harness's clock covers real cells on screen, not a scheduled render.
   await viewer.load(client);
+
   await viewer.restore({
     table: name,
     plugin: "Datagrid",
+    // The shared display order. Without it the grid follows the object keys.
+    columns: data.columns.map((c) => c.name),
     // The viewer draws its own panel-title bar above the grid — the one piece
     // of library chrome no other demo has. Left visible on purpose, but named,
     // because the default "untitled" reads as a bug rather than a feature.
@@ -77,6 +80,24 @@ async function build(host, data, ctx) {
     theme: ctx.theme.dark ? "Pro Dark" : "Pro Light",
     settings: false,
   });
+
+  // Header labels. Perspective names a column after its key in the data and has
+  // no option to display anything else, so the shared labels go in through
+  // regular-table's style listener, the datagrid's documented hook for
+  // restyling after each draw. Applied once now, since the first draw is done,
+  // and again on every redraw. Sorting and settings still use the key.
+  const labels = Object.fromEntries(data.columns.map((c) => [c.name, c.label]));
+  const rt = viewer.querySelector("perspective-viewer-datagrid")?.regular_table;
+  const relabel = () => {
+    for (const span of rt.querySelectorAll("thead th.psp-header-leaf > span:first-child")) {
+      const label = labels[span.textContent];
+      if (label) span.textContent = label;
+    }
+  };
+  if (rt) {
+    rt.addStyleListener(relabel);
+    relabel();
+  }
 
   // The element that really scrolls is regular-table, two shadow roots down:
   // <perspective-viewer> ▸ <perspective-viewer-datagrid> #shadow ▸

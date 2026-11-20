@@ -16,6 +16,7 @@ export const meta = { ...frontmatter, notes };
 function table(host, data, ctx) {
   const el = Inputs.table(data.rows, {
     columns: data.columns.map((c) => c.name),
+    header: Object.fromEntries(data.columns.map((c) => [c.name, c.label])),
     format: Object.fromEntries(
       data.columns.map((c) => [c.name, (v) => ctx.formatCell(v, c)])
     ),

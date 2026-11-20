@@ -24,7 +24,7 @@ function build(host, data, ctx) {
   grid.readonly = true;
   grid.columns = data.columns.map((c) => ({
     prop: c.name,
-    name: c.name,
+    name: c.label,
     size: 130,
     sortable: true,
     // A cell template may return plain text, so the shared formatter slots
