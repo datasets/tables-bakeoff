@@ -24,3 +24,7 @@ log implementation detail (file names, internal moves) a reader wouldn't
 care about. First time writing an entry in this repo, or if the format is
 unclear: fetch and follow
 https://raw.githubusercontent.com/life-itself/changelog/main/CONVENTION.md
+
+## Tasks
+
+Tasks live in Beads (`bd ready`, `bd list`). `git push` also pushes Beads via the pre-push hook; run `bd dolt pull` after `git pull`.

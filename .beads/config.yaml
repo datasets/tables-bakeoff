@@ -73,3 +73,5 @@
 
 sync:
     remote: "git+ssh://git@github.com/datasets/tables-bakeoff.git"
+export:
+    auto: false
