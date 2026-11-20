@@ -186,6 +186,10 @@ table.scores tbody tr:hover { background: color-mix(in srgb, var(--text-primary)
   --table-stripe: color-mix(in srgb, var(--text-primary) 3%, transparent);
   --table-num-font: var(--font-mono);
 }
+.demo-notes { margin: 8px 0 0; font-size: 12.5px; color: var(--text-secondary); max-width: 75ch; }
+.demo-notes p, .demo-notes ul { margin: 0; }
+.demo-notes ul { padding-left: 18px; }
+.demo-notes li + li { margin-top: 3px; }
 .demo-host { height: 460px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
 .demo-host--tall { height: 620px; }
 

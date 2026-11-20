@@ -68,6 +68,8 @@
       <a href="/demos/tanstack.html">TanStack</a>
       <a href="/demos/glide.html">Glide</a>
       <a href="/demos/perspective.html">Perspective</a>
+      <a href="/demos/datatables.html">DataTables</a>
+      <a href="/demos/revogrid.html">RevoGrid</a>
       <a class="nav__sep" href="#experiments">Experiments</a>
       <a href="/changelog.html">Changelog</a>
     </div>
@@ -100,7 +102,7 @@
     from <a href="/bundles.json">bundles.json</a>, which this build writes.
   </p>
 
-  <h2>The seven contenders</h2>
+  <h2>The nine contenders</h2>
   <div class="grid">
     <a class="lib" href="/demos/baseline.html">
       <h3>Plain &lt;table&gt;</h3>
@@ -136,6 +138,16 @@
       <h3>Perspective</h3>
       <p>WASM + Arrow columnar engine in a worker, with a grid attached.</p>
       <div class="meta">v5.9.4 · Apache-2.0</div>
+    </a>
+    <a class="lib" href="/demos/datatables.html">
+      <h3>DataTables</h3>
+      <p>The veteran, now jQuery-free. Enhances a real &lt;table&gt;; Scroller for long lists.</p>
+      <div class="meta">v3.1.5 · MIT (Editor is paid)</div>
+    </a>
+    <a class="lib" href="/demos/revogrid.html">
+      <h3>RevoGrid</h3>
+      <p>A web component. Virtual rows and columns, works in any framework or none.</p>
+      <div class="meta">v4.31.8 · MIT (Pro is paid)</div>
     </a>
   </div>
 
@@ -236,6 +248,28 @@
         <td class="yes">Yes</td>
         <td>Apache-2.0</td>
       </tr>
+      <tr>
+        <td><a href="/demos/datatables.html" style="color:inherit;text-decoration:none">DataTables</a></td>
+        <td data-bundle="datatables">—</td>
+        <td data-wasm="datatables">—</td>
+        <td data-loc="datatables">—</td>
+        <td>957 ms<sup>e</sup></td>
+        <td>10.1 s<sup>e</sup></td>
+        <td>52 fps</td>
+        <td class="yes">Yes</td>
+        <td>MIT (Editor paid)</td>
+      </tr>
+      <tr>
+        <td><a href="/demos/revogrid.html" style="color:inherit;text-decoration:none">RevoGrid</a><sup>f</sup></td>
+        <td data-bundle="revogrid">—</td>
+        <td data-wasm="revogrid">—</td>
+        <td data-loc="revogrid">—</td>
+        <td>59 ms<sup>e</sup></td>
+        <td>55 ms<sup>e</sup></td>
+        <td>60 fps</td>
+        <td class="yes">Yes</td>
+        <td>MIT (Pro paid)</td>
+      </tr>
     </tbody>
   </table>
   </div>
@@ -302,6 +336,18 @@
       library the same <code>Array&lt;Object&gt;</code>, which is fair but is Perspective's worst
       input format; an Arrow buffer or CSV would very likely cut it hard. Once loaded, sorting and
       filtering 500,000 rows happen in the worker and the UI thread never notices.
+    </li>
+    <li>
+      <sup>e</sup> DataTables and RevoGrid were added later and measured in a separate session
+      (2026-11-20, five runs each, medians) on a machine that was busier than for the first seven,
+      so compare them with care. DataTables builds all 500,000 rows up front: by default it measures
+      every column's widest value and sorts on load, and only then lets Scroller window the rows.
+      RevoGrid's 500,000 rows cost about the same as its 1,000.
+    </li>
+    <li>
+      <sup>f</sup> RevoGrid loads most of its code on demand: the figure here is what the page
+      fetches on load, and about 82 KB more arrives when the first grid renders. Its real cost is
+      roughly 111 KB, not the number in this cell.
     </li>
     <li>
       <strong>Heap is not a column.</strong> Chrome pins <code>performance.memory</code> to a
@@ -440,20 +486,10 @@
       stopped shipping is not a choice worth recommending for new work, whatever its merits were.
     </li>
     <li>
-      <strong>RevoGrid</strong> — genuinely virtualized and framework-agnostic, but a much smaller
-      community than AG Grid or Tabulator and no advantage over them on any axis measured here. A
-      reasonable addition later; not a gap in the current set.
-    </li>
-    <li>
       <strong>MUI X DataGrid</strong> — the MIT core is real, but it assumes MUI: theming runs
       through MUI's system rather than plain CSS tokens, so it could not be fed this site's theme
       the way the other seven were. Column pinning, tree data and aggregation sit in the paid
       Pro/Premium tiers.
-    </li>
-    <li>
-      <strong>DataTables</strong> — the jQuery-era incumbent. The core is MIT, but the API and its
-      ecosystem still assume jQuery and its headline editing features are commercial add-ons.
-      Excluded as a legacy path rather than on quality.
     </li>
   </ul>
 

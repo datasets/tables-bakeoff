@@ -63,6 +63,7 @@ import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
 import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.js";
+import { renderMarkdown } from "./markdown.js";
 
 restoreTheme();
 
@@ -254,6 +255,8 @@ const DEMOS = [
   { key: "tanstack", name: "TanStack" },
   { key: "glide", name: "Glide" },
   { key: "perspective", name: "Perspective" },
+  { key: "datatables", name: "DataTables" },
+  { key: "revogrid", name: "RevoGrid" },
 ];
 
 export function navbar() {
@@ -269,6 +272,8 @@ export function navbar() {
       <a href="/demos/tanstack.html">TanStack</a>
       <a href="/demos/glide.html">Glide</a>
       <a href="/demos/perspective.html">Perspective</a>
+      <a href="/demos/datatables.html">DataTables</a>
+      <a href="/demos/revogrid.html">RevoGrid</a>
       <a class="nav__sep" href="/index.html#experiments">Experiments</a>
       <a href="/changelog.html">Changelog</a>
     </div>
@@ -295,7 +300,9 @@ export function footer() {
 
 function shell(meta) {
   // meta values are escaped: the baseline's own name is literally "Plain
-  // <table>", which would otherwise open a real element in the header.
+  // <table>", which would otherwise open a real element in the header. Notes
+  // go through the changelog's small Markdown renderer, which escapes HTML
+  // first, so a demo can write its notes as a short bullet list.
   const e = escapeHtml;
   const links = [
     meta.homepage ? `<a href="${e(meta.homepage)}" target="_blank" rel="noopener">home</a>` : null,
@@ -314,7 +321,7 @@ function shell(meta) {
     <p style="margin:10px 0 0;font-size:12.5px;color:var(--text-muted)">
       ${links} &nbsp;·&nbsp; ${e(meta.license)}
     </p>
-    ${meta.notes ? `<p style="margin:8px 0 0;font-size:12.5px;color:var(--text-secondary);max-width:75ch">${e(meta.notes)}</p>` : ""}
+    ${meta.notes ? `<div class="demo-notes">${renderMarkdown(meta.notes)}</div>` : ""}
   </header>
   <main class="wrap" style="padding-bottom:60px">
     ${DATASET_KEYS.map(cardHTML).join("")}
