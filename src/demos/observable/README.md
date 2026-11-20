@@ -1,6 +1,6 @@
 ---
 name: Observable Inputs
-version: 0.12.0
+version: 1.0.0
 license: ISC
 docs: https://observablehq.github.io/framework/inputs/table
 homepage: https://observablehq.com/framework/lib/inputs

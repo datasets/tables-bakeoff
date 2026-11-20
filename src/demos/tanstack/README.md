@@ -1,6 +1,6 @@
 ---
 name: TanStack Table
-version: 9.2.4
+version: 9.3.1
 license: MIT
 docs: https://tanstack.com/table/latest
 homepage: https://tanstack.com/table

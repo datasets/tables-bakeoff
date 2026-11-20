@@ -1,6 +1,6 @@
 ---
 name: AG Grid Community
-version: 36.1.0
+version: 36.3.0
 license: MIT (Community tier)
 docs: https://www.ag-grid.com/javascript-data-grid/
 homepage: https://www.ag-grid.com

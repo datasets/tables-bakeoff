@@ -1,6 +1,6 @@
 ---
 name: Perspective
-version: 5.3.1
+version: 5.9.4
 license: Apache-2.0
 docs: https://perspective-dev.github.io/guide/
 homepage: https://perspective-dev.github.io/

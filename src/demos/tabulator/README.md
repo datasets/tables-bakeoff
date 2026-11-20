@@ -1,6 +1,6 @@
 ---
 name: Tabulator
-version: 6.5.2
+version: 6.7.1
 license: MIT
 docs: https://tabulator.info/docs/6.5
 homepage: https://tabulator.info
