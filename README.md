@@ -2,14 +2,16 @@
 
 **🔗 Live site: [tables.datahub.io](https://tables.datahub.io)**
 
-A bake-off of seven open-source JavaScript table/grid libraries, run over the
-same four datasets, built as a static site you open and scroll rather than a
-written report. It is a deliberate sibling of the
+A bake-off of open-source JavaScript table/grid libraries (six libraries and
+a plain `<table>` today; DataTables 3 and RevoGrid are being added), run over
+the same four datasets, built as a static site you open and scroll rather than
+a written report. The front page leads with the verdict and embeds every
+demo live; the reasoning is in [EVALUATION.md](./EVALUATION.md). It is a deliberate sibling of the
 [line-charts](https://linecharts.datahub.io/) repo: same structure, same
 shared harness pattern, same idea of comparing libraries by building the same
-thing seven times instead of reading seven sets of marketing copy.
+thing many times instead of reading many sets of marketing copy.
 
-The seven entries:
+The entries:
 
 - Plain `<table>` — the baseline/control, no library at all
 - [Observable Inputs](https://observablehq.com/framework/inputs/table)
@@ -39,32 +41,40 @@ Every library renders the same four datasets (a small rich sample, a wide
 inside the same page shell, the same light/dark theme, and the same per-cell
 formatter (`formatCell` in `src/data/load.js`). The intent is that what you're
 comparing on screen is the library's own rendering and interaction behaviour,
-not seven different amounts of styling effort. **Perspective is the one
+not different amounts of styling effort. **Perspective is the one
 exception**: it exposes no per-cell formatting callback, so its cells are
 formatted by its own plugin config instead of the shared formatter — this is
 disclosed in its demo's notes.
 
-The hub page (`index.html`) publishes only what was actually measured on this
-machine — bundle size, lines of code, render time, scroll FPS. There are no
-1–5 ratings anywhere on the site; see "Not yet written" below.
+The front page (`index.html`) renders from two sources: `bundles.json`, which
+the build writes (bundle size, lines of code), and `src/harness/results.js`
+(render time, scroll FPS, release dates, licence notes, and the 1 to 5
+scorecard with its reasons). Every typed-in number lives in `results.js` so one
+sweep updates the page; values from a run being repeated carry `verify: true`
+and render with a `data-verify` attribute.
 
-## Adding an eighth library
+Each demo page also has a `?bare=1` mode (optionally `&dataset=small|wide|medium|large`)
+that renders one dataset with no page chrome and posts its render time to the
+parent window. The front page gallery is one of those iframes per entry.
+
+## Adding a library
 
 1. Copy a directory under `src/demos/` (pick a vanilla one or a React one,
    whichever is closer) as `src/demos/<key>/`.
 2. Add `demos/<key>.html` for it.
 3. Add one entry to `DEMOS` in `vite.config.js`.
 4. Add a `SOURCE_TOKEN` entry for it in `tests/e2e/demo.spec.js`.
-5. Add a card for it to `index.html`.
+5. Add one entry to `ENTRIES` in `src/harness/results.js`. The gallery, the
+   measured table and the scorecard render from it.
 
-## Not yet written
+## Documents
 
-`docs/plans/` holds the original design and implementation plan.
-`OPEN-QUESTIONS.md` records the judgment calls made while building this,
-in case any should be revisited. `ANALYSIS.md` documents the measurement
-method and its caveats. `EVALUATION.md` does not exist yet — the subjective
-verdict (which library actually feels good to use, which one you'd reach for)
-is deliberately left for the repo's owner to write, not invented here.
+`EVALUATION.md` is the verdict: per-use-case picks with reasoning, the
+scorecard with reasons, what was not tested, and what DataHub will use.
+`ANALYSIS.md` documents the measurement method and its caveats.
+`OPEN-QUESTIONS.md` records the judgment calls made while building this, in
+case any should be revisited. `docs/plans/` holds the original design and
+implementation plan; `docs/launch/` the pre-mortems for the launch.
 
 ## Data attribution
 
