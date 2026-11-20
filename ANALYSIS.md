@@ -95,7 +95,7 @@ this library cost on a page that already ships React" rather than double-chargin
 every React demo for React itself.
 
 **WASM is never summed into a bundle total.** Perspective downloads roughly
-3.9 MB of compiled Rust (an engine and a viewer) before anything renders. Gzip
+4.3 MB of compiled Rust (an engine and a viewer) before anything renders. Gzip
 buys about 1% on that binary — this is not JavaScript, and averaging or stacking
 it against six JS bundle sizes would compare different kinds of thing. It is
 reported as its own column, always separate.
@@ -156,6 +156,8 @@ own page. Any screenshot comparing Perspective's columns to the other six is
 comparing formatting choices as much as rendering.
 
 ## Variance and confidence
+
+Measured on 2026-11-20/21, Apple M4 (16 GB), macOS 15.6, headless Chromium 151.0.7922.34 (Playwright 1.62.1), dev server, 1400×1000; render and FPS figures on the hub are medians of seven fresh page loads per library (Observable, Tabulator, AG Grid, TanStack, Glide, Perspective). The machine was shared with other jobs (load average roughly 4 to 12 during the runs), which inflates the slowest figures: Perspective's large render ranged 2.9 to 8.2 s across runs. The plain `<table>` figures (2.6 s at 50,000 rows, 6.9 s at 100,000, about 27 s at 200,000) were not re-taken: it has no upgraded dependency, and on the loaded machine it measured 4.8 s and 13 s in the same A/B runs as the old install, so those runs say nothing about the library versions. The Tabulator `height: "100%"` cliff was re-measured once, at about 8 minutes (480 s) at 50,000 rows, also loaded.
 
 Render numbers are one machine's observations, in headless Chromium at
 1400×1000, typed into the site from repeated manual runs rather than generated

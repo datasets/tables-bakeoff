@@ -102,22 +102,22 @@
     <a class="lib" href="/demos/observable.html">
       <h3>Observable Inputs</h3>
       <p>One function call. Strong defaults, built for data exploration.</p>
-      <div class="meta">v0.12.0 · ISC</div>
+      <div class="meta">v1.0.0 · ISC</div>
     </a>
     <a class="lib" href="/demos/tabulator.html">
       <h3>Tabulator</h3>
       <p>Vanilla, batteries-included: grouping, tree data, editing, export.</p>
-      <div class="meta">v6.5.2 · MIT</div>
+      <div class="meta">v6.7.1 · MIT</div>
     </a>
     <a class="lib" href="/demos/aggrid.html">
       <h3>AG Grid Community</h3>
       <p>The enterprise default. Vanilla core, row + column virtualization.</p>
-      <div class="meta">v36.1.0 · MIT (Community tier)</div>
+      <div class="meta">v36.3.0 · MIT (Community tier)</div>
     </a>
     <a class="lib" href="/demos/tanstack.html">
       <h3>TanStack Table</h3>
       <p>Headless. It computes rows and sorting; you write every element.</p>
-      <div class="meta">v9.2.4 · MIT · React</div>
+      <div class="meta">v9.3.1 · MIT · React</div>
     </a>
     <a class="lib" href="/demos/glide.html">
       <h3>Glide Data Grid</h3>
@@ -127,7 +127,7 @@
     <a class="lib" href="/demos/perspective.html">
       <h3>Perspective</h3>
       <p>WASM + Arrow columnar engine in a worker, with a grid attached.</p>
-      <div class="meta">v5.3.1 · Apache-2.0</div>
+      <div class="meta">v5.9.4 · Apache-2.0</div>
     </a>
   </div>
 
@@ -167,7 +167,7 @@
         <td data-bundle="observable">—</td>
         <td data-wasm="observable">—</td>
         <td data-loc="observable">—</td>
-        <td>5.8 ms<sup>a</sup></td>
+        <td>5.6 ms<sup>a</sup></td>
         <td>6.7 ms<sup>a</sup></td>
         <td>60 fps</td>
         <td class="yes">Yes<sup>a</sup></td>
@@ -178,8 +178,8 @@
         <td data-bundle="tabulator">—</td>
         <td data-wasm="tabulator">—</td>
         <td data-loc="tabulator">—</td>
-        <td>68 ms<sup>b</sup></td>
-        <td>280 ms<sup>b</sup></td>
+        <td>65 ms<sup>b</sup></td>
+        <td>141 ms<sup>b</sup></td>
         <td>60 fps</td>
         <td class="yes">Yes</td>
         <td>MIT</td>
@@ -189,8 +189,8 @@
         <td data-bundle="aggrid">—</td>
         <td data-wasm="aggrid">—</td>
         <td data-loc="aggrid">—</td>
-        <td>35 ms</td>
-        <td>248 ms</td>
+        <td>37 ms</td>
+        <td>280 ms</td>
         <td>60 fps</td>
         <td class="yes">Yes</td>
         <td>MIT (Community)</td>
@@ -200,9 +200,9 @@
         <td data-bundle="tanstack">—</td>
         <td data-wasm="tanstack">—</td>
         <td data-loc="tanstack">—</td>
-        <td>20.0 ms</td>
-        <td>141 ms</td>
-        <td>59 fps</td>
+        <td>31 ms</td>
+        <td>209 ms</td>
+        <td>56 fps</td>
         <td class="yes">Yes</td>
         <td>MIT</td>
       </tr>
@@ -211,8 +211,8 @@
         <td data-bundle="glide">—</td>
         <td data-wasm="glide">—</td>
         <td data-loc="glide">—</td>
-        <td>17.4 ms</td>
-        <td>24.6 ms</td>
+        <td>7.9 ms</td>
+        <td>11.2 ms</td>
         <td>60 fps</td>
         <td class="yes">Yes<sup>c</sup></td>
         <td>MIT</td>
@@ -222,8 +222,8 @@
         <td data-bundle="perspective">—</td>
         <td data-wasm="perspective">—</td>
         <td data-loc="perspective">—</td>
-        <td>274 ms</td>
-        <td>2,100–2,700 ms<sup>d</sup></td>
+        <td>565 ms</td>
+        <td>4,900–6,900 ms<sup>d</sup></td>
         <td>60 fps</td>
         <td class="yes">Yes</td>
         <td>Apache-2.0</td>
@@ -277,8 +277,8 @@
     <li>
       <sup>b</sup> Tabulator's own documented <code>height: "100%"</code> pattern — the one its docs
       give for filling a container — silently zeroes its viewport measurement, so it renders every
-      row instead of the visible ones: <strong>62 seconds at 50,000 rows</strong>, and 500,000
-      effectively never. Removing that one option gives the 280 ms above. Nothing warned.
+      row instead of the visible ones: <strong>about 8 minutes at 50,000 rows</strong>, and 500,000
+      effectively never. Removing that one option gives the 141 ms above. Nothing warned.
     </li>
     <li>
       <sup>c</sup> Glide's 500,000 rows render <em>faster than its own 1,000-row card</em>, because
@@ -317,11 +317,11 @@
   <ul class="tight">
     <li>
       <strong>Large datasets (50k–500k rows), speed is critical:</strong>
-      <strong class="yes">Glide Data Grid</strong> — renders 500,000 rows in 24.6ms. Trade-off: text isn't selectable, find-in-page doesn't work, canvas-only rendering. Use when you're scrolling through data, not copying or searching it.
+      <strong class="yes">Glide Data Grid</strong> — renders 500,000 rows in 11.2ms. Trade-off: text isn't selectable, find-in-page doesn't work, canvas-only rendering. Use when you're scrolling through data, not copying or searching it.
     </li>
     <li>
       <strong>General purpose, any size, any data:</strong>
-      <strong class="yes">AG Grid Community</strong> — 35–248ms renders, 60 fps, mature API, handles sorting and filtering smoothly. The safest default if you're not sure what you need.
+      <strong class="yes">AG Grid Community</strong> — 37–280ms renders, 60 fps, mature API, handles sorting and filtering smoothly. The safest default if you're not sure what you need.
     </li>
     <li>
       <strong>Maximum customization, small datasets:</strong>
@@ -346,13 +346,13 @@
     </li>
     <li>
       <strong>The most dangerous configuration in this bake-off came from a library's own docs.</strong>
-      Tabulator's <code>height: "100%"</code> turns a 40 ms render into a 62 second one at 50,000
+      Tabulator's <code>height: "100%"</code> turns a 40 ms render into an 8 minute one at 50,000
       rows, with no error, no warning, and nothing on screen to suggest anything is wrong. It is
       exactly the kind of thing you copy from a tutorial and never notice on a page of 200 rows.
     </li>
     <li>
       <strong>Canvas wins the row-count race and loses the text.</strong> Glide renders 500,000 rows
-      in 24.6 ms because it never sees the data — it is handed a row count and a
+      in 11.2 ms because it never sees the data — it is handed a row count and a
       <code>getCellContent(col, row)</code> callback. Whether that trade is acceptable depends
       entirely on whether your users need to search, select or copy what they can see.
     </li>
