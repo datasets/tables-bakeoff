@@ -3,7 +3,8 @@
 A bake-off of seven open-source JavaScript table/grid libraries, built as a static site you scroll rather than a written report. Sibling of the [line-charts](https://linecharts.datahub.io/) repo.
 
 - **Live:** https://tables.datahub.io/ — deployed and current.
-- **Build:** static Vite multi-page build; `npm run build` emits `dist/`. There is no deploy config in the repo — the site is served from the build output by datahub.io infra (deploy mechanism lives outside this repo).
+- **Build:** static Vite multi-page build; `npm run build` emits `dist/`.
+- **Deploy:** pushing `main` deploys to Cloudflare within about a minute (checked 21 Nov 2026); the build config lives outside this repo. Work on a branch, then push it to `main` when it should go live.
 - `CLAUDE.md` is a symlink to this file.
 
 ## Changelog
