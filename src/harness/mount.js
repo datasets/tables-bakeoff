@@ -10,7 +10,8 @@
  *   export const meta   = { name, version, license, docs, tagline, notes?, npm };
  *   export const tables = { small, wide, medium, large };
  *   export const source = renderFn;   // optional, see (3) — usually wanted
- *   mountDemo({ meta, tables, source });
+ *   export const setup  = asyncFn;   // optional, see (4)
+ *   mountDemo({ meta, tables, source, setup });
  *
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
@@ -59,7 +60,15 @@
  *     implementation across the four datasets, so tables[key] is a one-line
  *     delegating stub and the panel shows nothing worth reading. Export the
  *     function that does the work — one function, or a per-key map — and the
- *     panel shows the stub followed by that implementation. */
+ *     panel shows the stub followed by that implementation.
+ *
+ * (4) export const setup — a one-off, per-page cost that is not a render.
+ *     Perspective boots two WebAssembly engines before it can draw anything.
+ *     Left inside the first render it made 1,000 rows read as three seconds;
+ *     left out silently it would vanish. A demo with such a cost exports it
+ *     as `setup`: the harness awaits it once, before any card renders, times
+ *     it with the same clock, and prints it on its own line ("engine ready in
+ *     N ms") above the cards and in the gallery embed. */
 
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
@@ -69,14 +78,14 @@ import { renderMarkdown } from "./markdown.js";
 
 restoreTheme();
 
-export async function mountDemo({ meta, tables, source }) {
+export async function mountDemo({ meta, tables, source, setup }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
 
   // ?bare=1: the front page embeds each demo as an iframe showing only the
   // small dataset, no page chrome. Same loader, same formatter, same clock.
   const params = new URLSearchParams(location.search);
-  if (params.get("bare") === "1") return mountBare({ meta, tables, root, dataset: params.get("dataset") || "small" });
+  if (params.get("bare") === "1") return mountBare({ meta, tables, setup, root, dataset: params.get("dataset") || "small" });
 
   root.innerHTML = shell(meta);
   installThemeToggle(root.querySelector(".toggle"));
@@ -101,6 +110,22 @@ export async function mountDemo({ meta, tables, source }) {
         e.target.textContent = "loading…";
         render(key, card);
       });
+    }
+  }
+
+  // A one-off engine boot, timed on its own and shown on its own line, so it is
+  // neither hidden nor charged to whichever card happens to render first.
+  if (setup) {
+    const line = root.querySelector(".setup-line");
+    line.hidden = false;
+    try {
+      const ms = await timeSetup(setup);
+      line.querySelector("b").textContent = formatMs(ms);
+    } catch (err) {
+      line.querySelector("b").textContent = "failed";
+      line.insertAdjacentHTML("beforeend", `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`);
+      console.error(`[${meta.name}] setup`, err);
+      return;
     }
   }
 
@@ -189,7 +214,7 @@ export async function mountDemo({ meta, tables, source }) {
  *  the iframe, nothing else. Reports the render time to the parent window
  *  (`{ type: "tb:rendered", key, ms }`) and follows the parent's theme
  *  (`{ type: "tb:theme", value: "light" | "dark" | null }`). */
-async function mountBare({ meta, tables, root, dataset }) {
+async function mountBare({ meta, tables, setup, root, dataset }) {
   const key = DATASETS[dataset] ? dataset : "small";
   document.documentElement.classList.add("bare");
   root.innerHTML = `<div class="demo-host bare-host"></div>`;
@@ -198,7 +223,15 @@ async function mountBare({ meta, tables, root, dataset }) {
 
   const post = (msg) => { if (parent !== window) parent.postMessage({ demo: meta.name, key, ...msg }, "*"); };
 
+  let setupMs = null;
   async function render() {
+    if (setup && setupMs === null) {
+      try { setupMs = await timeSetup(setup); } catch (err) {
+        host.innerHTML = `<pre class="err">${escapeHtml(String(err))}</pre>`;
+        post({ type: "tb:failed" });
+        return;
+      }
+    }
     let data;
     try {
       data = await loadDataset(key);
@@ -214,7 +247,7 @@ async function mountBare({ meta, tables, root, dataset }) {
     try {
       const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
       cleanup = typeof result === "function" ? result : null;
-      post({ type: "tb:rendered", ms });
+      post({ type: "tb:rendered", ms, setupMs });
     } catch (err) {
       host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
       post({ type: "tb:failed" });
@@ -251,6 +284,14 @@ async function timeRender(fn, host) {
   const result = raw && typeof raw.then === "function" ? await raw : raw;
   void host.offsetHeight;
   return { result, ms: syncMs + (performance.now() - t0) };
+}
+
+/** A demo's one-off setup (see (4) in the contract). Same clock as a render,
+ *  without the layout flush, since nothing is on screen yet. */
+async function timeSetup(setup) {
+  const t0 = performance.now();
+  await setup();
+  return performance.now() - t0;
 }
 
 /** Libraries that own their own viewport (AG Grid, Glide) scroll an element
@@ -366,6 +407,7 @@ function shell(meta) {
     meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener">github${meta.stars ? ` · ${meta.stars.toLocaleString()} ★` : ""}</a>` : null,
     `<a href="${e(meta.docs)}" target="_blank" rel="noopener">docs</a>`,
     meta.npm ? `<code>${e(meta.npm)}</code>` : null,
+    meta.notes ? `<a href="#notes">notes from the build</a>` : null,
   ].filter(Boolean).join(" &nbsp;·&nbsp; ");
 
   return `
@@ -378,10 +420,12 @@ function shell(meta) {
     <p style="margin:10px 0 0;font-size:12.5px;color:var(--text-muted)">
       ${links} &nbsp;·&nbsp; ${e(meta.license)}
     </p>
-    ${meta.notes ? `<div class="demo-notes">${renderMarkdown(meta.notes)}</div>` : ""}
+    <p class="setup-line" hidden>${e(meta.setupLabel || "setup")} in <b>…</b>
+      <span>${e(meta.setupNote || "once per page, before any table; not included in the render times below")}</span></p>
   </header>
   <main class="wrap" style="padding-bottom:60px">
     ${DATASET_KEYS.map(cardHTML).join("")}
+    ${meta.notes ? `<section class="demo-notes-section" id="notes"><h2>Notes from the build</h2><div class="demo-notes">${renderMarkdown(meta.notes)}</div></section>` : ""}
   </main>
   ${footer()}`;
 }

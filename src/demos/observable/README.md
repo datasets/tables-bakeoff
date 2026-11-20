@@ -10,4 +10,7 @@ npm: "@observablehq/inputs"
 tagline: One function call. Strong defaults, built for data exploration.
 ---
 
-Inputs.table appends rows lazily as you scroll rather than windowing — nothing already in the DOM is ever removed, so memory grows with how far you scroll and never comes back down; on the 500,000-row card that means a full scroll to the bottom leaves every row live in the page. Its stylesheet is fixed light-mode with no theming hook at all, so dark mode here is a scoped CSS override keyed by the table's own generated id — Inputs.table exposes nothing for this itself. There is no column windowing either — @observablehq/inputs has no option for it and builds a <td> for every column of every row it appends (src/table.js line 100), so on the 80-column `wide` card all 80 columns are live in each row where the grids here render only the dozen on screen. That said it is the smallest API of the seven: one function call, no destroy method needed, and sort-on-header-click, alignment and formatting all come free.
+- One call, `Inputs.table(rows, options)`: it infers column types, right-aligns numbers and sorts on a header click.
+- It needs its stylesheet (`@observablehq/inputs/dist/index.css`, as its README shows) plus `select: false` for a read-only table. Our first build missed the stylesheet, which is why ids and dates wrapped mid-word in earlier screenshots.
+- It appends rows as you scroll and never removes them, and every appended row has all its columns (80 on the wide card). Fine for thousands of rows, not for hundreds of thousands.
+- No theming hook, and the stylesheet is light only, so dark mode here is a small CSS override keyed to the table's id.

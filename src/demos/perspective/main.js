@@ -24,19 +24,27 @@ import { mountDemo } from "../../harness/mount.js";
 import { DATASETS } from "../../data/datasets.js";
 
 const { meta: frontmatter, body: notes } = parseFrontmatter(readme);
-export const meta = { ...frontmatter, notes };
+export const meta = { ...frontmatter, notes, setupLabel: "engine ready", setupNote: "two WebAssembly binaries fetched and compiled, once per page, before any table; not included in the render times below" };
 
-/* One engine for the whole page. `worker()` instantiates the WASM store in a
- * Web Worker; doing that per card would charge each card for a cost the user
- * pays once. The four tables are named and share this one client, which is
- * also what lets viewer.load(client) + restore({table}) render exactly once. */
-const clientPromise = (async () => {
+/* One engine for the whole page, booted once in `setup` below. `worker()`
+ * instantiates the WASM store in a Web Worker; doing that per card would charge
+ * each card for a cost the user pays once. The harness times setup on its own
+ * and prints it as "engine ready in N ms" above the cards, so the boot is
+ * disclosed rather than landing inside the first card's render time (where it
+ * made 1,000 rows read as about three seconds). */
+let client = null;
+
+export async function setup() {
   await Promise.all([
     perspective.init_server(fetch(SERVER_WASM)),
     perspective_viewer.init_client(fetch(CLIENT_WASM)),
   ]);
-  return perspective.worker();
-})();
+  client = await perspective.worker();
+  // The worker finishes compiling on its first request, so make one: a
+  // one-row table, created and dropped, before the clock starts on any card.
+  const warm = await client.table([{ x: 1 }], { name: "warmup" });
+  await warm.delete();
+}
 
 /* Tables in a client live in a flat, engine-wide namespace keyed by name, and
  * `client.table()` throws `Table "x" already exists` on a collision. The
@@ -53,7 +61,6 @@ async function build(host, data, ctx) {
   viewer.style.width = "100%";
   host.appendChild(viewer);
 
-  const client = await clientPromise;
   const name = `${ctx.key}_${++tableSeq}`;
   // The one place the 500,000 rows cross into the engine: an array of JS
   // objects is transferred to the worker and rebuilt as Arrow columns there.
@@ -120,4 +127,4 @@ export const tables = { small: build, wide: build, medium: build, large: build }
 
 export const source = build;
 
-mountDemo({ meta, tables, source });
+mountDemo({ meta, tables, source, setup });

@@ -39,7 +39,11 @@ function build(host, data, ctx) {
     columnDefs: data.columns.map((c) => ({
       field: c.name,
       headerName: c.label,
-      type: c.type === "number" ? "rightAligned" : undefined,
+      // Right-align the numbers, not the header. The built-in "rightAligned"
+      // column type mirrors the header too, which puts the filter icon on the
+      // left of the label: beside a left-aligned neighbour that read as an
+      // extra, blank-headed column. The cell class is the half of it we want.
+      cellClass: c.type === "number" ? "ag-right-aligned-cell" : undefined,
       sortable: true,
       filter: true,
       resizable: true,

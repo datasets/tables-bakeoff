@@ -55,8 +55,8 @@ export const ENTRIES = [
     render50k: { text: "5.8 ms", verify: true },
     render500k: { text: "6.7 ms", sub: "first 60 rows only", verify: true },
     fps: { text: "60 fps", verify: true },
-    scores: { look: 2, api: 5, firstTry: 3, docs: 3, escape: 2 },
-    line: "Inputs.table(rows) is the best call in the set. The default look wraps ids and dates, the CSS is light-only, and there is no theming hook.",
+    scores: { look: 3, api: 5, firstTry: 3, docs: 3, escape: 2 },
+    line: "Inputs.table(rows) is the best call in the set. Load its stylesheet and pass select: false and it looks tidy; the CSS is light only and there is no theming hook.",
   },
   {
     key: "tabulator",
@@ -114,7 +114,7 @@ export const ENTRIES = [
     render500k: { text: "24.6 ms", verify: true },
     fps: { text: "60 fps", verify: true },
     scores: { look: 4, api: 4, firstTry: 3, docs: 3, escape: 2 },
-    line: "The best theming object here, one plain token bag. Canvas means no DOM to reach, and it will not size itself from CSS.",
+    line: "The best theming object here, one plain token bag. Grid copy works once getCellsForSelection is set, but canvas means browser Ctrl-F and text selection see nothing.",
   },
   {
     key: "perspective",

@@ -3,6 +3,9 @@
  * appending rows as you scroll — not real windowing, see meta.notes. */
 
 import * as Inputs from "@observablehq/inputs";
+// The stylesheet its README loads next to the script. Without it cells wrap
+// mid-token and every row shows its selection checkbox.
+import "@observablehq/inputs/dist/index.css";
 import { mountDemo } from "../../harness/mount.js";
 import { parseFrontmatter } from "../../harness/frontmatter.js";
 import readme from "./README.md?raw";
@@ -21,6 +24,11 @@ function table(host, data, ctx) {
       data.columns.map((c) => [c.name, (v) => ctx.formatCell(v, c)])
     ),
     align: Object.fromEntries(data.columns.map((c) => [c.name, c.align])),
+    // A read-only table: no selection checkboxes in the first column.
+    select: false,
+    // Auto layout sizes columns from their content (the default from 12
+    // columns up, stated here so the small and wide cards match).
+    layout: "auto",
     rows: 30,
     height: 460,
   });

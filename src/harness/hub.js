@@ -49,7 +49,7 @@ if (gallery) {
       <iframe title="${e(d.name)} rendering 1,000 property sales"
               loading="${i < 3 ? "eager" : "lazy"}" scrolling="no"
               src="${demoHref(d.key)}?bare=1&dataset=small"></iframe>
-      <div class="cell__foot">rendered in <b data-ms>—</b> in your browser</div>
+      <div class="cell__foot">rendered in <b data-ms>—</b> in your browser<span data-setup></span></div>
     </article>`).join("");
 
   const frames = [...gallery.querySelectorAll("iframe")];
@@ -57,7 +57,13 @@ if (gallery) {
   addEventListener("message", (ev) => {
     const c = cellOf(ev.source);
     if (!c || !ev.data || typeof ev.data !== "object") return;
-    if (ev.data.type === "tb:rendered") c.querySelector("[data-ms]").textContent = fmtMs(ev.data.ms);
+    if (ev.data.type === "tb:rendered") {
+      c.querySelector("[data-ms]").textContent = fmtMs(ev.data.ms);
+      // A one-off engine boot (Perspective's WASM) is reported beside the
+      // render, not inside it and not left out.
+      const boot = c.querySelector("[data-setup]");
+      if (boot && ev.data.setupMs != null) boot.textContent = ` · engine boot ${fmtMs(ev.data.setupMs)} first`;
+    }
     if (ev.data.type === "tb:failed") c.querySelector("[data-ms]").textContent = "failed";
   });
 

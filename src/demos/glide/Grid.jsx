@@ -4,7 +4,8 @@
  * passes through the grid at all.
  *
  * The bill for that arrives elsewhere: nothing on screen is in the DOM, so
- * Ctrl-F, screen readers and select-and-copy all see an empty box. */
+ * browser Ctrl-F and native text selection see an empty box. The grid's own
+ * selection and copy work (getCellsForSelection below). */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DataEditor, GridCellKind } from "@glideapps/glide-data-grid";
@@ -71,6 +72,10 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
         rowHeight={32}
         headerHeight={34}
         rowMarkers="none"
+        // The documented clipboard switch: without it Glide's copy does
+        // nothing. `true` answers copy requests from getCellContent, so a
+        // selected range copies as tab-separated text, off-screen rows too.
+        getCellsForSelection={true}
         smoothScrollX
         smoothScrollY
         width={box.width}
