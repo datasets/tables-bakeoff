@@ -11,3 +11,4 @@ data-cache/
 .beads-credential-key
 .beads/proxieddb/
 *.gate.lock*
+.aggrid-lean/

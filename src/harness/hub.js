@@ -158,6 +158,8 @@ fetch("/bundles.json")
       for (const el of document.querySelectorAll(`[data-bundle="${key}"]`)) {
         el.textContent = `${fmt(d.libKB - d.harnessKB)} kB`;
         if (d.lazyKB > 0 && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">+ ${fmt(d.lazyKB)} kB lazy</span>`);
+        const sub = ENTRIES.find((x) => x.key === key)?.bundleSub;
+        if (sub && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">${e(sub)}<sup><a href="#note-g">g</a></sup></span>`);
       }
       // Rounded variant for prose: "21 kB over React".
       for (const el of document.querySelectorAll(`[data-bundle-round="${key}"]`)) {

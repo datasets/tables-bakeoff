@@ -36,6 +36,12 @@ npm test           # vitest
 npm run test:e2e   # playwright
 ```
 
+Measurement scripts (each says how to run it at the top):
+`scripts/measure-sort.mjs` times "Sort by price" on every large card,
+`scripts/edit-test.mjs` runs the edit test, and
+`scripts/measure-aggrid-lean.mjs` sizes AG Grid with all Community modules
+against only the ones its demo uses.
+
 ## Method
 
 Every library renders the same four datasets (a small rich sample, a wide

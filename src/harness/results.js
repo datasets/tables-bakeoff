@@ -36,6 +36,16 @@ export const MEASURED = {
   sort: "21 Nov 2026, production build, median of 5, busy machine (load average 3 to 5; 10 to 13 for the plain table)",
 };
 
+/** AG Grid Community, everything vs only the modules the demo uses, from
+ *  scripts/measure-aggrid-lean.mjs (2026-11-21, AG Grid 36.3.0): the demo page
+ *  built twice through the same pipeline, own code net of the shared harness,
+ *  gzip. The site ships the quick-start version (`all`). */
+export const AGGRID_LEAN = {
+  allKB: 334,
+  leanKB: 272,
+  modules: ["ClientSideRowModelModule", "TextFilterModule", "NumberFilterModule", "DateFilterModule", "CellStyleModule", "NumberEditorModule"],
+};
+
 /** Scorecard axes, 1 (worst) to 5 (best). Subjective, from doing the build. */
 export const AXES = [
   { key: "look", label: "Default look", hint: "How the table looks before you touch the CSS" },
@@ -104,6 +114,7 @@ export const ENTRIES = [
     license: "MIT",
     released: "2026-11-04",
     paywalled: "Enterprise: grouping, pivot, range selection, clipboard, Excel export",
+    bundleSub: "272 kB with only the modules it uses",
     framework: "none",
     render50k: { text: "35 ms", verify: true },
     render500k: { text: "248 ms", verify: true },
