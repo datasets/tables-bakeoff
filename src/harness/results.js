@@ -100,7 +100,7 @@ export const ENTRIES = [
     textSelect: { text: "yes" },
     kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 5, firstTry: 3, docs: 3, escape: 2 },
-    line: "Inputs.table(rows) is the best call in the set. Load its stylesheet and pass select: false and it looks tidy; the CSS is light only and there is no theming hook.",
+    line: "Inputs.table(rows) is the best call in the set. Load its stylesheet and pass select: false and it looks tidy. There is no theming API; dark mode is your own CSS.",
   },
   {
     key: "tabulator",
@@ -279,7 +279,6 @@ export const VERDICTS = {
     ],
     skip: [
       "More than about ten thousand rows: it appends rows as you scroll and never removes them.",
-      "You need dark mode or theming. The CSS is light only, with no hook.",
     ],
     watch: "Load its stylesheet, or ids and dates wrap mid-word.",
   },
@@ -292,13 +291,12 @@ export const VERDICTS = {
     ],
     skip: [
       "Headers must sort from the keyboard. Here they sort on click only.",
-      "Dark mode must come from the library. Its themes are plain CSS with no variables.",
     ],
     watch: "height: \"100%\" in a parent with no height renders every row: 88 seconds at 50,000 rows, nothing logged. Give the host a real height.",
   },
   aggrid: {
     role: "Our pick for a big grid",
-    line: "Sorts and filters 500,000 rows at 60 fps out of the box, in any framework. Free, MIT; grouping, pivot and Excel export are Enterprise, $999 per developer.",
+    line: "Sorts and filters 500,000 rows at 60 fps out of the box, in any framework. Free, MIT; grouping, pivot and Excel export are Enterprise.",
     use: [
       "Tens of thousands to 500,000 rows and you want it done.",
       "Loud failures: a missing module throws, a wrong host height draws an obviously empty grid.",
