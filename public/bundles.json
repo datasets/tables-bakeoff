@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T00:19:49.110Z",
+  "generatedAt": "2026-11-21T00:25:57.189Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -12,10 +12,10 @@
   },
   "harness": {
     "files": [
-      "assets/results-Ck72GVga.js",
+      "assets/results-Bl9ZEqxA.js",
       "assets/markdown-B_sAtjw3.js",
       "assets/frontmatter-BYBBUU76.js",
-      "assets/mount-CB9dsnlP.js",
+      "assets/mount-CEUmoje2.js",
       "assets/theme-DTs1rE8-.js",
       "assets/theme-CQW_ahdP.css"
     ],
@@ -36,7 +36,7 @@
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 85.8,
+        "jsKB": 85.7,
         "cssKB": 7.4,
         "wasmKB": 0,
         "totalKB": 93.1
@@ -44,11 +44,11 @@
       "loc": 39,
       "files": {
         "js": [
-          "assets/baseline-BtVtseh6.js",
-          "assets/results-Ck72GVga.js",
+          "assets/baseline-KY-kuvbN.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -79,11 +79,11 @@
       "loc": 36,
       "files": {
         "js": [
-          "assets/observable-DnMQSVl4.js",
-          "assets/results-Ck72GVga.js",
+          "assets/observable-3h5YLylq.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -110,16 +110,16 @@
         "jsKB": 545.9,
         "cssKB": 36.6,
         "wasmKB": 0,
-        "totalKB": 582.5
+        "totalKB": 582.4
       },
       "loc": 70,
       "files": {
         "js": [
-          "assets/tabulator-Du2s6Lne.js",
-          "assets/results-Ck72GVga.js",
+          "assets/tabulator-CPBPln9P.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -151,11 +151,11 @@
       "loc": 40,
       "files": {
         "js": [
-          "assets/aggrid-CZDB-ae9.js",
-          "assets/results-Ck72GVga.js",
+          "assets/aggrid-C4-hhhGy.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -181,19 +181,19 @@
         "jsKB": 380.8,
         "cssKB": 7.4,
         "wasmKB": 0,
-        "totalKB": 388.2
+        "totalKB": 388.1
       },
       "loc": 147,
       "files": {
         "js": [
-          "assets/tanstack-DdYpc9-m.js",
-          "assets/results-Ck72GVga.js",
+          "assets/tanstack-DWOKte0Y.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/Table-DRgYDsge.js",
           "assets/react-XG3B2r_u.js",
           "assets/react-host-CTZUpMtF.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -224,14 +224,14 @@
       "loc": 128,
       "files": {
         "js": [
-          "assets/glide-DhybV7MM.js",
-          "assets/results-Ck72GVga.js",
+          "assets/glide-DerzLUOp.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/preload-helper-BXl3LOEh.js",
           "assets/react-host-CTZUpMtF.js",
           "assets/react-XG3B2r_u.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -240,8 +240,8 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/number-overlay-editor-CIjaEhdL.js",
-          "assets/data-grid-overlay-editor-eKDMErAW.js"
+          "assets/number-overlay-editor-DJ3PCpGA.js",
+          "assets/data-grid-overlay-editor-Dc1YVcEa.js"
         ]
       }
     },
@@ -261,15 +261,15 @@
         "jsKB": 386.4,
         "cssKB": 171.7,
         "wasmKB": 4388.9,
-        "totalKB": 558.2
+        "totalKB": 558.1
       },
       "loc": 63,
       "files": {
         "js": [
-          "assets/perspective-CkPPv0vS.js",
-          "assets/results-Ck72GVga.js",
+          "assets/perspective-DwVWxkXL.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js",
           "assets/frontmatter-BYBBUU76.js"
         ],
@@ -300,16 +300,16 @@
         "jsKB": 225.4,
         "cssKB": 38.6,
         "wasmKB": 0,
-        "totalKB": 264
+        "totalKB": 263.9
       },
       "loc": 56,
       "files": {
         "js": [
-          "assets/datatables-COtVp9J9.js",
-          "assets/results-Ck72GVga.js",
+          "assets/datatables-BPbZbEZM.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -341,11 +341,11 @@
       "loc": 52,
       "files": {
         "js": [
-          "assets/revogrid-YIACjJCl.js",
-          "assets/results-Ck72GVga.js",
+          "assets/revogrid-Ds8jyTYs.js",
+          "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CB9dsnlP.js",
+          "assets/mount-CEUmoje2.js",
           "assets/theme-DTs1rE8-.js",
           "assets/preload-helper-BXl3LOEh.js"
         ],
@@ -354,20 +354,20 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/revogr-data_4.entry-DnFtD2NF.js",
+          "assets/revogr-data_4.entry-ALRWOEfB.js",
           "assets/debounce-PCRWZliA-CMxTb8Pi.js",
-          "assets/throttle-DDvljWu0-Cpxn83Iv.js",
-          "assets/viewport.helpers-CoCAvmZs-BHhsPJ9H.js",
-          "assets/dimension.helpers-DLH6njyw-Bph15OMh.js",
-          "assets/header-cell-renderer-XoW6IWU0-5zSFX3go.js",
-          "assets/filter.button-BwxfX4Ix-BH9qcsou.js",
-          "assets/revogr-clipboard_3.entry-C-wwINas.js",
-          "assets/index-BvBMdMR3-BJ0n62ax.js",
-          "assets/edit.utils-Cm899OWt-DIylBBag.js",
-          "assets/revogr-attribution_7.entry-B5h9eMs9.js",
-          "assets/events-BvSmBueA-CJ-t6KPu.js",
-          "assets/revogr-filter-panel.entry-DqLSYX_c.js",
-          "assets/revo-grid.entry-ptgjvHMy.js"
+          "assets/throttle-DDvljWu0-CPBLLCAT.js",
+          "assets/viewport.helpers-CoCAvmZs-CsUgGM9-.js",
+          "assets/dimension.helpers-DLH6njyw-B8JS8Wr9.js",
+          "assets/header-cell-renderer-XoW6IWU0-Bucsk3TK.js",
+          "assets/filter.button-BwxfX4Ix-DYt_KijP.js",
+          "assets/revogr-clipboard_3.entry-DB9-uR7Z.js",
+          "assets/index-BvBMdMR3-Cpc7HRUV.js",
+          "assets/edit.utils-Cm899OWt-D9QBy9Ds.js",
+          "assets/revogr-attribution_7.entry-DieHQHxg.js",
+          "assets/events-BvSmBueA-BVaah-XR.js",
+          "assets/revogr-filter-panel.entry-BiXO2Xnt.js",
+          "assets/revo-grid.entry-B-k6hWyG.js"
         ]
       }
     }

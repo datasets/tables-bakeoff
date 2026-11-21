@@ -114,7 +114,7 @@ export const ENTRIES = [
     license: "MIT",
     released: "2026-11-04",
     paywalled: "Enterprise: grouping, pivot, range selection, clipboard, Excel export",
-    bundleSub: "272 kB with only the modules it uses",
+    bundleSub: "lean: 272 kB",
     framework: "none",
     render50k: { text: "35 ms", verify: true },
     render500k: { text: "248 ms", verify: true },
