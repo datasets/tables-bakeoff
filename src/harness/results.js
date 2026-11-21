@@ -29,6 +29,15 @@ export const EDIT_STATUS = {
   no: "Not available",
 };
 
+/** `textSelect` and `kbSort` were checked with Playwright on 2026-11-21 on
+ *  each demo's 1,000-row embed (`?bare=1&dataset=small`), dev server:
+ *  textSelect drags the mouse across the first data cell and reads
+ *  getSelection(); kbSort presses Tab from the top of the page until a column
+ *  header has focus, presses Enter, and checks the rows changed order (a second
+ *  Enter if the first sort left them as they were). "click only" means the
+ *  header sorts on a click but Tab never reaches it. No screen reader was used. */
+export const CHECKED = "21 Nov 2026, Playwright, the 1,000-row embed of each demo";
+
 /** Where the typed-in render and FPS numbers come from. */
 export const MEASURED = {
   machine: "Apple M4, 16 GB, macOS 15.6, headless Chromium 151, 1400×1000",
@@ -70,6 +79,8 @@ export const ENTRIES = [
     render500k: { text: "did not finish", sub: "100,000 rows: 6.3 s" },
     sort500k: { text: "20 to 22 s", sub: "100,000 rows; rebuilds the table" },
     fps: { text: "n/a", sub: "13 fps at 50,000" },
+    textSelect: { text: "yes" },
+    kbSort: { text: "n/a", sub: "no header sort" },
     scores: { look: 4, api: 5, firstTry: 5, docs: 5, escape: 5 },
     line: "Our CSS, no API to learn, nothing to fight. It cannot virtualize, so it stops at a few thousand rows.",
   },
@@ -86,6 +97,8 @@ export const ENTRIES = [
     render500k: { text: "10.8 ms", sub: "first 60 rows only" },
     sort500k: { text: "104 ms", sub: "redraws the first 60 rows" },
     fps: { text: "53 fps" },
+    textSelect: { text: "yes" },
+    kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 5, firstTry: 3, docs: 3, escape: 2 },
     line: "Inputs.table(rows) is the best call in the set. Load its stylesheet and pass select: false and it looks tidy; the CSS is light only and there is no theming hook.",
   },
@@ -106,6 +119,8 @@ export const ENTRIES = [
       paste: { status: "config", text: "selectableRange, clipboard: true and clipboardPasteParser/Action: \"range\", from its spreadsheet example. Free" },
     },
     fps: { text: "60 fps" },
+    textSelect: { text: "yes" },
+    kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 4, firstTry: 1, docs: 4, escape: 3 },
     line: "Complete docs, and they contain the trap: height: \"100%\" in an unsized parent cost 88 seconds at 50,000 rows with nothing logged.",
   },
@@ -126,6 +141,8 @@ export const ENTRIES = [
       paste: { status: "paid", text: "clipboard and cell selection are Enterprise modules; in Community, Ctrl/Cmd-V on a cell does nothing" },
     },
     fps: { text: "60 fps" },
+    textSelect: { text: "no", sub: "needs an option" },
+    kbSort: { text: "yes" },
     scores: { look: 4, api: 4, firstTry: 3, docs: 4, escape: 4 },
     line: "Threw on a missing ModuleRegistry and had renamed its scroller class, but both failures were visible. The theming API is good.",
   },
@@ -141,6 +158,8 @@ export const ENTRIES = [
     render500k: { text: "124 ms" },
     sort500k: { text: "418 ms" },
     fps: { text: "60 fps" },
+    textSelect: { text: "yes" },
+    kbSort: { text: "yes", sub: "header is a <button>" },
     scores: { look: 5, api: 3, firstTry: 2, docs: 2, escape: 5 },
     line: "It is your table, so it looks like your site. v9 docs were the .d.ts files, and the virtualizer and spacer rows are yours to get wrong.",
   },
@@ -161,6 +180,8 @@ export const ENTRIES = [
       paste: { status: "config", text: "onPaste: true (without it only the first value lands) and getCellsForSelection" },
     },
     fps: { text: "60 fps" },
+    textSelect: { text: "no", sub: "canvas" },
+    kbSort: { text: "n/a", sub: "no header sort" },
     scores: { look: 4, api: 4, firstTry: 3, docs: 3, escape: 2 },
     line: "The best theming object here, one plain token bag. Grid copy works once getCellsForSelection is set, but canvas means browser Ctrl-F and text selection see nothing.",
   },
@@ -177,6 +198,8 @@ export const ENTRIES = [
     render500k: { text: "1.9 s" },
     sort500k: { text: "346 ms", sub: "in the worker" },
     fps: { text: "60 fps" },
+    textSelect: { text: "no" },
+    kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 3, firstTry: 4, docs: 2, escape: 1 },
     line: "Worked on the first run. No per-cell formatter, no locale option, and two WASM URLs to wire up by hand.",
   },
@@ -199,6 +222,8 @@ export const ENTRIES = [
       paste: { status: "paid", text: "Editor again" },
     },
     fps: { text: "47 fps", sub: "48 fps on 80 columns" },
+    textSelect: { text: "yes" },
+    kbSort: { text: "yes" },
     scores: { look: 3, api: 4, firstTry: 2, docs: 4, escape: 4 },
     line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. It builds its whole model before showing anything, so 500,000 rows is ten seconds.",
   },
@@ -219,6 +244,8 @@ export const ENTRIES = [
       paste: { status: "yes", text: "pastes down from the focused cell; range: true is only for drag-selecting" },
     },
     fps: { text: "60 fps" },
+    textSelect: { text: "no", sub: "off by default" },
+    kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 4, firstTry: 3, docs: 3, escape: 3 },
     line: "The fastest DOM grid at 500,000 rows, in any framework. Its render event fires before any cell exists, its columns do not auto-size, and its community is a quarter of AG Grid's.",
   },

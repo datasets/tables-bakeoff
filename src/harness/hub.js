@@ -4,7 +4,7 @@
  * /bundles.json, so those cannot drift from what shipped. */
 import "./analytics.js";
 import { restoreTheme, installThemeToggle, onThemeChange } from "./theme.js";
-import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS } from "./results.js";
+import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS, CHECKED } from "./results.js";
 
 restoreTheme();
 const toggleBtn = document.querySelector(".toggle");
@@ -36,6 +36,7 @@ for (const el of document.querySelectorAll("[data-library-count]")) {
 for (const el of document.querySelectorAll("[data-measured-machine]")) el.textContent = MEASURED.machine;
 for (const el of document.querySelectorAll("[data-measured-when]")) el.textContent = MEASURED.when;
 for (const el of document.querySelectorAll("[data-measured-sort]")) el.textContent = MEASURED.sort;
+for (const el of document.querySelectorAll("[data-checked]")) el.textContent = CHECKED;
 
 /* ---- gallery: the same 1,000 rows, one iframe per entry ----------------- */
 const gallery = document.getElementById("gallery");
@@ -91,6 +92,8 @@ if (measured) {
       ${cell(d.render500k, d.render500k?.text?.startsWith("did not") ? "no" : "")}
       ${cell(d.sort500k)}
       ${cell(d.fps)}
+      ${cell(d.textSelect)}
+      ${cell(d.kbSort)}
       <td>${month(d.released)}</td>
       <td class="lic">${e(d.license)}<span class="sub">paywalled: ${e(d.paywalled)}</span></td>
     </tr>`).join("");
