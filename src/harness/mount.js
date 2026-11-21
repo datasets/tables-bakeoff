@@ -1,9 +1,15 @@
 /* The shared demo-page framework. A library's page supplies four render
- * functions and gets an identical page: header, four cards, a live metrics
- * badge per card, and a source panel showing the exact code that ran.
+ * functions and gets an identical page: a verdict at the top, a card for
+ * 1,000 rows and one for 500,000, a live metrics badge per card, a "Get
+ * started" block, and a source panel showing the exact code that ran.
  *
  * This is what makes the bake-off fair — every demo gets the same shell, the
  * same data, the same theme and the same formatter.
+ *
+ * All four datasets still exist and still render: the front page gallery and
+ * scripts/measure-all.mjs use them. `?cards=all` puts all four cards on the
+ * page (the measurement scripts pass it); `?bare=1&dataset=<key>` renders one
+ * dataset with no chrome (the gallery embeds).
  *
  * THE CONTRACT every demo module implements:
  *
@@ -12,7 +18,8 @@
  *   export const source = renderFn;   // optional, see (3) — usually wanted
  *   export const setup  = asyncFn;   // optional, see (4)
  *   export const edit   = renderFn;  // optional, see (6)
- *   mountDemo({ meta, tables, source, setup, edit });
+ *   export const skip   = { large: markdown };  // optional, see (7)
+ *   mountDemo({ meta, tables, source, setup, edit, skip });
  *
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
@@ -89,19 +96,33 @@
  *     proves an edit reached the data and not only the screen. What each
  *     library needed is recorded in results.js (`edit`) and printed on the
  *     card; an entry with a result but no `edit` export (DataTables, whose
- *     editing is the paid Editor) gets the card with the result only. */
+ *     editing is the paid Editor) gets the card with the result only.
+ *
+ * (7) export const skip — a card the page should not run.
+ *     The plain <table> cannot render 500,000 rows: the page hangs. Its page
+ *     shows a note in the large card instead of a Load button. `skip` maps a
+ *     dataset key to that note, in Markdown. The card keeps its title and
+ *     source panel. Bare mode and `?cards=all` ignore it, so the measurement
+ *     scripts still get the capped render they time. */
 
 import "./analytics.js";
+import "./demo.css";
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
 import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.js";
 import { renderMarkdown } from "./markdown.js";
-import { ENTRIES, EDIT_STATUS } from "./results.js";
+import { ENTRIES, EDIT_STATUS, VERDICTS } from "./results.js";
+import { SNIPPETS } from "./snippets.js";
 
 restoreTheme();
 
-export async function mountDemo({ meta, tables, source, setup, edit }) {
+/** The two cards a page shows: the small dataset and the large one. The 80
+ *  column and 50,000 row datasets are still built, embedded and measured, but
+ *  on the page they told the reader nothing the other two did not. */
+const PAGE_KEYS = ["small", "large"];
+
+export async function mountDemo({ meta, tables, source, setup, edit, skip = {} }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
 
@@ -110,9 +131,18 @@ export async function mountDemo({ meta, tables, source, setup, edit }) {
   const params = new URLSearchParams(location.search);
   if (params.get("bare") === "1") return mountBare({ meta, tables, setup, root, dataset: params.get("dataset") || "small" });
 
-  const entry = ENTRIES.find((d) => d.key === demoKey());
-  root.innerHTML = shell(meta, entry, !!edit);
+  // ?cards=all: every dataset, and no skipped cards. For the measurement
+  // scripts, which time all four and the plain table's capped 100,000 rows.
+  const allCards = params.get("cards") === "all";
+  const keys = allCards ? DATASET_KEYS : PAGE_KEYS;
+  const skipped = allCards ? {} : skip;
+
+  const key = demoKey();
+  const entry = ENTRIES.find((d) => d.key === key);
+  root.innerHTML = shell({ meta, entry, hasEdit: !!edit, keys, skipped, verdict: VERDICTS[key], snippet: SNIPPETS[key] });
   installThemeToggle(root.querySelector(".toggle"));
+  fillBundleSize(root, key);
+  wireCopyButtons(root);
 
   const cleanups = {};
   const sorters = {};
@@ -120,9 +150,10 @@ export async function mountDemo({ meta, tables, source, setup, edit }) {
 
   // Wire every card before rendering any of them, so the large card's Load
   // button is live while the eager cards are still working.
-  for (const key of DATASET_KEYS) {
+  for (const key of keys) {
     const card = root.querySelector(`[data-card="${key}"]`);
     card.querySelector(".src pre").textContent = sourceOf(tables[key], sourceFor(source, key));
+    if (skipped[key]) continue;
 
     const fpsBtn = card.querySelector(".fps-btn");
     // Nothing to scroll until a table exists; an FPS number for an empty box
@@ -165,8 +196,8 @@ export async function mountDemo({ meta, tables, source, setup, edit }) {
   // parquet decode interleaving with another card's timed render on the same
   // thread would inflate whichever card lost the race, and the site would
   // publish the result as if it were the library's cost.
-  for (const key of DATASET_KEYS) {
-    if (!DATASETS[key].eager) continue;
+  for (const key of keys) {
+    if (!DATASETS[key].eager || skipped[key]) continue;
     await render(key, root.querySelector(`[data-card="${key}"]`));
   }
 
@@ -277,11 +308,46 @@ export async function mountDemo({ meta, tables, source, setup, edit }) {
   if (entry?.edit) await renderEdit(root.querySelector('[data-card="edit"]'), edit, meta);
 
   onThemeChange(() => {
-    for (const key of DATASET_KEYS) {
+    for (const key of keys) {
+      if (skipped[key]) continue;
       const card = root.querySelector(`[data-card="${key}"]`);
       if (card.querySelector(".metric b").textContent !== "—") render(key, card);
     }
   });
+}
+
+/** The hero's size figure comes from /bundles.json, which the build writes,
+ *  the same source as the front page. The dev server has no file until after
+ *  a build, so the cell keeps its dash. */
+function fillBundleSize(root, key) {
+  const cells = root.querySelectorAll("[data-bundle]");
+  if (!cells.length) return;
+  fetch("/bundles.json")
+    .then((r) => (r.ok ? r.json() : null))
+    .then((b) => {
+      const d = b?.demos?.[key];
+      if (!d) return;
+      const kb = Math.round(d.libKB - d.harnessKB);
+      for (const el of cells) el.textContent = `${kb} kB`;
+    })
+    .catch(() => {});
+}
+
+/** Each copy button copies the text of the element its data-copy-target
+ *  selector names, inside the same block. */
+function wireCopyButtons(root) {
+  for (const btn of root.querySelectorAll(".copy-btn")) {
+    btn.addEventListener("click", async () => {
+      const text = btn.closest("[data-copy-block]")?.querySelector(btn.dataset.copyTarget)?.textContent ?? "";
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "Copied";
+      } catch {
+        btn.textContent = "Select and copy";
+      }
+      setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+    });
+  }
 }
 
 /* ---------------------------------------------------------------- */
@@ -314,6 +380,11 @@ async function renderEdit(card, edit, meta) {
   const draw = async () => {
     try { cleanup?.(); } catch {}
     host.innerHTML = "";
+    // Tabulator's range selection focuses its first cell as it builds, which
+    // scrolls the page to the edit card on load. Put the page back where the
+    // reader had it, now and once more after the library's next frame.
+    const y = scrollY;
+    const restore = () => { if (scrollY !== y) scrollTo(0, y); };
     try {
       const result = await edit(host, copy, { theme: theme(), key: "small", formatCell, reportRows: () => {}, provideSort: () => {} });
       cleanup = typeof result === "function" ? result : null;
@@ -321,6 +392,8 @@ async function renderEdit(card, edit, meta) {
       host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
       console.error(`[${meta.name}] edit`, err);
     }
+    restore();
+    requestAnimationFrame(() => requestAnimationFrame(restore));
   };
   await draw();
   show();
@@ -525,39 +598,105 @@ export function footer() {
   </footer>`;
 }
 
-function shell(meta, entry, hasEdit) {
+function shell({ meta, entry, hasEdit, keys, skipped, verdict, snippet }) {
   // meta values are escaped: the baseline's own name is literally "Plain
   // <table>", which would otherwise open a real element in the header. Notes
   // go through the changelog's small Markdown renderer, which escapes HTML
   // first, so a demo can write its notes as a short bullet list.
   const e = escapeHtml;
+  // Short on purpose: the nav already has the library list, and the package
+  // name is in the Get started block's install line.
   const links = [
-    meta.homepage ? `<a href="${e(meta.homepage)}" target="_blank" rel="noopener">home</a>` : null,
-    meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener">github${meta.stars ? ` · ${meta.stars.toLocaleString()} ★` : ""}</a>` : null,
+    snippet ? `<a href="#get-started">get started</a>` : null,
     `<a href="${e(meta.docs)}" target="_blank" rel="noopener">docs</a>`,
-    meta.npm ? `<code>${e(meta.npm)}</code>` : null,
+    meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener">github${meta.stars ? ` · ${meta.stars.toLocaleString()} ★` : ""}</a>` : null,
+    meta.homepage ? `<a href="${e(meta.homepage)}" target="_blank" rel="noopener">home</a>` : null,
     meta.notes ? `<a href="#notes">notes from the build</a>` : null,
   ].filter(Boolean).join(" &nbsp;·&nbsp; ");
 
   return `
   ${navbar()}
-  <header class="wrap" style="padding-top:22px;padding-bottom:10px">
-    <h1 style="margin:14px 0 4px;font-size:26px;letter-spacing:-0.02em">${e(meta.name)}
-      <span style="font-size:14px;color:var(--text-muted);font-weight:400">v${e(meta.version)}</span>
+  <header class="wrap hero">
+    <h1 class="hero__title">${e(meta.name)}
+      ${meta.version && meta.version !== "—" ? `<span class="hero__version">v${e(meta.version)}</span>` : ""}
     </h1>
-    <p style="margin:0;max-width:70ch;color:var(--text-secondary);font-size:14px">${e(meta.tagline)}</p>
-    <p style="margin:10px 0 0;font-size:12.5px;color:var(--text-muted)">
-      ${links} &nbsp;·&nbsp; ${e(meta.license)}
-    </p>
+    <p class="hero__tagline">${e(meta.tagline)}</p>
+    <p class="hero__links">${links}${meta.license && meta.license !== "n/a" ? ` &nbsp;·&nbsp; ${e(meta.license)}` : ""}</p>
+    ${verdict && entry ? verdictHTML(verdict, entry) : ""}
     <p class="setup-line" hidden>${e(meta.setupLabel || "setup")} in <b>…</b>
       <span>${e(meta.setupNote || "once per page, before any table; not included in the render times below")}</span></p>
   </header>
   <main class="wrap" style="padding-bottom:60px">
-    ${DATASET_KEYS.map(cardHTML).join("")}
+    ${keys.map((k) => cardHTML(k, skipped[k])).join("")}
     ${entry?.edit ? editCardHTML(entry.edit, hasEdit) : ""}
+    ${snippet ? startHTML(snippet, meta) : ""}
     ${meta.notes ? `<section class="demo-notes-section" id="notes"><h2>Notes from the build</h2><div class="demo-notes">${renderMarkdown(meta.notes)}</div></section>` : ""}
   </main>
   ${footer()}`;
+}
+
+/** The verdict at the top of the page: where this library landed in the
+ *  picks, one sentence on why, the five numbers that matter, the reasons
+ *  for and against, and the trap to know about. */
+function verdictHTML(v, entry) {
+  const e = escapeHtml;
+  const list = (items) => `<ul>${items.map((s) => `<li>${e(s)}</li>`).join("")}</ul>`;
+  return `
+    <section class="verdict" aria-label="Verdict">
+      <p class="verdict__role">${e(v.role)}</p>
+      <p class="verdict__line">${e(v.line)}</p>
+      ${statsHTML(entry)}
+      <div class="verdict__cases">
+        <div class="verdict__case verdict__case--use"><h2>Use it if</h2>${list(v.use)}</div>
+        <div class="verdict__case verdict__case--skip"><h2>Skip it if</h2>${list(v.skip)}</div>
+      </div>
+      ${v.watch ? `<p class="verdict__watch"><b>Watch out:</b> ${e(v.watch)}</p>` : ""}
+    </section>`;
+}
+
+/** The figures a reader asks about first, from results.js and bundles.json.
+ *  A `sub` is the caveat under the number (the plain table's "100,000 rows"). */
+function statsHTML(entry) {
+  const e = escapeHtml;
+  const cell = (label, v) => `<div class="stat"><dt>${label}</dt><dd>${e(v.text)}${v.sub ? `<small>${e(v.sub)}</small>` : ""}</dd></div>`;
+  return `
+      <dl class="stats">
+        ${cell("Render 500,000 rows", entry.render500k)}
+        ${cell("Sort 500,000 rows", entry.sort500k)}
+        ${cell("Scroll", entry.fps)}
+        <div class="stat"><dt>Size, gzip</dt><dd data-bundle>—</dd></div>
+        ${cell("Framework", { text: frameworkLabel(entry.framework) })}
+      </dl>`;
+}
+
+/** results.js says "none" for a library that needs no framework, which on
+ *  its own reads as "works with none". It works with any, which is the point. */
+function frameworkLabel(f) {
+  if (f === "none") return "any";
+  if (f === "none (web component)") return "any (web component)";
+  return f;
+}
+
+/** The "Get started" block: the install line and the smallest complete
+ *  starter, each with a copy button. The code the demo on this page took is
+ *  still under "source" on each card. */
+function startHTML(snippet, meta) {
+  const e = escapeHtml;
+  return `
+  <section class="card start" id="get-started" data-copy-block>
+    <div class="card__head">
+      <h2 class="card__title">Get started with ${e(meta.name)}</h2>
+      <p class="card__desc">${snippet.install ? "Install, then the" : "The"} smallest table from an array of row objects. The code this page's demo took is under "source" on each card above.</p>
+    </div>
+    ${snippet.install ? `<div class="start__install" data-copy-block>
+      <code class="start__cmd">${e(snippet.install)}</code>
+      <button class="copy-btn" type="button" data-copy-target=".start__cmd">Copy</button>
+    </div>` : ""}
+    <div class="start__code" data-copy-block>
+      <div class="start__bar"><span class="start__lang">${e(snippet.lang)}</span><button class="copy-btn" type="button" data-copy-target="pre">Copy</button></div>
+      <pre>${e(snippet.code)}</pre>
+    </div>
+  </section>`;
 }
 
 function editCardHTML(result, hasEdit) {
@@ -587,26 +726,31 @@ function editCardHTML(result, hasEdit) {
   </section>`;
 }
 
-function cardHTML(key) {
+/** One dataset card. `skipNote` (Markdown) replaces the table and its
+ *  buttons with a note; see (7) in the contract. */
+function cardHTML(key, skipNote) {
   const d = DATASETS[key];
-  return `
-  <section class="card" id="${key}" data-card="${key}" style="margin-top:24px;scroll-margin-top:16px">
-    <div class="card__head">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
-        <h2 class="card__title">${d.title}</h2>
-        <span class="metric">rendered <b>—</b></span>
-      </div>
-      <p class="card__desc">${d.desc}</p>
-      <p class="card__desc" style="color:var(--text-muted)"><b style="font-weight:600">Stresses:</b> ${d.stress}</p>
-      <p class="metric-detail" style="font-size:12px;color:var(--text-muted);margin:6px 0 0"></p>
-    </div>
-    <div class="demo-host${key === "large" ? " demo-host--tall" : ""}"></div>
+  const body = skipNote
+    ? `<div class="skip-note">${renderMarkdown(skipNote)}</div>`
+    : `<div class="demo-host${key === "large" ? " demo-host--tall" : ""}"></div>
     <div class="card__actions">
       ${d.eager ? "" : `<button class="load-btn">Load ${key === "large" ? "500,000 rows" : "data"}</button>`}
       <button class="fps-btn">Measure scroll FPS</button>
       <span class="fps-out"></span>
       ${key === "large" ? `<button class="sort-btn">Sort by price</button><span class="sort-out"></span>` : ""}
+    </div>`;
+  return `
+  <section class="card" id="${key}" data-card="${key}" style="margin-top:24px;scroll-margin-top:16px">
+    <div class="card__head">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+        <h2 class="card__title">${d.title}</h2>
+        <span class="metric">rendered <b>${skipNote ? "not run" : "—"}</b></span>
+      </div>
+      <p class="card__desc">${d.desc}</p>
+      <p class="card__desc" style="color:var(--text-muted)"><b style="font-weight:600">Stresses:</b> ${d.stress}</p>
+      <p class="metric-detail" style="font-size:12px;color:var(--text-muted);margin:6px 0 0"></p>
     </div>
+    ${body}
     <details class="src"><summary>source</summary><pre></pre></details>
   </section>`;
 }

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { SNIPPETS } from "../../src/harness/snippets.js";
 
 /* Every demo key the site will eventually ship. BUILT is the subset that has a
  * page today — the loop only runs over BUILT so a half-finished bake-off still
@@ -35,6 +36,12 @@ const SOURCE_TOKEN = {
 /* Grids whose edit test result is in results.js. DataTables shows the card
  * with its paid-tier result and no grid. */
 const EDIT_TESTED = ["tabulator", "aggrid", "glide", "revogrid", "datatables"];
+
+/* The page shows two dataset cards, 1,000 and 500,000 rows. `?cards=all`
+ * puts all four on, which the measurement scripts use. The plain table's
+ * 500,000-row card is a note on the page (it cannot render them), so the
+ * tests that need its Load button open the page with all cards on. */
+const allCards = (key) => (key === "baseline" ? "?cards=all" : "");
 
 test.describe("hub", () => {
   test("links to every demo page from the measured table", async ({ page }) => {
@@ -82,19 +89,54 @@ test.describe("hub", () => {
 
 for (const key of BUILT) {
   test.describe(key, () => {
-    test("renders the eager datasets with no console error", async ({ page }) => {
+    test("renders the 1,000-row card with no console error, and shows only it and the 500,000-row card", async ({ page }) => {
       const errors = [];
       page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
       page.on("pageerror", (e) => errors.push(String(e)));
 
       await page.goto(`/demos/${key}.html`);
 
-      // Three eager cards must show a render time; the fourth is on demand.
-      for (const ds of ["small", "wide", "medium"]) {
-        const badge = page.locator(`[data-card="${ds}"] .metric b`);
-        await expect(badge).not.toHaveText("—", { timeout: 30000 });
-      }
+      const badge = page.locator(`[data-card="small"] .metric b`);
+      await expect(badge).not.toHaveText("—", { timeout: 30000 });
       expect(errors).toEqual([]);
+
+      // Two dataset cards on the page: the 80-column and 50,000-row datasets
+      // are still built and measured, but not shown here.
+      const cards = page.locator('[data-card]:not([data-card="edit"])');
+      await expect(cards).toHaveCount(2);
+      await expect(cards.nth(0)).toHaveAttribute("data-card", "small");
+      await expect(cards.nth(1)).toHaveAttribute("data-card", "large");
+    });
+
+    test("with ?cards=all renders all four datasets, which the measurement scripts rely on", async ({ page }) => {
+      await page.goto(`/demos/${key}.html?cards=all`);
+      for (const ds of ["small", "wide", "medium"]) {
+        await expect(page.locator(`[data-card="${ds}"] .metric b`)).not.toHaveText("—", { timeout: 30000 });
+      }
+      await expect(page.locator('[data-card="large"] .load-btn')).toBeVisible();
+    });
+
+    test("opens with the verdict and the numbers from results.js", async ({ page }) => {
+      await page.goto(`/demos/${key}.html`);
+      await expect(page.locator(".verdict__role")).not.toBeEmpty();
+      await expect(page.locator(".verdict__line")).not.toBeEmpty();
+      await expect(page.locator(".verdict__case--use li").first()).not.toBeEmpty();
+      await expect(page.locator(".verdict__case--skip li").first()).not.toBeEmpty();
+      await expect(page.locator(".stats .stat")).toHaveCount(5);
+      // The page is read from the top: nothing may scroll it on load (the
+      // Tabulator edit grid used to focus a cell and jump to its own card).
+      await expect(page.locator(`[data-card="small"] .metric b`)).not.toHaveText("—", { timeout: 30000 });
+      await page.waitForTimeout(500);
+      expect(await page.evaluate(() => scrollY)).toBe(0);
+    });
+
+    test("shows the Get started block exactly when there is a snippet for it", async ({ page }) => {
+      await page.goto(`/demos/${key}.html`);
+      const block = page.locator("#get-started");
+      if (!SNIPPETS[key]) return expect(block).toHaveCount(0);
+      await expect(block.locator("pre")).toContainText(SNIPPETS[key].code.split("\n")[0]);
+      await expect(block.locator(".copy-btn")).toHaveCount(SNIPPETS[key].install ? 2 : 1);
+      await expect(page.locator('.hero__links a[href="#get-started"]')).toHaveCount(1);
     });
 
     test("shows the real render implementation, not a delegating stub", async ({ page }) => {
@@ -111,7 +153,7 @@ for (const key of BUILT) {
     });
 
     test("reports the row count it actually rendered", async ({ page }) => {
-      await page.goto(`/demos/${key}.html`);
+      await page.goto(`/demos/${key}.html?cards=all`);
       const detail = page.locator(`[data-card="medium"] .metric-detail`);
       await expect(detail).toContainText("rows", { timeout: 30000 });
       // 50,000 rows presented in full reads as a plain count; a capped card
@@ -130,7 +172,7 @@ for (const key of BUILT) {
         return route.fulfill({ status: 500, body: "nope" });
       });
 
-      await page.goto(`/demos/${key}.html`);
+      await page.goto(`/demos/${key}.html${allCards(key)}`);
       const card = page.locator(`[data-card="large"]`);
       await card.getByRole("button", { name: /load/i }).click();
 
@@ -146,7 +188,7 @@ for (const key of BUILT) {
     });
 
     test("loads the large dataset only when asked", async ({ page }) => {
-      await page.goto(`/demos/${key}.html`);
+      await page.goto(`/demos/${key}.html${allCards(key)}`);
       const card = page.locator(`[data-card="large"]`);
       await expect(card.locator(".metric b")).toHaveText("—");
       await card.getByRole("button", { name: /load/i }).click();
@@ -156,7 +198,7 @@ for (const key of BUILT) {
     // Every demo hands the harness a sort; the button stays disabled until
     // the large table exists.
     test("offers a timed sort on the large card once it has loaded", async ({ page }) => {
-      await page.goto(`/demos/${key}.html`);
+      await page.goto(`/demos/${key}.html${allCards(key)}`);
       const card = page.locator(`[data-card="large"]`);
       await expect(card.locator(".sort-btn")).toBeDisabled();
       await card.getByRole("button", { name: /load/i }).click();
@@ -175,3 +217,22 @@ for (const key of BUILT) {
     });
   });
 }
+
+test.describe("baseline 500,000 rows", () => {
+  test("shows a note instead of running a render that hangs the page", async ({ page }) => {
+    await page.goto("/demos/baseline.html");
+    const card = page.locator('[data-card="large"]');
+    await expect(card.locator(".skip-note")).toContainText("500,000 rows");
+    await expect(card.locator(".skip-note")).toContainText("2.5 s at 50,000");
+    await expect(card.locator('.skip-note a[href="/demos/aggrid.html"]')).toHaveCount(1);
+    await expect(card.locator(".load-btn")).toHaveCount(0);
+    await expect(card.locator(".metric b")).toHaveText("not run");
+    // The source panel still shows the capped implementation.
+    await expect(card.locator(".src pre")).toContainText("rowLimit");
+  });
+
+  test("still renders the capped 100,000 rows in bare mode, for the gallery and the measurements", async ({ page }) => {
+    await page.goto("/demos/baseline.html?bare=1&dataset=large");
+    await expect(page.locator(".bare-host .cap-note")).toContainText("100,000 of 500,000", { timeout: 120000 });
+  });
+});

@@ -14,7 +14,7 @@ for (const key of keys.split(",")) {
   const errs = [];
   p.on("pageerror", (e) => errs.push(String(e)));
   p.on("console", (m) => m.type() === "error" && errs.push(m.text()));
-  await p.goto(`${base}/demos/${key}.html`);
+  await p.goto(`${base}/demos/${key}.html?cards=all`);
   const card = p.locator('[data-card="large"]');
   await p.locator('[data-card="medium"] .metric b').filter({ hasNotText: "—" }).waitFor({ timeout: 120000 });
   await card.locator(".load-btn").click();

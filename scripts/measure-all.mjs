@@ -1,7 +1,11 @@
 // One consistent re-measure of every figure on the front page.
 //
 // For each of the nine demos, RUNS fresh page loads (headless Chromium,
-// 1400x1000, production build served by `vite preview`). Each load records:
+// 1400x1000, production build served by `vite preview`) of the demo page with
+// `?cards=all`: the page itself shows only the 1,000 and 500,000 row cards,
+// and the plain <table> shows a note instead of its 500,000-row render; the
+// flag puts all four cards back, with the plain table's capped 100,000 rows.
+// Each load records:
 //   - render ms for small, wide, medium (rendered by the page on load) and large
 //     (the Load button; the plain <table> shows 100,000 of the 500,000 rows)
 //   - Perspective's engine boot ("setup"), which the harness times separately
@@ -86,7 +90,7 @@ async function oneRun(browser, key) {
   p.on("console", (m) => m.type() === "error" && errs.push(m.text()));
   const r = { render: {}, fps: {}, dropped: {} };
   try {
-    await p.goto(`${base}/demos/${key}.html`);
+    await p.goto(`${base}/demos/${key}.html?cards=all`);
     const metric = (k) => p.locator(`[data-card="${k}"] .metric b`);
     const done = /^[^—…]+$/;
     for (const k of ["small", "wide", "medium"]) {

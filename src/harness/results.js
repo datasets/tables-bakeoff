@@ -251,6 +251,130 @@ export const ENTRIES = [
   },
 ];
 
+/** The top of each library page (src/harness/mount.js) renders from this.
+ *  `role` is where the library landed in the picks on the front page; `line`
+ *  is the one-sentence verdict, cost included; `use` and `skip` are the
+ *  reasons to choose it or not, two each, short; `watch` is the trap or the
+ *  setup step that is not a reason to skip but will cost you an afternoon.
+ *  Every fact here is also in EVALUATION.md or the entry above. */
+export const VERDICTS = {
+  baseline: {
+    role: "Our pick for a table on a page",
+    line: "Use a plain <table> up to a few thousand rows. No library, no API to learn, your own CSS.",
+    use: [
+      "A report, article or docs page with up to a few thousand rows.",
+      "Print, copy, Ctrl-F and dark mode with no extra code. Sort on click is ten more lines.",
+    ],
+    skip: [
+      "More than about 10,000 rows: 2.5 s at 50,000, and it gets worse faster than the row count.",
+      "You need a search box or filters.",
+    ],
+  },
+  observable: {
+    role: "Runner-up for a table on a page",
+    line: "Inputs.table(rows) is the best single call in the set: types inferred, numbers right-aligned, sort on click. Free, ISC.",
+    use: [
+      "A few thousand rows with sort on click, in one call.",
+      "You already use Observable Plot or Inputs on the page.",
+    ],
+    skip: [
+      "More than about ten thousand rows: it appends rows as you scroll and never removes them.",
+      "You need dark mode or theming. The CSS is light only, with no hook.",
+    ],
+    watch: "Load its stylesheet, or ids and dates wrap mid-word.",
+  },
+  tabulator: {
+    role: "Our pick for an editable grid",
+    line: "Edit cells, paste ranges, group, export: all in the free MIT package, vanilla, no framework.",
+    use: [
+      "People edit cells and paste ranges, like a spreadsheet.",
+      "You want a grid done without React, at a third of AG Grid's size.",
+    ],
+    skip: [
+      "Headers must sort from the keyboard. Here they sort on click only.",
+      "Dark mode must come from the library. Its themes are plain CSS with no variables.",
+    ],
+    watch: "height: \"100%\" in a parent with no height renders every row: 88 seconds at 50,000 rows, nothing logged. Give the host a real height.",
+  },
+  aggrid: {
+    role: "Our pick for a big grid",
+    line: "Sorts and filters 500,000 rows at 60 fps out of the box, in any framework. Free, MIT; grouping, pivot and Excel export are Enterprise, $999 per developer.",
+    use: [
+      "Tens of thousands to 500,000 rows and you want it done.",
+      "Loud failures: a missing module throws, a wrong host height draws an obviously empty grid.",
+    ],
+    skip: [
+      "Bundle size matters: 333 kB as the quick start ships it, 272 kB lean, the heaviest grid here.",
+      "You need grouping, pivot, range selection, clipboard or Excel export without paying.",
+    ],
+    watch: "Register modules before createGrid or it throws. Browser text selection is off until you set enableCellTextSelection.",
+  },
+  tanstack: {
+    role: "DataHub's pick: build your own",
+    line: "Headless: it computes rows, sorting and columns, you write every element. Your table in your markup, 24 kB over React.",
+    use: [
+      "You ship React and want to own the markup and CSS.",
+      "Browser Ctrl-F, text selection and copy must work on the rows on screen.",
+    ],
+    skip: [
+      "You want a grid done. The virtualizer, spacer rows and sticky header are yours to write: 150 lines here.",
+      "You need docs. When we built this, v9's were the .d.ts files.",
+    ],
+    watch: "The spacer-row and column-group arithmetic is yours to get wrong. We got it wrong twice.",
+  },
+  glide: {
+    role: "Also consider, for an editable grid",
+    line: "Canvas, so 500,000 rows draw in 17 ms and it feels like Sheets. React 16 to 18 only; last release February 2024.",
+    use: [
+      "React 18 and you want the spreadsheet feel.",
+      "Range copy and paste, with two props.",
+    ],
+    skip: [
+      "Browser Ctrl-F and text selection must work. A canvas has no text to find.",
+      "You want a maintained library. Last stable release February 2024.",
+    ],
+    watch: "Set getCellsForSelection or copy returns nothing, and onPaste: true or only the first pasted value lands. The quick start mentions neither.",
+  },
+  perspective: {
+    role: "A special case",
+    line: "A WebAssembly analytics engine with a grid on top. Worked on the first run; 1.9 s to load 500,000 rows into its worker. Apache-2.0.",
+    use: [
+      "Pivot, aggregation and filtering computed off the main thread.",
+      "You can carry 4.3 MB of WebAssembly.",
+    ],
+    skip: [
+      "You need per-cell formatting or a locale option. There is none.",
+      "You want a light page.",
+    ],
+    watch: "Two WASM URLs to wire up by hand.",
+  },
+  datatables: {
+    role: "A special case: a search box over a few thousand rows",
+    line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. 52 kB, MIT.",
+    use: [
+      "A few thousand rows of HTML with a search box and sort for free.",
+      "Real <td>s the browser can find, select and copy.",
+    ],
+    skip: [
+      "Anything grid shaped or large: 8.5 s at 500,000 rows, and its own FAQ caps client-side data at about 50,000.",
+      "You need editing. That is the paid Editor, from $219 per developer.",
+    ],
+  },
+  revogrid: {
+    role: "Runner-up for a big grid and for an editable grid",
+    line: "The fastest DOM grid at 500,000 rows, a web component for any framework, and paste worked with no config. It shows a link in the corner.",
+    use: [
+      "A fast grid in any framework, with clipboard and keyboard navigation in the free core.",
+      "Editing and pasting ranges with no extra config.",
+    ],
+    skip: [
+      "You cannot show its corner link. Removing it is Pro, $199 to $499 per developer per year.",
+      "You want a large community. Its is about a quarter of AG Grid's.",
+    ],
+    watch: "Its render event fires before any cell exists, and columns do not auto-size.",
+  },
+};
+
 /* Things to confirm before launch that are not numbers in ENTRIES:
  * - index.html Method: "the numbers were checked against the build and the
  *   live pages" must be literally true of whoever did it.
