@@ -347,8 +347,7 @@
       formatter hook. Each demo supplies four render functions; the harness owns
       the page, the clock and the FPS run, and empties the host between renders. The clock waits for
       async work and forces layout, so a library that returns early cannot report a scheduling call
-      as a render. Agents built most of the demos under direction; the numbers were checked against
-      the build and the live pages before they went on this page.
+      as a render. Agents built and measured the demos under our direction. We chose the verdict, and every number comes from a script in the repo you can run yourself (<code>scripts/measure-all.mjs</code>).
     </p>
     <p>
       The full method and its caveats:
