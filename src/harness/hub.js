@@ -1,14 +1,14 @@
-/* The front page and the compare page. Renders the gallery, the measured
- * table (trimmed on the front page, full on compare.html), the feature table,
- * the edit test, the scorecard and the "get started" code from
- * src/harness/results.js, features.js and snippets.js (one place for every
- * typed-in number), then fills bundle size and lines written from the real
- * build output in /bundles.json, so those cannot drift from what shipped.
+/* The front page and the compare page. Renders the gallery, the overview
+ * (front page: one row per library), the full measured table (compare.html),
+ * the feature table, the edit test, the scorecard and the "get started" code
+ * from src/harness/results.js, features.js and snippets.js (one place for
+ * every typed-in number), then fills bundle size and lines written from the
+ * real build output in /bundles.json, so those cannot drift from what shipped.
  * Every block is optional: a page renders whichever of the ids it has. */
 import "./analytics.js";
 import { restoreTheme, installThemeToggle, onThemeChange } from "./theme.js";
-import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS, CHECKED } from "./results.js";
-import { FEATURES, SUPPORT, SUPPORT_LABELS, FEATURES_CHECKED } from "./features.js";
+import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS, CHECKED, STARS_CHECKED, BADGES } from "./results.js";
+import { FEATURES, SUPPORT, SUPPORT_LABELS, FEATURES_CHECKED, featureScore } from "./features.js";
 import { SNIPPETS } from "./snippets.js";
 
 restoreTheme();
@@ -31,6 +31,8 @@ function cell(m, extraClass = "") {
   const sub = m.sub ? `<span class="sub">${e(m.sub)}</span>` : "";
   return `<td class="${extraClass}"${verify}>${e(m.text)}${sub}</td>`;
 }
+const failed = (d) => (d.render500k?.text?.startsWith("did not") ? "no" : "");
+const starsCell = (d) => (d.stars == null ? `<td class="na">n/a</td>` : `<td>${d.stars.toLocaleString("en-US")}</td>`);
 
 /* ---- "nine" in the prose, from the list ------------------------------ */
 for (const el of document.querySelectorAll("[data-entry-count]")) {
@@ -45,6 +47,8 @@ for (const el of document.querySelectorAll("[data-measured-when]")) el.textConte
 for (const el of document.querySelectorAll("[data-measured-sort]")) el.textContent = MEASURED.sort;
 for (const el of document.querySelectorAll("[data-checked]")) el.textContent = CHECKED;
 for (const el of document.querySelectorAll("[data-features-checked]")) el.textContent = FEATURES_CHECKED;
+for (const el of document.querySelectorAll("[data-stars-checked]")) el.textContent = STARS_CHECKED;
+for (const el of document.querySelectorAll("[data-feature-count]")) el.textContent = String(FEATURES.length);
 
 /* ---- gallery: the same 1,000 rows, one iframe per entry ----------------- */
 const gallery = document.getElementById("gallery");
@@ -86,28 +90,49 @@ if (gallery) {
   });
 }
 
-/* ---- measured table ----------------------------------------------------- */
-/* The front page's table carries data-trim and shows the columns that decide
- * a pick: weight, lines, render and sort at 500,000 rows, last release. The
- * compare page shows everything. Both render every entry. */
+/* ---- overview: the front page's one table ------------------------------------ */
+/* One row per entry: the picks first in job order, then the runners-up, then
+ * the rest (BADGES holds the first six). Stars, last release, render at
+ * 500,000 rows, own size with its qualifiers (React, lazy chunks, WASM) and the
+ * feature score from features.js, plus a one-line comment. */
+const overview = document.querySelector("#overview tbody");
+if (overview) {
+  const ranked = [...Object.keys(BADGES).map(entry).filter(Boolean), ...ENTRIES.filter((d) => !BADGES[d.key])];
+  const badge = (d) => {
+    const b = BADGES[d.key];
+    return b ? `<span class="tag tag--${b.kind}">${b.kind === "pick" ? "Pick" : "Runner-up"} · ${e(b.job)}</span>` : "";
+  };
+  // "React (adapters for ...)" and "none (web component)" read as "React" and nothing.
+  const fw = (d) => (d.framework.startsWith("none") ? "" : ` · ${e(d.framework.split(" (")[0])}`);
+  const about = (d) => (d.version ? `v${e(d.version)} · ${e(d.license)}${fw(d)}` : "no library");
+  const score = (d) => {
+    const s = featureScore(d.key);
+    const paid = s.paid ? `<span class="sub">${s.paid} paid</span>` : "";
+    return `<td class="score"><b>${s.free}</b>/${s.total}${paid}</td>`;
+  };
+  overview.innerHTML = ranked.map((d) => `
+    <tr>
+      <td class="name"><span class="name__line"><a href="${demoHref(d.key)}">${e(d.name)}</a>${badge(d)}</span>
+        <span class="sub">${about(d)}</span><span class="sub glance-inline">${e(d.glance)}</span></td>
+      ${starsCell(d)}
+      <td>${month(d.released)}</td>
+      ${cell(d.render500k, failed(d))}
+      <td data-bundle="${e(d.key)}">—</td>
+      ${score(d)}
+      <td class="glance">${e(d.glance)}</td>
+    </tr>`).join("");
+}
+
+/* ---- measured table (compare.html) --------------------------------------- */
 const measuredTable = document.getElementById("measured");
 const measured = measuredTable?.querySelector("tbody");
 if (measuredTable && measured) {
-  const trim = measuredTable.hasAttribute("data-trim");
-  const name = (d) => `<td><a href="${demoHref(d.key)}">${e(d.name)}</a>${!trim && d.note ? `<sup><a href="#note-${d.note}">${d.note}</a></sup>` : ""}
+  const name = (d) => `<td><a href="${demoHref(d.key)}">${e(d.name)}</a>${d.note ? `<sup><a href="#note-${d.note}">${d.note}</a></sup>` : ""}
         ${d.version ? `<span class="sub">v${e(d.version)}${d.framework !== "none" ? ` · ${e(d.framework)}` : ""}</span>` : `<span class="sub">no library</span>`}</td>`;
-  const failed = (d) => (d.render500k?.text?.startsWith("did not") ? "no" : "");
-  measured.innerHTML = ENTRIES.map((d) => trim ? `
+  measured.innerHTML = ENTRIES.map((d) => `
     <tr>
       ${name(d)}
-      <td data-bundle="${e(d.key)}">—</td>
-      <td data-loc="${e(d.key)}">—</td>
-      ${cell(d.render500k, failed(d))}
-      ${cell(d.sort500k)}
-      <td>${month(d.released)}</td>
-    </tr>` : `
-    <tr>
-      ${name(d)}
+      ${starsCell(d)}
       <td data-bundle="${e(d.key)}">—</td>
       <td data-wasm="${e(d.key)}">—</td>
       <td data-loc="${e(d.key)}">—</td>
@@ -249,17 +274,29 @@ fetch("/bundles.json")
       for (const el of document.querySelectorAll(`[data-bundle="${d.key}"],[data-loc="${d.key}"],[data-wasm="${d.key}"]`)) el.textContent = "not built";
     }
 
-    const fullTable = measuredTable && !measuredTable.hasAttribute("data-trim");
     for (const [key, d] of Object.entries(demos)) {
       // "Own code" nets out the shared harness (mount + hyparquet + site.css,
       // paid by every demo) and, for the React demos, React itself. Code
       // fetched on demand after load is shown beside it, not summed: for
       // RevoGrid most of it arrives on first render, for Glide it is editors.
+      const own = d.libKB - d.harnessKB;
+      const sub = entry(key)?.bundleSub;
       for (const el of document.querySelectorAll(`[data-bundle="${key}"]`)) {
-        el.textContent = `${fmt(d.libKB - d.harnessKB)} kB`;
-        if (d.lazyKB > 0 && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">+ ${fmt(d.lazyKB)} kB lazy</span>`);
-        const sub = entry(key)?.bundleSub;
-        if (sub && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">${e(sub)}${fullTable ? `<sup><a href="#note-g">g</a></sup>` : ""}</span>`);
+        el.textContent = `${fmt(own)} kB`;
+        if (el.closest("#measured")) {
+          if (d.lazyKB > 0) el.insertAdjacentHTML("beforeend", `<span class="sub">+ ${fmt(d.lazyKB)} kB lazy</span>`);
+          if (sub) el.insertAdjacentHTML("beforeend", `<span class="sub">${e(sub)}<sup><a href="#note-g">g</a></sup></span>`);
+        }
+        // The overview says what else the page carries: React (shared, so not
+        // in the figure), chunks fetched after load, Perspective's WASM.
+        if (el.closest("#overview")) {
+          const q = [];
+          if (d.reactKB > 0) q.push(`+ ${fmt(d.reactKB)} kB React`);
+          if (d.lazyKB > 0) q.push(`+ ${fmt(d.lazyKB)} kB lazy`);
+          if (d.wasmKB > 0) q.push(`+ ${(d.wasmKB / 1000).toFixed(1)} MB WASM`);
+          if (sub) q.push(sub);
+          if (q.length) el.insertAdjacentHTML("beforeend", `<span class="sub">${q.map(e).join(", ")}</span>`);
+        }
       }
       // Rounded variant for prose: "21 kB over React".
       for (const el of document.querySelectorAll(`[data-bundle-round="${key}"]`)) {

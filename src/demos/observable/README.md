@@ -5,7 +5,6 @@ license: ISC
 docs: https://observablehq.github.io/framework/inputs/table
 homepage: https://observablehq.com/framework/lib/inputs
 github: https://github.com/observablehq/inputs
-stars: 171
 npm: "@observablehq/inputs"
 tagline: One function call. Strong defaults, built for data exploration.
 ---

@@ -5,7 +5,6 @@ license: MIT (core); Editor is paid
 docs: https://datatables.net/manual/
 homepage: https://datatables.net
 github: https://github.com/DataTables/DataTables
-stars: 7390
 npm: datatables.net-dt
 tagline: The veteran. Enhances a real <table>; jQuery-free since v3.
 ---

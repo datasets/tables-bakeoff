@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { SNIPPETS } from "../../src/harness/snippets.js";
+import { ENTRIES, BADGES } from "../../src/harness/results.js";
+import { FEATURES, featureScore } from "../../src/harness/features.js";
 
 /* Every demo key the site will eventually ship. BUILT is the subset that has a
  * page today — the loop only runs over BUILT so a half-finished bake-off still
@@ -44,11 +46,38 @@ const EDIT_TESTED = ["tabulator", "aggrid", "glide", "revogrid", "datatables"];
 const allCards = (key) => (key === "baseline" ? "?cards=all" : "");
 
 test.describe("hub", () => {
-  test("links to every demo page from the measured table", async ({ page }) => {
+  test("links to every demo page from the overview table", async ({ page }) => {
     await page.goto("/index.html");
     for (const key of ALL_DEMO_KEYS) {
-      await expect(page.locator(`#measured a[href="/demos/${key}.html"]`)).toHaveCount(1);
+      await expect(page.locator(`#overview a[href="/demos/${key}.html"]`)).toHaveCount(1);
     }
+  });
+
+  test("the overview lists the picks first, with stars and a feature score from the sources", async ({ page }) => {
+    await page.goto("/index.html");
+    const rows = page.locator("#overview tbody tr");
+    await expect(rows).toHaveCount(ALL_DEMO_KEYS.length);
+    // Picks and runners-up first, in BADGES order, each with its badge.
+    const picks = Object.keys(BADGES);
+    for (let i = 0; i < picks.length; i++) {
+      await expect(rows.nth(i).locator(`a[href="/demos/${picks[i]}.html"]`)).toHaveCount(1);
+      await expect(rows.nth(i).locator(".tag")).toContainText(BADGES[picks[i]].kind === "pick" ? "Pick" : "Runner-up");
+    }
+    await expect(page.locator("#overview .tag")).toHaveCount(picks.length);
+    // Stars are the figure in results.js; the plain table has none.
+    const aggrid = ENTRIES.find((d) => d.key === "aggrid");
+    await expect(page.locator('#overview a[href="/demos/aggrid.html"]').locator("xpath=ancestor::tr")).toContainText(aggrid.stars.toLocaleString("en-US"));
+    await expect(page.locator('#overview a[href="/demos/baseline.html"]').locator("xpath=ancestor::tr").locator("td.na")).toHaveText("n/a");
+    // The feature score is free features out of all of them, paid counted apart.
+    const score = featureScore("aggrid");
+    const scoreCell = page.locator('#overview a[href="/demos/aggrid.html"]').locator("xpath=ancestor::tr").locator("td.score");
+    await expect(scoreCell).toContainText(`${score.free}/${FEATURES.length}`);
+    await expect(scoreCell).toContainText(`${score.paid} paid`);
+    await expect(page.locator("#overview thead")).toContainText(`of ${FEATURES.length}`);
+    // Size qualifiers: React for the React demos, lazy chunks, WASM.
+    await expect(page.locator('#overview [data-bundle="tanstack"]')).toContainText("React", { timeout: 10000 });
+    await expect(page.locator('#overview [data-bundle="revogrid"]')).toContainText("lazy");
+    await expect(page.locator('#overview [data-bundle="perspective"]')).toContainText("WASM");
   });
 
   test("embeds every demo in the gallery in bare mode and gets a render time back", async ({ page }) => {
@@ -63,25 +92,25 @@ test.describe("hub", () => {
   test("shows measured bundle sizes rather than hardcoded ones", async ({ page }) => {
     await page.goto("/index.html");
     // Bundle figures appear in the picks, the gallery and the table; check the table's.
-    const cell = page.locator('#measured [data-bundle="aggrid"]');
+    const cell = page.locator('#overview [data-bundle="aggrid"]');
     await expect(cell).not.toHaveText("—", { timeout: 10000 });
     await expect(cell).toContainText("kB");
   });
 
   test("shows measured line counts for every demo", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto("/compare.html");
     for (const key of ALL_DEMO_KEYS) {
       const cell = page.locator(`#measured [data-loc="${key}"]`);
       await expect(cell).not.toHaveText("—", { timeout: 10000 });
     }
   });
 
-  // Both tables render from results.js; an empty cell means an entry is
+  // The overview renders from results.js; an empty cell means an entry is
   // missing a field, which would otherwise ship silently.
-  test("has no empty cells in the measured table or the scorecard", async ({ page }) => {
+  test("has no empty cells in the overview", async ({ page }) => {
     await page.goto("/index.html");
-    // Let hub.js finish filling the bundle/LOC cells before asserting.
-    await expect(page.locator('#measured [data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
+    // Let hub.js finish filling the bundle cells before asserting.
+    await expect(page.locator('#overview [data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
     const empties = page.locator("table.scores td:empty");
     await expect(empties).toHaveCount(0);
   });
@@ -271,10 +300,8 @@ test.describe("landing v2", () => {
     await expect(page.locator('a[href="/why.html"]').first()).toBeVisible();
   });
 
-  test("the front page shows a feature summary and starter code for every pick", async ({ page }) => {
+  test("the front page shows starter code for every pick", async ({ page }) => {
     await page.goto("/index.html");
-    await expect(page.locator("#features tbody tr").first()).toContainText("Sort");
-    await expect(page.locator("#features thead th")).toHaveCount(6);
     for (const key of ["baseline", "aggrid", "tabulator", "tanstack"]) {
       await expect(page.locator(`#snippets .snippet[data-lib="${key}"] .snippet__code code`)).not.toBeEmpty();
     }
@@ -286,7 +313,8 @@ test.describe("landing v2", () => {
   test("compare.html has the full tables for all nine", async ({ page }) => {
     await page.goto("/compare.html");
     await expect(page.locator("#measured tbody tr")).toHaveCount(ALL_DEMO_KEYS.length);
-    await expect(page.locator("#measured thead th")).toHaveCount(12);
+    await expect(page.locator("#measured thead th")).toHaveCount(13);
+    await expect(page.locator("#measured tbody tr").nth(3)).toContainText(ENTRIES[3].stars.toLocaleString("en-US"));
     await expect(page.locator("#features thead th")).toHaveCount(ALL_DEMO_KEYS.length + 1);
     await expect(page.locator("#scorecard tbody tr")).toHaveCount(ALL_DEMO_KEYS.length);
     await expect(page.locator('#measured [data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });

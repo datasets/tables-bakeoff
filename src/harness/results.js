@@ -57,6 +57,22 @@ export const AGGRID_LEAN = {
   modules: ["ClientSideRowModelModule", "TextFilterModule", "NumberFilterModule", "DateFilterModule", "CellStyleModule", "NumberEditorModule"],
 };
 
+/** When `stars` on each entry was read from GitHub (gh api repos/<owner>/<repo>
+ *  --jq .stargazers_count). The library pages and both tables print it. */
+export const STARS_CHECKED = "21 Nov 2026";
+
+/** Where each library landed in the picks, for the badge in the front page's
+ *  overview table. The overview lists these first, in this order, then the
+ *  rest in ENTRIES order. */
+export const BADGES = {
+  baseline: { kind: "pick", job: "a table on a page" },
+  aggrid: { kind: "pick", job: "a big grid" },
+  tabulator: { kind: "pick", job: "an editable grid" },
+  tanstack: { kind: "pick", job: "build your own" },
+  observable: { kind: "runner-up", job: "a table on a page" },
+  revogrid: { kind: "runner-up", job: "big grid, editable grid" },
+};
+
 /** Scorecard axes, 1 (worst) to 5 (best). Subjective, from doing the build. */
 export const AXES = [
   { key: "look", label: "Default look", hint: "How the table looks before you touch the CSS" },
@@ -75,6 +91,8 @@ export const ENTRIES = [
     released: "",
     paywalled: "n/a",
     framework: "none",
+    stars: null,
+    glance: "No library; stops at a few thousand rows.",
     render50k: { text: "2,470 ms" },
     render500k: { text: "did not finish", sub: "100,000 rows: 6.3 s" },
     sort500k: { text: "20 to 22 s", sub: "100,000 rows; rebuilds the table" },
@@ -92,6 +110,8 @@ export const ENTRIES = [
     released: "2026-11-04",
     paywalled: "nothing",
     framework: "none",
+    stars: 175,
+    glance: "One call, sort built in, no virtual rows.",
     note: "a",
     render50k: { text: "5.4 ms" },
     render500k: { text: "10.8 ms", sub: "first 60 rows only" },
@@ -110,6 +130,8 @@ export const ENTRIES = [
     released: "2026-10-22",
     paywalled: "nothing. Editors, clipboard and range selection are free",
     framework: "none",
+    stars: 7825,
+    glance: "Edit, paste, group, export, all free.",
     note: "b",
     render50k: { text: "48.4 ms" },
     render500k: { text: "185 ms" },
@@ -133,6 +155,8 @@ export const ENTRIES = [
     paywalled: "Enterprise: grouping, pivot, range selection, clipboard, Excel export",
     bundleSub: "lean: 272 kB",
     framework: "none",
+    stars: 15690,
+    glance: "Everything, but grouping and clipboard are Enterprise.",
     render50k: { text: "33.4 ms" },
     render500k: { text: "233 ms" },
     sort500k: { text: "369 ms" },
@@ -154,6 +178,8 @@ export const ENTRIES = [
     released: "2026-10-12",
     paywalled: "nothing",
     framework: "React (adapters for Vue, Svelte, Solid, Angular)",
+    stars: 28596,
+    glance: "Headless: you write the markup and virtualizer.",
     render50k: { text: "12.3 ms" },
     render500k: { text: "124 ms" },
     sort500k: { text: "418 ms" },
@@ -171,6 +197,8 @@ export const ENTRIES = [
     released: "2024-02-03",
     paywalled: "nothing",
     framework: "React 16 to 18 only",
+    stars: 5448,
+    glance: "Canvas and fast. React only; last release 2024.",
     note: "c",
     render50k: { text: "9.6 ms" },
     render500k: { text: "16.8 ms" },
@@ -193,6 +221,8 @@ export const ENTRIES = [
     released: "2026-11-20",
     paywalled: "nothing",
     framework: "none",
+    stars: 11662,
+    glance: "Analytics engine with a grid; 4.3 MB WASM.",
     note: "d",
     render50k: { text: "191 ms" },
     render500k: { text: "1.9 s" },
@@ -213,6 +243,8 @@ export const ENTRIES = [
     released: "2026-10-30",
     paywalled: "Editor, SearchPanes, StateRestore (DataTables Plus, $219 per developer)",
     framework: "none",
+    stars: 7390,
+    glance: "Sort and search over HTML rows; editing paid.",
     note: "e",
     render50k: { text: "810 ms" },
     render500k: { text: "8.5 s" },
@@ -235,6 +267,8 @@ export const ENTRIES = [
     released: "2026-11-19",
     paywalled: "Pro ($199 to $499 per developer per year): pivot, Excel, master-detail, richer filters. The free core shows a RevoGrid link",
     framework: "none (web component)",
+    stars: 3465,
+    glance: "Fastest DOM grid; the free core shows a link.",
     note: "f",
     render50k: { text: "55 ms" },
     render500k: { text: "62 ms" },

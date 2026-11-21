@@ -130,8 +130,27 @@ table#features td.f-paid b { color: var(--series-2); }
 table#features td.f-no b { color: var(--text-muted); font-weight: 500; }
 table#features td.f-unknown { color: var(--text-muted); }
 table#features[data-notes] td { white-space: normal; min-width: 14ch; max-width: 30ch; font-variant-numeric: normal; }
+/* The front page's overview: one row per library, a comment column that
+ * wraps, badges for the picks. */
+table#overview td.name { white-space: normal; min-width: 22ch; }
+table#overview td.name .name__line { display: block; white-space: nowrap; }
+table#overview td.name .sub { font-size: 11px; }
+table#overview td.name .glance-inline { display: none; }
+table#overview td .sub { white-space: nowrap; }
+table#overview .tag { vertical-align: 1px; margin-left: 7px; padding: 1px 7px 2px; font-size: 10px; white-space: nowrap; }
+table#overview .tag--runner-up { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); padding: 0 6px 1px; }
+table#overview th.glance, table#overview td.glance { text-align: left; white-space: normal; min-width: 22ch; max-width: 34ch; color: var(--text-secondary); font-size: 12.5px; font-variant-numeric: normal; }
+table#overview td.score b { font-weight: 650; color: var(--text-primary); }
+table#overview td.na { color: var(--text-muted); }
+.after--plain { max-width: 86ch; color: var(--text-secondary); line-height: 1.5; }
+.after--plain a { display: inline-block; margin-right: 14px; }
 .scroll-hint { display: none; font-size: 11.5px; color: var(--text-muted); margin: 0 0 6px; }
 @media (max-width: 660px) {
+  table#overview .glance { display: none; }
+  table#overview td.name { min-width: 15ch; max-width: 42vw; }
+  table#overview td.name .name__line { white-space: normal; }
+  table#overview .tag { display: inline-block; margin: 2px 0 0; }
+  table#overview td.name .glance-inline { display: block; margin-top: 3px; white-space: normal; }
   table#scorecard .why { display: none; }
   table#scorecard td .why-inline { display: block; white-space: normal; max-width: 42ch; font-size: 12px; margin-top: 3px; }
   .scroll-hint { display: block; }

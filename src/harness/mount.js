@@ -111,7 +111,7 @@ import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
 import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.js";
 import { renderMarkdown } from "./markdown.js";
-import { ENTRIES, EDIT_STATUS, VERDICTS, SKIP_CARDS } from "./results.js";
+import { ENTRIES, EDIT_STATUS, VERDICTS, SKIP_CARDS, STARS_CHECKED } from "./results.js";
 import { SNIPPETS } from "./snippets.js";
 
 restoreTheme();
@@ -615,7 +615,8 @@ function shell({ meta, entry, hasEdit, keys, skipped, verdict, snippet }) {
   const links = [
     snippet ? `<a href="#get-started">get started</a>` : null,
     `<a href="${e(meta.docs)}" target="_blank" rel="noopener">docs</a>`,
-    meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener">github${meta.stars ? ` · ${meta.stars.toLocaleString()} ★` : ""}</a>` : null,
+    // Stars come from results.js, the same figure the front page prints.
+    meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener"${entry?.stars ? ` title="GitHub stars, ${e(STARS_CHECKED)}"` : ""}>github${entry?.stars ? ` · ${entry.stars.toLocaleString("en-US")} ★` : ""}</a>` : null,
     meta.homepage ? `<a href="${e(meta.homepage)}" target="_blank" rel="noopener">home</a>` : null,
     meta.notes ? `<a href="#notes">notes from the build</a>` : null,
   ].filter(Boolean).join(" &nbsp;·&nbsp; ");

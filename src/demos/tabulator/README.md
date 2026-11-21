@@ -5,7 +5,6 @@ license: MIT
 docs: https://tabulator.info/docs/6.5
 homepage: https://tabulator.info
 github: https://github.com/olifolkerd/tabulator
-stars: 7755
 npm: tabulator-tables
 tagline: Vanilla, batteries-included: grouping, tree data, editing, export.
 ---

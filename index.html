@@ -132,42 +132,34 @@
     <noscript><p class="caption">The gallery needs JavaScript. The demos are linked in the navigation above.</p></noscript>
   </div>
 
-  <h2>What we measured</h2>
+  <h2 id="overview-section">All nine at a glance</h2>
   <p class="caption">
-    Own code is gzipped JS + CSS with the shared harness netted out, read from the build. Render and sort
-    are the median of five fresh page loads on one laptop (<span data-measured-when>21 Nov 2026</span>).
-    Treat them as an order of magnitude; every demo page measures again in your browser.
+    One row each, picks and runners-up first. Stars from GitHub on <span data-stars-checked>21 Nov 2026</span>.
+    Render is the median of five page loads on one laptop the same day; treat it as an order of magnitude.
+    Size is the gzipped JS and CSS the library adds to a page, read from the build; React, chunks loaded
+    later and WASM are listed under it, not added in.
   </p>
   <p class="scroll-hint">The table scrolls sideways.</p>
   <div class="scroll">
-  <table class="scores" id="measured" data-trim>
+  <table class="scores" id="overview">
     <thead><tr>
       <th>Library</th>
-      <th>Own code<br><span class="sub">gzip</span></th>
-      <th>Lines<br><span class="sub">written</span></th>
-      <th>Render<br><span class="sub">500,000 rows</span></th>
-      <th>Sort by price<br><span class="sub">500,000 rows</span></th>
+      <th>Stars<br><span class="sub">GitHub</span></th>
       <th>Last<br><span class="sub">release</span></th>
+      <th>Render<br><span class="sub">500,000 rows</span></th>
+      <th>Size<br><span class="sub">gzip</span></th>
+      <th>Features<br><span class="sub">free, of <span data-feature-count>13</span></span></th>
+      <th class="glance">In short</th>
     </tr></thead>
-    <tbody><tr><td colspan="6">Loading from results.js and bundles.json…</td></tr></tbody>
+    <tbody><tr><td colspan="7">Loading from results.js and bundles.json…</td></tr></tbody>
   </table>
   </div>
-  <p class="after"><a href="/compare.html#measured-section">The full table: 50,000 rows, scroll FPS, text selection, keyboard sort, licences, footnotes</a></p>
-
-  <h2 id="features-summary">What each can do</h2>
-  <p class="caption">
-    The picks and the runner-up, feature by feature. "Needs config" means it works once you set an option
-    its docs show; "paid tier" means the free package does not have it; "you write it" means the library
-    leaves it to you. Hover a feature for what it means.
+  <p class="after after--plain">
+    Features counts the <span data-feature-count>13</span> we checked that come free: built in, with an option, or as a free
+    plugin. A paid tier counts apart; "you write it" counts as nothing.
+    <a href="/compare.html#features-section">Every feature for all nine</a>
+    <a href="/compare.html#measured-section">Every number: 50,000 rows, sort, scroll, lines written, licences</a>
   </p>
-  <p class="scroll-hint">The table scrolls sideways.</p>
-  <div class="scroll">
-  <table class="scores" id="features" data-libs="baseline,aggrid,tabulator,revogrid,tanstack" data-features="sort,filter,search,edit,paste,group,pin,export,rowVirt,keyboard">
-    <thead><tr><th>Feature</th></tr></thead>
-    <tbody><tr><td>Loading from features.js…</td></tr></tbody>
-  </table>
-  </div>
-  <p class="after"><a href="/compare.html#features-section">All nine libraries, every feature, with notes</a></p>
 
   <h2 id="start">Start with the pick</h2>
   <p class="caption">

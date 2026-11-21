@@ -85,6 +85,7 @@
   <table class="scores" id="measured">
     <thead><tr>
       <th>Library</th>
+      <th>Stars<br><span class="sub">GitHub</span></th>
       <th>Own code<br><span class="sub">gzip</span></th>
       <th>WASM</th>
       <th>Lines<br><span class="sub">written</span></th>
@@ -97,7 +98,7 @@
       <th>Last<br><span class="sub">release</span></th>
       <th>Licence</th>
     </tr></thead>
-    <tbody><tr><td colspan="12">Loading from results.js and bundles.json…</td></tr></tbody>
+    <tbody><tr><td colspan="13">Loading from results.js and bundles.json…</td></tr></tbody>
   </table>
   </div>
   <details class="notes">
@@ -111,6 +112,7 @@
       <li id="note-g"><sup>g</sup> AG Grid's own-code figure is with <code>AllCommunityModule</code> registered, as its quick start does, and that is what this site ships. Built again through the same pipeline with only the modules the demo uses (<code>ClientSideRowModelModule</code>, the text, number and date filters, <code>CellStyleModule</code> and <code>NumberEditorModule</code>; sorting and resize are core), it is 272 kB against 334 kB for everything. Sort, filter and edit still work, with no missing-module errors. Measured by <code>scripts/measure-aggrid-lean.mjs</code>.</li>
       <li id="note-h"><sup>h</sup> Text in the DOM, browser text selection, grid copy and accessibility are four different things. Every grid here except Glide puts the visible cells in the DOM. <strong>Select text</strong> is a mouse drag across a cell: it works in the plain table, Observable, Tabulator, TanStack and DataTables. AG Grid draws grid markup (<code>div role="grid"</code>), not a <code>&lt;table&gt;</code>, and blocks selection unless you set <code>enableCellTextSelection</code>, which our demo does not. Perspective and RevoGrid turn it off too. <strong>Grid copy</strong> (select a range, Ctrl/Cmd-C) is a library feature: Glide with <code>getCellsForSelection</code>, RevoGrid by default, Tabulator with <code>clipboard: true</code>, AG Grid only in Enterprise. <strong>Keyboard sort</strong>: Tab from the top of the 1,000-row embed until a column header has focus, press Enter, check the rows moved. AG Grid, DataTables and TanStack sort. Observable, Tabulator, Perspective and RevoGrid sort on a click, but Tab never reaches a header. The plain table and Glide demos have no header sort. <strong>Not tested:</strong> screen readers, arrow-key navigation inside the grid, focus handling while scrolling.</li>
       <li id="note-d"><sup>d</sup> Perspective's large figure is mostly moving 500,000 JavaScript objects into a worker and rebuilding them as Arrow columns. Every library gets the same <code>Array&lt;Object&gt;</code>, which is Perspective's worst input; Arrow or CSV would cut it. Its WASM boot is timed separately and shown as "engine ready in N ms" on its page and in the gallery, not inside any render figure. Once loaded, sort and filter run in the worker.</li>
+      <li><strong>Stars</strong> are GitHub stargazers on <span data-stars-checked>21 Nov 2026</span>, read with the GitHub API. The plain table has no repository.</li>
       <li><strong>Own code</strong> nets out the <span data-harness>25 kB</span> every demo page loads (the mount harness, the Parquet reader, <code>site.css</code>) and, for the React demos, <span data-react>60 kB</span> of React. Full page weights are in <a href="/bundles.json">bundles.json</a>. Perspective's WebAssembly is its own column because gzip barely compresses it.</li>
       <li><strong>Lines written</strong> are non-blank, non-comment lines under <code>src/demos/&lt;key&gt;/</code>. A build-cost proxy: JSX markup counts the same as logic. The sort hook and edit test that the harness asks of each demo are fenced off and not counted, so the column still measures building the table.</li>
       <li><strong>The render clock</strong> covers building the DOM and a forced layout. Without the layout flush the plain <code>&lt;table&gt;</code> would report a fifth of its real cost. <strong>Scroll FPS</strong> is a scripted scroll of 20,000 px over 120 frames on the element that scrolls. All figures here are from the production build.</li>

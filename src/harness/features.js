@@ -45,6 +45,21 @@ export const FEATURES = [
   { key: "keyboard", label: "Keyboard", help: "Move between cells with the arrow keys." },
 ];
 
+/** The overview table's feature score: how many of FEATURES a library has
+ *  without paying (built in, with config, or as a free plugin), and how many
+ *  sit in a paid tier. "You write it" and "no" count toward neither. */
+export function featureScore(key) {
+  const s = SUPPORT[key] || {};
+  let free = 0;
+  let paid = 0;
+  for (const f of FEATURES) {
+    const v = s[f.key]?.v;
+    if (v === "yes" || v === "config" || v === "plugin") free++;
+    else if (v === "paid") paid++;
+  }
+  return { free, paid, total: FEATURES.length };
+}
+
 export const SUPPORT = {
   baseline: {
     sort: { v: "diy", note: "about ten lines" },

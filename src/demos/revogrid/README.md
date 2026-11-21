@@ -5,7 +5,6 @@ license: MIT; Pro is paid
 docs: https://rv-grid.com/guide/
 homepage: https://rv-grid.com
 github: https://github.com/revolist/revogrid
-stars: 3465
 npm: "@revolist/revogrid"
 tagline: A web component. Virtual rows and columns, spreadsheet-style editing.
 ---
