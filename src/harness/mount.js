@@ -490,7 +490,9 @@ export function navbar() {
   <div class="wrap nav__inner">
     <a class="nav__brand" href="/index.html">Tables Bakeoff</a>
     <div class="nav__links">
-      <a href="/demos/baseline.html">Plain &lt;table&gt;</a>
+      <a href="/compare.html">Compare</a>
+      <a href="/why.html">Why</a>
+      <a class="nav__sep" href="/demos/baseline.html">Plain &lt;table&gt;</a>
       <a href="/demos/observable.html">Observable</a>
       <a href="/demos/tabulator.html">Tabulator</a>
       <a href="/demos/aggrid.html">AG Grid</a>
@@ -519,7 +521,7 @@ export function footer() {
   <footer style="border-top:1px solid var(--border);margin-top:60px;padding:40px 0;color:var(--text-muted);font-size:12px">
     <div class="wrap" style="text-align:center">
       Built by <a href="https://datahub.io" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">DataHub</a>, which needed a table and picked one.
-      Verdict and numbers on the <a href="/index.html" style="color:var(--text-secondary);font-weight:500">front page</a>.
+      The picks are on the <a href="/index.html" style="color:var(--text-secondary);font-weight:500">front page</a>, every number on <a href="/compare.html" style="color:var(--text-secondary);font-weight:500">Compare</a>.
       We count visits with Google Analytics.
     </div>
   </footer>`;

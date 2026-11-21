@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Why DataHub built a bake-off of nine JavaScript tables, how the measurements were made, what DataHub chose and why, and what was not tested.">
+<title>Why we did this. Tables Bakeoff</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tables Bakeoff">
+<meta property="og:url" content="https://tables.datahub.io/why.html">
+<meta property="og:title" content="Why we built a table bake-off">
+<meta property="og:description" content="DataHub needed a table library for dataset previews. The comparisons online were lists with no opinion, so we built the same table nine ways and measured.">
+<meta property="og:image" content="https://tables.datahub.io/og/tables-bakeoff.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why we built a table bake-off">
+<meta name="twitter:description" content="DataHub needed a table library for dataset previews. The comparisons online were lists with no opinion, so we built the same table nine ways and measured.">
+<meta name="twitter:image" content="https://tables.datahub.io/og/tables-bakeoff.png">
+<link rel="canonical" href="https://tables.datahub.io/why.html">
+<link rel="stylesheet" href="/src/harness/site.css">
+<link rel="stylesheet" href="/src/harness/pages.css">
+<style>
+  h2 { scroll-margin-top: 16px; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="wrap nav__inner">
+    <a class="nav__brand" href="/index.html">Tables Bakeoff</a>
+    <div class="nav__links">
+      <a href="/compare.html">Compare</a>
+      <a href="/why.html" class="is-current">Why</a>
+      <a class="nav__sep" href="/demos/baseline.html">Plain &lt;table&gt;</a>
+      <a href="/demos/observable.html">Observable</a>
+      <a href="/demos/tabulator.html">Tabulator</a>
+      <a href="/demos/aggrid.html">AG Grid</a>
+      <a href="/demos/tanstack.html">TanStack</a>
+      <a href="/demos/glide.html">Glide</a>
+      <a href="/demos/perspective.html">Perspective</a>
+      <a href="/demos/datatables.html">DataTables</a>
+      <a href="/demos/revogrid.html">RevoGrid</a>
+      <a class="nav__sep" href="/index.html#experiments">Experiments</a>
+      <a href="/changelog.html">Changelog</a>
+    </div>
+    <div class="nav__tools">
+      <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </a>
+      <button class="toggle" type="button" aria-label="Theme"></button>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>Why we did this, and how</h1>
+    <p class="lede">
+      <a href="https://datahub.io" target="_blank" rel="noopener">DataHub</a> needed a table for dataset previews.
+      We wanted to choose properly, so we built the same table nine ways and measured. This page is the
+      reasoning. The <a href="/index.html">picks</a> and the <a href="/compare.html">numbers</a> are elsewhere.
+    </p>
+  </header>
+
+  <div class="prose">
+    <h2 id="why">Why</h2>
+    <p>
+      DataHub shows a preview of every dataset: the first rows, sometimes all of them, in a table. We needed
+      a library for that table and we wanted to pick it on evidence. The comparison pages online did not
+      help. They are lists: ten libraries, a logo each, a bullet list of features copied from the README,
+      and no opinion about which to use. Nobody had put the same data through all of them on the same page.
+    </p>
+    <p>
+      So we did. The question we started with is the one most people arrive with: which one should I use?
+      The answer we ended with is that different jobs get different picks, and that most of the time the
+      right answer is a plain <code>&lt;table&gt;</code>.
+    </p>
+
+    <h2 id="how">How</h2>
+    <p>
+      <strong>Same data.</strong> HM Land Registry Price Paid data, real UK house sales, as Parquet. Four
+      datasets: 1,000 rows in 16 columns; the same 1,000 rows with 64 extra numeric columns, 80 in all; 50,000
+      rows; and a 500,000-row sample of one year, loaded on demand. Every library gets the same
+      <code>Array&lt;Object&gt;</code> from the same loader. That is the best input for a plain table and the
+      worst for a columnar engine like Perspective, and we say so where it matters.
+    </p>
+    <p>
+      <strong>Same harness.</strong> Every demo is the same page shell, the same theme tokens and the same
+      mounting code. A demo supplies four render functions, one per dataset, and the harness owns the page,
+      the clock and the scroll test, and empties the host between renders. The same cell formatter runs for
+      every library except Perspective, which has no per-cell formatter hook, so differences on screen come
+      from the library.
+    </p>
+    <p>
+      <strong>Scripted measurements.</strong> Render time covers building the DOM and a forced layout, so a
+      library that returns early cannot report a scheduling call as a render; without the layout flush the
+      plain table would report a fifth of its real cost. Scroll is a scripted 20,000 px scroll over 120 frames
+      on the element that actually moves. Sort is the library's own sort call, timed until the sorted rows
+      are on screen. Every figure is the median of five fresh page loads from
+      <code>scripts/measure-all.mjs</code> on one laptop (<span data-measured-machine>Apple M4, headless Chromium</span>),
+      on the production build. Bundle sizes and line counts are read from the build output. One number was
+      timed by hand: Tabulator's 88 seconds with its documented <code>height: "100%"</code> in an unsized parent.
+    </p>
+    <p>
+      <strong>Edit, keyboard and selection tests.</strong> On each grid that edits, we double-clicked a price
+      and typed a new one, then pasted three lines onto a price cell, and counted a value only if it reached
+      the data. With Playwright we dragged the mouse across a cell to see if browser text selection works, and
+      pressed Tab from the top of each page until a column header had focus, then Enter, to see if the rows
+      sorted. Those are the feature checks behind the <a href="/compare.html#features">feature table</a>.
+    </p>
+    <p>
+      <strong>Who did what.</strong> Agents built and measured the demos under our direction. We set the
+      harness, the datasets and the tests, reviewed each demo, reran the numbers and chose the verdict. Every
+      timing but one comes from a script in the
+      <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener">repo</a> that you can
+      run yourself, and every demo page measures again in your browser.
+    </p>
+    <p>
+      The method and its caveats in full:
+      <a href="https://github.com/datasets/tables-bakeoff/blob/main/ANALYSIS.md" target="_blank" rel="noopener">ANALYSIS.md</a>.
+      The verdict with its reasoning:
+      <a href="https://github.com/datasets/tables-bakeoff/blob/main/EVALUATION.md" target="_blank" rel="noopener">EVALUATION.md</a>.
+    </p>
+
+    <h2 id="datahub">What DataHub chose</h2>
+    <p>
+      <strong>TanStack Table with react-virtual, wrapped once as a <code>&lt;DataTable&gt;</code> component in
+      PortalJS.</strong> This is the "build your own" pick, and it is not the pick for most people.
+    </p>
+    <p>
+      DataHub pages already ship React, so the table costs 24 kB, not 333. We want to own the markup and the
+      CSS: a dataset preview has to be text people can find with Ctrl-F and copy a postcode out of, and the
+      theme is our own CSS variables, with no third-party theme to fight. What comes back from TanStack is an
+      ordinary <code>&lt;table&gt;</code>.
+    </p>
+    <p>
+      The cost is 150 lines we own. The row and column virtualizers, the spacer cells, the sticky header and
+      the sort buttons are ours. Ctrl-F only sees the mounted rows, so searching a whole dataset is our own
+      search box, and the keyboard sort is ours too. TanStack v9 is a redesign and its docs lagged it, so we
+      spent part of a day in the type definitions; that is paid for now. Both experiments on this site, the
+      <a href="/demos/tanstack-summary.html">summary and filter table</a> and the
+      <a href="/demos/duckdb-query.html">DuckDB query demo</a>, were built on it without surprises.
+    </p>
+    <p>
+      For a portal that is not React, we would say Tabulator, with a sized parent. For a table in a data
+      story, we keep writing <code>&lt;table&gt;</code>.
+    </p>
+
+    <h2 id="not-tested">What we did not test</h2>
+    <ul>
+      <li><strong>Filtering at 500,000 rows.</strong> Observed, not timed. Sorting is timed; filtering is not.</li>
+      <li><strong>Editing beyond one column.</strong> The edit test covers double-click edit and pasting a column into five grids. Validation, undo, multi-column paste and fill handles were not tested.</li>
+      <li><strong>Accessibility, beyond keyboard sort.</strong> No screen reader, no arrow-key navigation inside the grid, no focus handling while scrolling. Native table markup does not settle accessibility on its own.</li>
+      <li><strong>Column pinning, resize, filter rows.</strong> Not in the harness. The summary-stats experiment on TanStack has a filter row.</li>
+      <li><strong>Mobile performance.</strong> The layout works at 375 px; FPS was measured in desktop headless Chromium only.</li>
+      <li><strong>Arrow or CSV input for Perspective.</strong> Everyone got the same <code>Array&lt;Object&gt;</code>. An Arrow buffer would very likely cut Perspective's 500,000-row figure hard.</li>
+      <li><strong>More machines and browsers.</strong> One machine, one headless Chromium, the median of five loads, with min to max in <code>docs/reports/measurements-2026-11-21.md</code>. Treat the numbers as an order of magnitude.</li>
+    </ul>
+
+    <h2 id="not-included">Considered, not included</h2>
+    <ul>
+      <li><strong>Handsontable</strong>: paid for commercial use since v7. Everything here is permissive open source.</li>
+      <li><strong>MUI X Data Grid</strong>: the MIT tier caps pages at 100 rows and keeps column pinning, tree data and aggregation in Pro and Premium. Theming runs through MUI's system, so it could not take this site's tokens the way the others did.</li>
+      <li><strong>react-data-grid</strong>: still a beta after years, and React 19 only. The TanStack demo already answers "a virtualized <code>&lt;table&gt;</code> in React".</li>
+      <li><strong>SlickGrid</strong>: 6.0 (Nov 2026) is real and MIT, and it shows what AG Grid and Tabulator already show here.</li>
+      <li><strong>Grid.js</strong>: no release since March 2024.</li>
+      <li><strong>Kendo, DevExtreme, Syncfusion, Bryntum</strong>: commercial. This is about libraries you can adopt without a procurement conversation.</li>
+      <li><strong>Vue, Svelte, Angular grids</strong>: TanStack has adapters for all three, and the vanilla entries work anywhere. Glide is React only.</li>
+    </ul>
+
+    <h2 id="add">Add a library</h2>
+    <p>
+      Copy <code>demos/baseline.html</code> and <code>src/demos/baseline/main.js</code>, export
+      <code>meta</code> and four render functions, add the key to <code>DEMOS</code> in
+      <code>vite.config.js</code> and one entry to <code>src/harness/results.js</code>. Bundle size and line
+      count then appear by themselves. Corrections and additions on
+      <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+  </div>
+
+  <p class="foot">
+    Contains HM Land Registry data © Crown copyright and database right 2026, licensed under the Open
+    Government Licence v3.0.
+  </p>
+
+</div>
+
+<footer style="border-top:1px solid var(--border);margin-top:40px;padding:36px 0;color:var(--text-muted);font-size:12.5px">
+  <div class="wrap" style="text-align:center;max-width:70ch">
+    Built by <a href="https://datahub.io" target="_blank" rel="noopener">DataHub</a>, which needed a
+    table and picked one. Same treatment for line-chart libraries at
+    <a href="https://linecharts.datahub.io/" target="_blank" rel="noopener">linecharts.datahub.io</a>.
+    Source and corrections on <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener">GitHub</a>.
+    We count visits with Google Analytics.
+  </div>
+</footer>
+
+<script type="module" src="/src/harness/hub.js"></script>
+</body>
+</html>

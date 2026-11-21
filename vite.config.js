@@ -64,6 +64,8 @@ export default {
     rollupOptions: {
       input: {
         index: resolve(process.cwd(), "index.html"),
+        compare: resolve(process.cwd(), "compare.html"),
+        why: resolve(process.cwd(), "why.html"),
         changelog: resolve(process.cwd(), "changelog.html"),
         ...Object.fromEntries(built),
         // Exploratory spikes, not bakeoff entries (see GitHub issues #4 and #6)
