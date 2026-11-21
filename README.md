@@ -1,15 +1,8 @@
 # Tables Bakeoff
 
-**🔗 Live site: [tables.datahub.io](https://tables.datahub.io)**
+**Live site: [tables.datahub.io](https://tables.datahub.io)**
 
-A bake-off of open-source JavaScript table/grid libraries (eight libraries and
-a plain `<table>`), run over
-the same four datasets, built as a static site you open and scroll rather than
-a written report. The front page leads with the verdict and embeds every
-demo live; the reasoning is in [EVALUATION.md](./EVALUATION.md). It is a deliberate sibling of the
-[line-charts](https://linecharts.datahub.io/) repo: same structure, same
-shared harness pattern, same idea of comparing libraries by building the same
-thing many times instead of reading many sets of marketing copy.
+We built the same table with eight open-source JavaScript table libraries and a plain `<table>`, over the same four datasets, measured them, and picked one for each of three jobs: a table on a page, a big grid, an editable grid. It is a static site you open and scroll, not a report. The front page leads with the picks and embeds every demo live; the reasoning is in [EVALUATION.md](./EVALUATION.md). It is a sibling of the [line-charts](https://linecharts.datahub.io/) repo: same structure, same harness pattern, same idea of comparing libraries by building the same thing many times instead of reading marketing copy.
 
 The nine entries:
 
