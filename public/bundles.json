@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T00:27:19.260Z",
+  "generatedAt": "2026-11-21T01:21:08.174Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -12,15 +12,15 @@
   },
   "harness": {
     "files": [
-      "assets/results-Bl9ZEqxA.js",
+      "assets/results-Cy-gb1dU.js",
       "assets/markdown-B_sAtjw3.js",
       "assets/frontmatter-BYBBUU76.js",
-      "assets/mount-CfyUNV5X.js",
+      "assets/mount-DEyXxjoq.js",
       "assets/theme-DTs1rE8-.js",
       "assets/theme-CQW_ahdP.css"
     ],
-    "rawKB": 91.4,
-    "gzipKB": 30.8
+    "rawKB": 90.9,
+    "gzipKB": 30.7
   },
   "demos": {
     "baseline": {
@@ -32,23 +32,23 @@
       "totalKB": 31.8,
       "reactKB": 0,
       "libKB": 31.8,
-      "harnessKB": 30.8,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 85.7,
+        "jsKB": 85.3,
         "cssKB": 7.4,
         "wasmKB": 0,
-        "totalKB": 93.1
+        "totalKB": 92.7
       },
       "loc": 39,
       "files": {
         "js": [
-          "assets/baseline-B1myKHe6.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/baseline-DDyaLTqj.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -64,26 +64,26 @@
       "jsKB": 35.7,
       "cssKB": 3.4,
       "otherKB": 0,
-      "totalKB": 39.1,
+      "totalKB": 39,
       "reactKB": 0,
-      "libKB": 39.1,
-      "harnessKB": 30.8,
+      "libKB": 39,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 101.2,
+        "jsKB": 100.8,
         "cssKB": 11.6,
         "wasmKB": 0,
-        "totalKB": 112.9
+        "totalKB": 112.5
       },
       "loc": 36,
       "files": {
         "js": [
-          "assets/observable-CVlMzd0_.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/observable-B960AS8O.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -97,29 +97,29 @@
     "tabulator": {
       "name": "Tabulator",
       "react": false,
-      "jsKB": 136.7,
+      "jsKB": 136.6,
       "cssKB": 6.2,
       "otherKB": 0,
-      "totalKB": 142.9,
+      "totalKB": 142.8,
       "reactKB": 0,
-      "libKB": 142.9,
-      "harnessKB": 30.8,
+      "libKB": 142.8,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 545.9,
+        "jsKB": 545.5,
         "cssKB": 36.6,
         "wasmKB": 0,
-        "totalKB": 582.4
+        "totalKB": 582
       },
       "loc": 70,
       "files": {
         "js": [
-          "assets/tabulator-D7KAm2R3.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/tabulator-BYBmqQ9Y.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -139,23 +139,23 @@
       "totalKB": 363.2,
       "reactKB": 0,
       "libKB": 363.2,
-      "harnessKB": 30.8,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 1272.3,
+        "jsKB": 1271.9,
         "cssKB": 7.4,
         "wasmKB": 0,
-        "totalKB": 1279.6
+        "totalKB": 1279.2
       },
       "loc": 40,
       "files": {
         "js": [
-          "assets/aggrid-BWGjPeQq.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/aggrid-DPDe-5KA.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -168,32 +168,32 @@
     "tanstack": {
       "name": "TanStack Table",
       "react": true,
-      "jsKB": 121.4,
+      "jsKB": 121.3,
       "cssKB": 2.2,
       "otherKB": 0,
-      "totalKB": 123.6,
+      "totalKB": 123.5,
       "reactKB": 69,
-      "libKB": 54.6,
-      "harnessKB": 30.8,
+      "libKB": 54.5,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 380.8,
+        "jsKB": 380.4,
         "cssKB": 7.4,
         "wasmKB": 0,
-        "totalKB": 388.1
+        "totalKB": 387.7
       },
       "loc": 147,
       "files": {
         "js": [
-          "assets/tanstack-DJAmnILI.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/tanstack-C-1NPmsc.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/Table-DRgYDsge.js",
           "assets/react-XG3B2r_u.js",
           "assets/react-host-CTZUpMtF.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -209,29 +209,29 @@
       "jsKB": 200.6,
       "cssKB": 4.5,
       "otherKB": 0,
-      "totalKB": 205.1,
+      "totalKB": 205,
       "reactKB": 69,
-      "libKB": 136.1,
-      "harnessKB": 30.8,
+      "libKB": 136,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 8.2,
       "raw": {
-        "jsKB": 609.3,
+        "jsKB": 608.9,
         "cssKB": 20.1,
         "wasmKB": 0,
-        "totalKB": 629.4
+        "totalKB": 629
       },
       "loc": 128,
       "files": {
         "js": [
-          "assets/glide-BmDXzIos.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/glide-B6XzsZys.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/preload-helper-BXl3LOEh.js",
           "assets/react-host-CTZUpMtF.js",
           "assets/react-XG3B2r_u.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -240,8 +240,8 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/number-overlay-editor-tJ0y0iSs.js",
-          "assets/data-grid-overlay-editor-B9H7E4ZL.js"
+          "assets/number-overlay-editor-D70oWuaj.js",
+          "assets/data-grid-overlay-editor-DqThVFGq.js"
         ]
       }
     },
@@ -251,25 +251,25 @@
       "jsKB": 109.2,
       "cssKB": 28.5,
       "otherKB": 0,
-      "totalKB": 137.8,
+      "totalKB": 137.7,
       "reactKB": 0,
-      "libKB": 137.8,
-      "harnessKB": 30.8,
+      "libKB": 137.7,
+      "harnessKB": 30.7,
       "wasmKB": 4348.9,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 386.4,
+        "jsKB": 386,
         "cssKB": 171.7,
         "wasmKB": 4388.9,
-        "totalKB": 558.1
+        "totalKB": 557.7
       },
       "loc": 63,
       "files": {
         "js": [
-          "assets/perspective-DWrg--oc.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/perspective-DJZRldI0.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js",
           "assets/frontmatter-BYBBUU76.js"
         ],
@@ -287,29 +287,29 @@
     "datatables": {
       "name": "DataTables",
       "react": false,
-      "jsKB": 76.8,
+      "jsKB": 76.7,
       "cssKB": 6.4,
       "otherKB": 0,
-      "totalKB": 83.2,
+      "totalKB": 83.1,
       "reactKB": 0,
-      "libKB": 83.2,
-      "harnessKB": 30.8,
+      "libKB": 83.1,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 0,
       "raw": {
-        "jsKB": 225.4,
+        "jsKB": 225,
         "cssKB": 38.6,
         "wasmKB": 0,
-        "totalKB": 263.9
+        "totalKB": 263.5
       },
       "loc": 56,
       "files": {
         "js": [
-          "assets/datatables-CxvukZfD.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/datatables-Co3dZ5WU.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -323,29 +323,29 @@
     "revogrid": {
       "name": "RevoGrid",
       "react": false,
-      "jsKB": 58.5,
+      "jsKB": 58.4,
       "cssKB": 2.2,
       "otherKB": 0,
-      "totalKB": 60.7,
+      "totalKB": 60.6,
       "reactKB": 0,
-      "libKB": 60.7,
-      "harnessKB": 30.8,
+      "libKB": 60.6,
+      "harnessKB": 30.7,
       "wasmKB": 0,
       "lazyKB": 88.2,
       "raw": {
-        "jsKB": 167.1,
+        "jsKB": 166.7,
         "cssKB": 7.4,
         "wasmKB": 0,
-        "totalKB": 174.5
+        "totalKB": 174.1
       },
       "loc": 52,
       "files": {
         "js": [
-          "assets/revogrid-D6iM-eO7.js",
-          "assets/results-Bl9ZEqxA.js",
+          "assets/revogrid-Bco1i6j8.js",
+          "assets/results-Cy-gb1dU.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CfyUNV5X.js",
+          "assets/mount-DEyXxjoq.js",
           "assets/theme-DTs1rE8-.js",
           "assets/preload-helper-BXl3LOEh.js"
         ],
@@ -354,20 +354,20 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/revogr-data_4.entry-CvzfLIRv.js",
+          "assets/revogr-data_4.entry-CD4N4q0m.js",
           "assets/debounce-PCRWZliA-CMxTb8Pi.js",
-          "assets/throttle-DDvljWu0-BZgdrYQM.js",
-          "assets/viewport.helpers-CoCAvmZs-Fy_zOR34.js",
-          "assets/dimension.helpers-DLH6njyw-vz4aknXW.js",
-          "assets/header-cell-renderer-XoW6IWU0-BFTtQj3b.js",
-          "assets/filter.button-BwxfX4Ix-BJBu_ZNt.js",
-          "assets/revogr-clipboard_3.entry-BnNhEkts.js",
-          "assets/index-BvBMdMR3-DnGTzUYK.js",
-          "assets/edit.utils-Cm899OWt-Cbu0e8P2.js",
-          "assets/revogr-attribution_7.entry-DpeVsS_U.js",
-          "assets/events-BvSmBueA-CHjyVdOY.js",
-          "assets/revogr-filter-panel.entry-D8ezXccc.js",
-          "assets/revo-grid.entry-D5vxW8Ap.js"
+          "assets/throttle-DDvljWu0-CCaSyQB0.js",
+          "assets/viewport.helpers-CoCAvmZs-Ck2PMjt2.js",
+          "assets/dimension.helpers-DLH6njyw-BYGyf6ro.js",
+          "assets/header-cell-renderer-XoW6IWU0-DU-ziqYF.js",
+          "assets/filter.button-BwxfX4Ix-CaL4RK4J.js",
+          "assets/revogr-clipboard_3.entry-Df9WBCm7.js",
+          "assets/index-BvBMdMR3-Dmj-lyqP.js",
+          "assets/edit.utils-Cm899OWt-DM8CQr33.js",
+          "assets/revogr-attribution_7.entry-BcMw5myE.js",
+          "assets/events-BvSmBueA-cx7axEhG.js",
+          "assets/revogr-filter-panel.entry-C7TvtH_D.js",
+          "assets/revo-grid.entry-BG7XPwJt.js"
         ]
       }
     }

@@ -65,7 +65,7 @@ export const tables = {
   medium: (host, data, ctx) => renderTable(host, data, ctx),
   // Capped at 100,000 of 500,000 rows. Uncapped this never completed — the
   // cost is table layout, which goes superlinear past ~100k rows (measured on
-  // this machine: 2.6s / 6.9s / ~27s at 50k / 100k / 200k, see meta.notes for
+  // this machine: 2.5s / 6.3s / ~27s at 50k / 100k / 200k, see meta.notes for
   // the run-to-run spread). The cap is stated in meta.notes and on the card,
   // so the reader sees the baseline is being shown at its best case and still
   // loses.

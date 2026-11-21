@@ -37,6 +37,8 @@ npm run test:e2e   # playwright
 ```
 
 Measurement scripts (each says how to run it at the top):
+`scripts/measure-all.mjs` re-measures every render, FPS and sort figure on the
+front page (about 15 minutes; `--only aggrid,tabulator` for some),
 `scripts/measure-sort.mjs` times "Sort by price" on every large card,
 `scripts/edit-test.mjs` runs the edit test, and
 `scripts/measure-aggrid-lean.mjs` sizes AG Grid with all Community modules
@@ -58,8 +60,11 @@ The front page (`index.html`) renders from two sources: `bundles.json`, which
 the build writes (bundle size, lines of code), and `src/harness/results.js`
 (render time, scroll FPS, release dates, licence notes, and the 1 to 5
 scorecard with its reasons). Every typed-in number lives in `results.js` so one
-sweep updates the page; values from a run being repeated carry `verify: true`
-and render with a `data-verify` attribute.
+sweep updates the page. The numbers come from `node scripts/measure-all.mjs`
+(builds, serves the production build, five fresh page loads per figure, waits
+for a quiet machine; output in `docs/reports/measurements-<date>.{json,md}`).
+A value from a run you do not yet trust can carry `verify: true` and renders
+with a `data-verify` attribute.
 
 Each demo page also has a `?bare=1` mode (optionally `&dataset=small|wide|medium|large`)
 that renders one dataset with no page chrome and posts its render time to the
