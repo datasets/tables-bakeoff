@@ -23,11 +23,11 @@ export function inferColumns(rows) {
  *  in the table because it is real data; it is just not what a reader wants in
  *  the first column. */
 export const COLUMN_LABELS = {
-  street: "Street",
-  town: "Town",
-  price: "Price",
   date: "Date",
+  price: "Price",
   propertyType: "Property type",
+  town: "Town",
+  street: "Street",
   oldNew: "New build",
   duration: "Tenure",
   postcode: "Postcode",

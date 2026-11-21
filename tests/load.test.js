@@ -24,8 +24,8 @@ describe("arrangeColumns", () => {
 
   it("puts the human columns first, the GUID last, and labels every column", () => {
     const out = arrangeColumns(cols("id", "price", "date", "postcode", "propertyType", "street", "town"));
-    expect(out.map((c) => c.name)).toEqual(["street", "town", "price", "date", "propertyType", "postcode", "id"]);
-    expect(out.map((c) => c.label)).toEqual(["Street", "Town", "Price", "Date", "Property type", "Postcode", "Transaction ID"]);
+    expect(out.map((c) => c.name)).toEqual(["date", "price", "propertyType", "town", "street", "postcode", "id"]);
+    expect(out.map((c) => c.label)).toEqual(["Date", "Price", "Property type", "Town", "Street", "Postcode", "Transaction ID"]);
   });
 
   it("keeps unknown columns in their own order, after the known ones and before id", () => {
