@@ -17,9 +17,13 @@ const WIDTH_FOR = { number: 112, date: 118, string: 152 };
  *  first paint is an empty grid. `initial` is the harness host measured before
  *  the mount so frame one is already correct; the observer below only has to
  *  handle later resizes. */
-export function GlideGrid({ data, formatCell, theme, initial }) {
+export function GlideGrid({ data, formatCell, theme, initial, api }) {
   const wrapRef = useRef(null);
   const [box, setBox] = useState(initial);
+  // Glide has no sorting of its own: the app owns row order. `order` maps a
+  // display row to a source row, or is null for file order.
+  const [order, setOrder] = useState(null);
+  if (api) api.setOrder = setOrder;
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -50,7 +54,8 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
   const getCellContent = useCallback(
     ([col, row]) => {
       const spec = data.columns[col];
-      const text = formatCell(data.rows[row]?.[spec.name], spec);
+      const source = order ? order[row] : row;
+      const text = formatCell(data.rows[source]?.[spec.name], spec);
       return {
         kind: GridCellKind.Text,
         data: text,
@@ -59,7 +64,7 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
         contentAlign: spec.align,
       };
     },
-    [data, formatCell]
+    [data, formatCell, order]
   );
 
   return (

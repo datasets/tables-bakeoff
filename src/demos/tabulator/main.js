@@ -35,6 +35,9 @@ function build(host, data, ctx, opts = {}) {
       })),
       ...opts,
     });
+    // Sort and clear go through Tabulator's own API; both redraw before
+    // returning.
+    ctx.provideSort((field) => (field ? t.setSort(field, "asc") : t.clearSort()));
     t.on("tableBuilt", () => {
       // Tabulator scrolls .tabulator-tableholder internally; the host div
       // itself never moves, so the FPS run must be pointed here.

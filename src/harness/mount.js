@@ -19,7 +19,7 @@
  *             { name, label, type: 'string'|'number'|'date', align: 'left'|'right' },
  *             already in the shared display order (src/data/load.js). Use
  *             `label` for the header and `name` as the field.
- *   ctx     — { theme, key, formatCell, reportRows }:
+ *   ctx     — { theme, key, formatCell, reportRows, provideSort }:
  *               theme      a snapshot of theme.js's tokens taken just before
  *                          this render — `theme.dark` is the light/dark
  *                          discriminator, plus palette, surface, page, text,
@@ -30,6 +30,7 @@
  *               formatCell the single shared formatter; use it for every cell
  *                          so differences on screen come from the library.
  *               reportRows see (2).
+ *               provideSort see (5).
  * It may return nothing, or a cleanup function, or a promise of either. The
  * promise is awaited inside the timed region, so async mounts (a React root,
  * Perspective's viewer.load) report their true cost. Cleanup runs before the
@@ -68,7 +69,15 @@
  *     left out silently it would vanish. A demo with such a cost exports it
  *     as `setup`: the harness awaits it once, before any card renders, times
  *     it with the same clock, and prints it on its own line ("engine ready in
- *     N ms") above the cards and in the gallery embed. */
+ *     N ms") above the cards and in the gallery embed.
+ *
+ * (5) ctx.provideSort(fn) — the large card's "Sort by price" action.
+ *     Hand the harness a function `fn(field)` that sorts the table ascending
+ *     by `field` through the library's own API, or, given null, puts the rows
+ *     back in file order. The harness clears (untimed), then times
+ *     fn("price") with the same clock as a render: it awaits a returned
+ *     promise, then forces layout. Resolve the promise only once the sorted
+ *     rows are on screen, as the render predicates do. */
 
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
@@ -91,6 +100,8 @@ export async function mountDemo({ meta, tables, source, setup }) {
   installThemeToggle(root.querySelector(".toggle"));
 
   const cleanups = {};
+  const sorters = {};
+  const sortRuns = {};
 
   // Wire every card before rendering any of them, so the large card's Load
   // button is live while the eager cards are still working.
@@ -103,6 +114,12 @@ export async function mountDemo({ meta, tables, source, setup }) {
     // would be a meaningless 60.
     fpsBtn.disabled = true;
     fpsBtn.addEventListener("click", () => runFps(card));
+
+    const sortBtn = card.querySelector(".sort-btn");
+    if (sortBtn) {
+      sortBtn.disabled = true;
+      sortBtn.addEventListener("click", () => runSort(key, card));
+    }
 
     if (!DATASETS[key].eager) {
       card.querySelector(".load-btn").addEventListener("click", (e) => {
@@ -161,6 +178,7 @@ export async function mountDemo({ meta, tables, source, setup }) {
 
     try { cleanups[key]?.(); } catch {}
     cleanups[key] = null;
+    sorters[key] = null;
     host.innerHTML = "";
 
     // A demo that presents the whole dataset says nothing; one that caps or
@@ -171,12 +189,14 @@ export async function mountDemo({ meta, tables, source, setup }) {
       key,
       formatCell,
       reportRows: (n) => { renderedRows = n; },
+      provideSort: (fn) => { sorters[key] = fn; },
     };
     try {
       const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
       cleanups[key] = typeof result === "function" ? result : null;
       badge.textContent = formatMs(ms);
       card.querySelector(".fps-btn").disabled = false;
+      resetSort(key, card);
       detail.textContent =
         `${rowsLabel(renderedRows, data.numRows)} · ` +
         `load ${formatMs(data.timings.fetchMs + data.timings.decodeMs)} · ` +
@@ -188,6 +208,45 @@ export async function mountDemo({ meta, tables, source, setup }) {
       badge.textContent = "failed";
       console.error(`[${meta.name}] ${key}`, err);
     }
+  }
+
+  /* Sort by price, timed. Each click puts the rows back in file order first,
+   * untimed, so every run sorts the same input: a second ascending sort of
+   * already-sorted rows would be a much cheaper, different job. The card keeps
+   * every run and shows the median. */
+  function resetSort(key, card) {
+    sortRuns[key] = [];
+    const btn = card.querySelector(".sort-btn");
+    if (!btn) return;
+    const out = card.querySelector(".sort-out");
+    btn.disabled = !sorters[key];
+    out.textContent = sorters[key] ? "" : "no sort in this demo";
+  }
+
+  async function runSort(key, card) {
+    const sorter = sorters[key];
+    if (!sorter) return;
+    const btn = card.querySelector(".sort-btn");
+    const out = card.querySelector(".sort-out");
+    const host = card.querySelector(".demo-host");
+    btn.disabled = true;
+    out.textContent = "sorting…";
+    try {
+      await sorter(null);
+      await nextFrame();
+      const { ms } = await timeRender(() => sorter("price"), host);
+      const runs = sortRuns[key];
+      runs.push(ms);
+      out.dataset.median = String(median(runs));
+      out.dataset.runs = String(runs.length);
+      out.textContent = runs.length === 1
+        ? `sorted in ${formatMs(ms)}`
+        : `sorted in ${formatMs(ms)} · median of ${runs.length}: ${formatMs(median(runs))}`;
+    } catch (err) {
+      out.textContent = `sort failed: ${err.message || err}`;
+      console.error(`[${meta.name}] sort`, err);
+    }
+    btn.disabled = false;
   }
 
   async function runFps(card) {
@@ -243,7 +302,7 @@ async function mountBare({ meta, tables, setup, root, dataset }) {
     try { cleanup?.(); } catch {}
     cleanup = null;
     host.innerHTML = "";
-    const ctx = { theme: theme(), key, formatCell, reportRows: () => {} };
+    const ctx = { theme: theme(), key, formatCell, reportRows: () => {}, provideSort: () => {} };
     try {
       const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
       cleanup = typeof result === "function" ? result : null;
@@ -284,6 +343,14 @@ async function timeRender(fn, host) {
   const result = raw && typeof raw.then === "function" ? await raw : raw;
   void host.offsetHeight;
   return { result, ms: syncMs + (performance.now() - t0) };
+}
+
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
+
+function median(xs) {
+  const s = [...xs].sort((a, b) => a - b);
+  const m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
 /** A demo's one-off setup (see (4) in the contract). Same clock as a render,
@@ -448,6 +515,7 @@ function cardHTML(key) {
       ${d.eager ? "" : `<button class="load-btn">Load ${key === "large" ? "500,000 rows" : "data"}</button>`}
       <button class="fps-btn">Measure scroll FPS</button>
       <span class="fps-out"></span>
+      ${key === "large" ? `<button class="sort-btn">Sort by price</button><span class="sort-out"></span>` : ""}
     </div>
     <details class="src"><summary>source</summary><pre></pre></details>
   </section>`;

@@ -36,6 +36,25 @@ function build(host, data, ctx) {
   applyTheme(grid, ctx.theme);
 
   return new Promise((resolve) => {
+    // Sorting is the grid's own method. Its promise settles before the new
+    // rows are drawn, so wait for the first price cell to change as well.
+    // Clearing waits the same way, so the next timed sort starts from rows
+    // that are really back in file order on screen.
+    let sorted = false;
+    const redrawn = async (change) => {
+      const before = firstCellText(grid, data, "price");
+      await change();
+      await untilFrame(() => firstCellText(grid, data, "price") !== before);
+    };
+    ctx.provideSort(async (field) => {
+      if (!field) {
+        if (sorted) await redrawn(() => grid.clearSorting());
+        sorted = false;
+        return;
+      }
+      await redrawn(() => grid.updateColumnSorting({ prop: field }, "asc", false));
+      sorted = true;
+    });
     const done = () => {
       // RevoGrid draws its own vertical scrollbar element and keeps the
       // body in step with it. Setting scrollTop on the body div directly
@@ -50,6 +69,27 @@ function build(host, data, ctx) {
     });
     painted.observe(grid, { childList: true, subtree: true });
     host.append(grid);
+  });
+}
+
+/** Text of the first visible row's cell in column `name`. */
+function firstCellText(grid, data, name) {
+  const i = data.columns.findIndex((c) => c.name === name);
+  return grid.querySelector(`revogr-data .rgCell[data-rgrow="0"][data-rgcol="${i}"]`)?.textContent ?? null;
+}
+
+/** Resolve on the first animation frame where check() is true. Rejects after
+ *  ~5 s rather than resolving, so a sort that never shows cannot pass as one
+ *  that did. */
+function untilFrame(check) {
+  return new Promise((resolve, reject) => {
+    let n = 0;
+    const tick = () => {
+      if (check()) return resolve();
+      if (++n > 300) return reject(new Error("sorted rows never appeared"));
+      requestAnimationFrame(tick);
+    };
+    tick();
   });
 }
 

@@ -49,6 +49,21 @@ function table(host, data, ctx) {
   }
 
   host.append(el);
+
+  // Inputs.table has no sort API after construction; its documented way to
+  // sort is a header click, so that is what this does. A Cmd/Meta-click on
+  // the sorted header is its own "back to input order".
+  let sortedBy = null;
+  const th = (name) => el.querySelector(`thead th[title="${name}"]`);
+  ctx.provideSort((field) => {
+    if (!field) {
+      if (sortedBy) th(sortedBy).dispatchEvent(new MouseEvent("click", { metaKey: true }));
+      sortedBy = null;
+      return;
+    }
+    th(field).click();
+    sortedBy = field;
+  });
 }
 
 export const tables = { small: table, wide: table, medium: table, large: table };

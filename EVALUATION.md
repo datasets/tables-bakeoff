@@ -8,7 +8,7 @@ Every typed-in number here is also in `src/harness/results.js`, which the front 
 
 **Use a plain `<table>` until it hurts, which is around a few thousand rows. Past that, AG Grid Community if you want it done, TanStack Table if you want it yours. Tabulator if people need to edit cells. Everything else is a special case.**
 
-The race everyone expects, 500,000 rows, is close to a tie. Every virtualizing grid scrolls at or near 60 fps and renders in 25 to 300 ms, except Perspective at about two seconds, most of which is marshalling 500,000 objects into its WebAssembly worker, and DataTables at ten, which builds its whole model before it shows a row. At 60 fps you cannot see the difference between 25 ms and 250 ms. Speed does not pick a winner. Four other things do:
+The race everyone expects, 500,000 rows, is close to a tie. Every virtualizing grid scrolls at or near 60 fps and renders in 25 to 300 ms, except Perspective at about two seconds, most of which is marshalling 500,000 objects into its WebAssembly worker, and DataTables at ten, which builds its whole model before it shows a row. At 60 fps you cannot see the difference between 25 ms and 250 ms. Sorting all 500,000 rows by price is close too: 0.1 to 0.45 s in every grid, median of 5 on a busy machine (AG Grid 377 ms, Tabulator 397 ms, TanStack 397 ms, DataTables 440 ms, Perspective 346 ms in its worker, RevoGrid 211 ms, Glide 106 ms with our own index sort, Observable Inputs 101 ms). Speed does not pick a winner. Four other things do:
 
 1. **Is the text in the DOM?** A canvas grid is pixels. Browser Ctrl-F and text selection cannot see it, and a screen reader gets whatever hidden mirror the library keeps; copy works only through the grid's own clipboard support. A virtualized DOM grid gives you Ctrl-F, selection, copy and assistive tech for the mounted rows, the ones on screen, and the plain `<table>` for every row. For a data site that is most of the job.
 2. **What does it weigh?** Own code, gzipped, over the shared harness: plain `<table>` 1 kB, Observable Inputs 7 kB, TanStack Table 24 kB on a page that already ships React, DataTables 52 kB, Glide 105 kB plus React, RevoGrid about 112 kB once its lazy components load, Perspective 107 kB plus 4.3 MB of WebAssembly, Tabulator 112 kB, AG Grid Community 333 kB with every Community module registered.
@@ -88,7 +88,7 @@ Perspective is a query engine with a grid attached. Its WebAssembly boot is time
 
 ## What we did not test
 
-- **Sorting and filtering at 500,000 rows.** Observed, not timed. A timed sort is in progress. <!-- VERIFY -->
+- **Filtering at 500,000 rows.** Observed, not timed. Sorting is timed (above and on each large card); filtering is not.
 - **Editing.** No demo edits a cell yet. See the Tabulator pick. <!-- VERIFY -->
 - **Accessibility.** One library (Glide) was checked for its hidden `role="grid"` mirror. Keyboard navigation and screen-reader announcements were not tested across the set. Native table markup does not settle this on its own; the TanStack demo sorts on a header click with no focusable button.
 - **Column pinning, resize, filter rows.** Not in the harness. The summary-stats spike on TanStack has a filter row.

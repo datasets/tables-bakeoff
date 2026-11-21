@@ -205,7 +205,7 @@ table.scores tbody tr:hover { background: color-mix(in srgb, var(--text-primary)
   display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
   padding: 10px 18px 14px;
 }
-.fps-out { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.fps-out, .sort-out { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
 button {
   font: inherit; font-size: 12px; padding: 5px 11px;

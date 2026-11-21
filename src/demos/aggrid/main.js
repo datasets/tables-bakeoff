@@ -60,6 +60,14 @@ function build(host, data, ctx) {
   // FPS run must be pointed here.
   host.querySelector(".ag-grid-viewport")?.setAttribute("data-scroller", "");
 
+  // Sorting is column state. defaultState clears every other column's sort.
+  ctx.provideSort((field) =>
+    api.applyColumnState({
+      state: field ? [{ colId: field, sort: "asc" }] : [],
+      defaultState: { sort: null },
+    })
+  );
+
   return () => api.destroy();
 }
 

@@ -117,6 +117,9 @@ async function build(host, data, ctx) {
     ?.shadowRoot?.querySelector("regular-table");
   grid?.setAttribute("data-scroller", "");
 
+  // Sorting runs in the worker; restore() resolves once the grid has redrawn.
+  ctx.provideSort((field) => viewer.restore({ sort: field ? [[field, "asc"]] : [] }));
+
   return async () => {
     try { await viewer.delete(); } catch {}
     try { await table.delete(); } catch {}

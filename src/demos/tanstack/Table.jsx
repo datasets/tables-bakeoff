@@ -32,8 +32,10 @@ const features = tableFeatures({
 const ROW_H = 32;
 const WIDTH_FOR = { number: 112, date: 118, string: 152 };
 
-export function TanStackTable({ data, formatCell }) {
+export function TanStackTable({ data, formatCell, api }) {
   const [sorting, setSorting] = useState([]);
+  // The harness's sort action drives the same state a header click does.
+  if (api) api.setSorting = setSorting;
   const scrollRef = useRef(null);
 
   const columns = useMemo(
