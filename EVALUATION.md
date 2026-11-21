@@ -14,7 +14,7 @@ The race everyone expects is 500,000 rows. Five grids render them in under a qua
 
 1. **What can the browser do with the text?** Four separate things get lumped together here. *Text in the DOM*: every grid here except Glide, which is canvas, puts the visible cells in the DOM, so browser Ctrl-F finds the mounted rows (the plain `<table>` has every row). *Browser text selection*: a mouse drag selects cells in the plain table, Observable, Tabulator, TanStack and DataTables. AG Grid draws grid markup (`div role="grid"`), not a `<table>`, and blocks selection unless you set `enableCellTextSelection`, which our demo does not; Perspective and RevoGrid block it too. *Grid copy*: select a range and Ctrl/Cmd-C. That is a library feature: Glide with `getCellsForSelection`, RevoGrid by default, Tabulator with `clipboard: true`, AG Grid only in Enterprise. *Accessibility*: we checked one thing, keyboard sort (below). We did not test any grid with a screen reader. For a data site, text people can find and copy is most of the job.
 2. **What does it weigh?** Own code, gzipped, over the shared harness: plain `<table>` 1 kB, Observable Inputs 8 kB with its stylesheet, TanStack Table 24 kB on a page that already ships React, DataTables 52 kB, Glide 105 kB plus React, RevoGrid about 118 kB once its lazy components load, Perspective 107 kB plus 4.3 MB of WebAssembly, Tabulator 112 kB, AG Grid Community 333 kB with every Community module registered (272 kB with only the modules it uses).
-3. **How does it fail?** Tabulator's documented `height: "100%"` silently renders every row when the parent has no resolved height: 88 seconds at 50,000 rows instead of 36 ms, nothing logged. AG Grid, given the same mistake, draws a visibly broken 0 px viewport. A silent failure costs more than a missing feature.
+3. **How does it fail?** Tabulator's documented `height: "100%"` silently renders every row when the parent has no resolved height: 88 seconds at 50,000 rows instead of 36 ms with a sized parent, nothing logged. AG Grid, given the same mistake, draws a visibly broken 0 px viewport. A silent failure costs more than a missing feature.
 4. **Is anyone still shipping it?** Glide Data Grid's last stable release was February 2024 and its peer range is React 16 to 18. Our first draft recommended it for large data on the strength of a 25 ms render. We reversed that. A grid you will live with for three years needs a maintainer more than it needs 200 ms.
 
 ## Per use case
@@ -27,7 +27,7 @@ The race everyone expects is 500,000 rows. Five grids render them in under a qua
 
 ### A big grid you want done, in any framework: AG Grid Community
 
-40 lines for sort, filter, row and column virtualization and 500,000 rows at 60 fps with no dropped frames. It was the only library whose configuration mistakes failed loudly: a missing `ModuleRegistry` call throws, and a wrong host height draws an obviously empty grid. The theming API (`themeQuartz.withParams`) took our tokens cleanly.
+40 lines for sort, filter, row and column virtualization and 500,000 rows at 60 fps, dropping one frame per run like the other fast grids. It was the only library whose configuration mistakes failed loudly: a missing `ModuleRegistry` call throws, and a wrong host height draws an obviously empty grid. The theming API (`themeQuartz.withParams`) took our tokens cleanly.
 
 The costs. It is 333 kB as shipped here, because the demo registers `AllCommunityModule`, which is what the quick start does. Registering only the six modules the demo uses (client-side row model, text, number and date filters, cell style, number editor) measured 272 kB against 334 kB through the same build, so about a fifth comes off and it stays the heaviest grid here (`scripts/measure-aggrid-lean.mjs`). And Community is the free tier of a company that sells Enterprise: row grouping, pivot, range selection, clipboard, Excel export and the server-side row model are paywalled. Community is MIT and does everything in this test.
 
@@ -55,9 +55,9 @@ Cell editors, clipboard, range selection, grouping and export are in the free MI
 
 Tabulator stays the pick, now on evidence rather than feature lists: everything an editable grid needs passed, free, with options its own docs show. RevoGrid did slightly better on this test (no extra config at all) and is the runner-up; its corner link and smaller community are why it is not the pick. Handsontable is paid for commercial use.
 
-The trap, since it is the most dangerous configuration in the whole exercise: `height: "100%"`, the option Tabulator's own docs give for filling a container, overrides the host's CSS height with one the parent cannot resolve. Tabulator then measures a 0 px viewport and renders every row. 88 seconds at 50,000 rows, 500,000 effectively never, nothing in the console. Give the host a real height and it is 185 ms. Tabulator is a good library. The documented pattern is the trap, and you will not notice it on a page of 200 rows.
+The trap, since it is the most dangerous configuration in the whole exercise: `height: "100%"`, the option Tabulator's own docs give for filling a container, overrides the host's CSS height with one the parent cannot resolve. Tabulator then measures a 0 px viewport and renders every row. 88 seconds at 50,000 rows, nothing in the console. Give the host a real height and the same 50,000 rows take 36 ms. Tabulator is a good library. The documented pattern is the trap, and you will not notice it on a page of 200 rows.
 
-**Also consider Glide Data Grid**, on React 18, when you want the Sheets feel. Canvas, so 500,000 rows render in 17 ms and memory does not move as you scroll. Grid copy works once `getCellsForSelection` is set, which the quick start does not mention: select a range, Ctrl/Cmd-C, and it arrives as tab-separated text. Browser Ctrl-F and text selection cannot see a canvas. Last release February 2024.
+**Also consider Glide Data Grid**, on React 18, when you want the Sheets feel. Canvas, so 500,000 rows render in 17 ms. Grid copy works once `getCellsForSelection` is set, which the quick start does not mention: select a range, Ctrl/Cmd-C, and it arrives as tab-separated text. Browser Ctrl-F and text selection cannot see a canvas. Last release February 2024.
 
 ### Not a pick: Perspective
 
@@ -104,7 +104,7 @@ Perspective is a query engine with a grid attached. Its WebAssembly boot is time
 - **Column pinning, resize, filter rows.** Not in the harness. The summary-stats spike on TanStack has a filter row.
 - **Mobile performance.** The layout works at 375 px; FPS was measured in desktop headless Chromium only.
 - **Arrow or CSV input for Perspective.** Everyone got the same `Array<Object>`. An Arrow buffer would very likely cut Perspective's 500,000-row figure hard.
-- **Repeated runs with spread.** Render numbers are one machine, a handful of runs each, typed in. Treat them as an order of magnitude. Every demo page measures again in your browser.
+- **More machines and browsers.** Render numbers are one machine and one headless Chromium, the median of five fresh page loads, with min to max published in `docs/reports/measurements-2026-11-21.md`. Treat them as an order of magnitude. Every demo page measures again in your browser.
 
 ## What DataHub will use
 

@@ -41,7 +41,7 @@ its true cost), and a forced layout via reading `host.offsetHeight`. That third
 part matters more than it looks: browsers can defer layout until something reads
 a geometry property, so a render function can return having only *queued* work.
 Forcing the read makes the clock honest — for the plain `<table>` baseline,
-forced layout is 6 of the 7.7 seconds at 100,000 rows; for a virtualizing grid,
+forced layout is most of the 6.3 seconds at 100,000 rows; for a virtualizing grid,
 it's close to zero. That gap is the actual thing this site exists to show, and
 deferring the layout read would have hidden it.
 
@@ -80,10 +80,10 @@ Sizes are gzip, 1 kB = 1000 bytes, read from Vite's build manifest by
 `scripts/measure-bundles.mjs` — not estimated, not quoted from a library's own
 marketing.
 
-**The harness floor.** Every demo loads roughly 23.3 kB of shared code before any
+**The harness floor.** Every demo loads roughly 31.2 kB of shared code before any
 library-specific bytes: the mount harness (which pulls in `hyparquet` to decode
 the Parquet fixtures) plus `site.css`. This is why the plain `<table>` baseline
-— genuinely about 0.9 kB of its own code — reports 24.2 kB total. `bundles.json`
+— genuinely about 1 kB of its own code — reports 32.2 kB total. `bundles.json`
 reports this floor (`harnessKB`) as its own column precisely so it can be
 subtracted rather than misread as the baseline's actual cost.
 
@@ -117,7 +117,7 @@ actually on disk.
 build-cost proxy, not a quality measure, and it's a crude one: it counts JSX
 markup the same as logic, so a React demo's own component file is structurally
 penalized against a vanilla demo that hands a config object to a constructor.
-TanStack's 166 lines (nearly triple AG Grid's 62) is a real number about what
+TanStack's 150 lines (nearly four times AG Grid's 40) is a real number about what
 "headless" costs in code — the row virtualizer, column virtualizer, spacer
 cells, `<colgroup>`, sticky header and sort arrows are all hand-written — but
 reading it as "TanStack's code is worse" rather than "TanStack's code is yours

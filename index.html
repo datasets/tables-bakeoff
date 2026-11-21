@@ -296,7 +296,7 @@
     <summary>Footnotes and how to read the columns</summary>
     <ul>
       <li id="note-a"><sup>a</sup> Observable Inputs appends rows as you scroll and never removes them. The 10.8 ms is the first 60-row batch, not 500,000 rows. Scroll to the bottom and every row is live in the DOM, all 80 columns of the wide set included.</li>
-      <li id="note-b"><sup>b</sup> Tabulator's documented <code>height: "100%"</code> replaces the host's CSS height with one the parent cannot resolve, so it measures a 0 px viewport and renders every row: 88 s at 50,000. Give the host a real height and it is 185 ms. Nothing warns either way.</li>
+      <li id="note-b"><sup>b</sup> Tabulator's documented <code>height: "100%"</code> replaces the host's CSS height with one the parent cannot resolve, so it measures a 0 px viewport and renders every row: 88 s at 50,000 rows. Give the host a real height and the same 50,000 rows take 36 ms. Nothing warns either way.</li>
       <li id="note-c"><sup>c</sup> Glide's 500,000 rows render as fast as its 1,000 (17 and 19 ms) because canvas paints a fixed viewport. Nothing on screen is in the DOM. It keeps a hidden <code>role="grid"</code> mirror of the visible rows, meant for screen readers; we did not test one. Selecting a range and pressing Ctrl/Cmd-C copies it as tab-separated text once <code>getCellsForSelection</code> is set; browser Ctrl-F and text selection get nothing.</li>
       <li id="note-e"><sup>e</sup> DataTables builds its whole row model, with type detection and an <code>autoWidth</code> scan, before Scroller windows anything; its own FAQ caps client-side data at about 50,000 rows. <code>autoWidth: false</code> cuts a third to a half. No column virtualization, so the 80-column card is its slowest.</li>
       <li id="note-f"><sup>f</sup> RevoGrid's loader fetches about 88 kB of component code when the first grid connects, so the build-time figure understates it: about 118 kB is the real cost on first render. Its <code>aftergridrender</code> event fires before any cell exists; the demo waits for the first real cell instead.</li>
@@ -347,7 +347,7 @@
       formatter hook. Each demo supplies four render functions; the harness owns
       the page, the clock and the FPS run, and empties the host between renders. The clock waits for
       async work and forces layout, so a library that returns early cannot report a scheduling call
-      as a render. Agents built and measured the demos under our direction. We chose the verdict, and every number comes from a script in the repo you can run yourself (<code>scripts/measure-all.mjs</code>).
+      as a render. Agents built and measured the demos under our direction. We chose the verdict, and every timing but one comes from a script in the repo you can run yourself (<code>scripts/measure-all.mjs</code>); the Tabulator 88 seconds was timed by hand.
     </p>
     <p>
       The full method and its caveats:
