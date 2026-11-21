@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every number behind the Tables Bakeoff picks: render, scroll and sort timings for nine JavaScript tables at 50,000 and 500,000 rows, the edit test, the feature table, the scorecard and the method.">
+<title>The full comparison. Tables Bakeoff</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tables Bakeoff">
+<meta property="og:url" content="https://tables.datahub.io/compare.html">
+<meta property="og:title" content="Nine JavaScript tables, every number">
+<meta property="og:description" content="Render, scroll and sort timings at 50,000 and 500,000 rows, the edit test, the feature table, the scorecard and the method behind the Tables Bakeoff picks.">
+<meta property="og:image" content="https://tables.datahub.io/og/tables-bakeoff.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nine JavaScript tables, every number">
+<meta name="twitter:description" content="Render, scroll and sort timings at 50,000 and 500,000 rows, the edit test, the feature table, the scorecard and the method behind the Tables Bakeoff picks.">
+<meta name="twitter:image" content="https://tables.datahub.io/og/tables-bakeoff.png">
+<link rel="canonical" href="https://tables.datahub.io/compare.html">
+<link rel="stylesheet" href="/src/harness/site.css">
+<link rel="stylesheet" href="/src/harness/pages.css">
+<style>
+  h2 { scroll-margin-top: 16px; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="wrap nav__inner">
+    <a class="nav__brand" href="/index.html">Tables Bakeoff</a>
+    <div class="nav__links">
+      <a href="/compare.html" class="is-current">Compare</a>
+      <a href="/why.html">Why</a>
+      <a class="nav__sep" href="/demos/baseline.html">Plain &lt;table&gt;</a>
+      <a href="/demos/observable.html">Observable</a>
+      <a href="/demos/tabulator.html">Tabulator</a>
+      <a href="/demos/aggrid.html">AG Grid</a>
+      <a href="/demos/tanstack.html">TanStack</a>
+      <a href="/demos/glide.html">Glide</a>
+      <a href="/demos/perspective.html">Perspective</a>
+      <a href="/demos/datatables.html">DataTables</a>
+      <a href="/demos/revogrid.html">RevoGrid</a>
+      <a class="nav__sep" href="/changelog.html">Changelog</a>
+    </div>
+    <div class="nav__tools">
+      <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </a>
+      <button class="toggle" type="button" aria-label="Theme"></button>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>The full comparison</h1>
+    <p class="lede">
+      Every number behind the <a href="/index.html">picks</a>, for all nine: render, scroll and sort at 50,000
+      and 500,000 rows, the edit test, what each can do, how each felt to build, and how we measured.
+      Bundle sizes and line counts are read from the build, the rest from one scripted run.
+    </p>
+    <p class="links">
+      <a href="#measured-section">Measured</a>
+      <a href="#edit-test">Edit test</a>
+      <a href="#features-section">Features</a>
+      <a href="#scorecard-section">Scorecard</a>
+      <a href="#surprised">What surprised us</a>
+      <a href="#method">Method</a>
+    </p>
+  </header>
+
+  <h2 id="measured-section">What we measured</h2>
+  <p class="caption">
+    Own code is gzipped JS + CSS with the shared harness netted out, read from the build. Render
+    time and scroll FPS are typed in from one scripted run (<span data-measured-machine>one laptop, headless
+    Chromium</span>; <span data-measured-when>Nov 2026</span>). Treat them as an order of magnitude.
+    Most grids hit the 60 fps ceiling, so that column separates little, and a smooth scroll says
+    nothing about how long the first render or a sort takes. Every demo page measures again in your
+    browser. The last two checks are yes or no (<span data-checked>21 Nov 2026</span>).
+  </p>
+  <p class="scroll-hint">The table scrolls sideways.</p>
+  <div class="scroll">
+  <table class="scores" id="measured">
+    <thead><tr>
+      <th>Library</th>
+      <th>Own code<br><span class="sub">gzip</span></th>
+      <th>WASM</th>
+      <th>Lines<br><span class="sub">written</span></th>
+      <th>Render<br><span class="sub">50,000 rows</span></th>
+      <th>Render<br><span class="sub">500,000 rows</span></th>
+      <th>Sort by price<br><span class="sub">500,000 rows</span></th>
+      <th>Scroll<br><span class="sub">at 500,000</span></th>
+      <th>Select text<br><span class="sub">by mouse<sup><a href="#note-h">h</a></sup></span></th>
+      <th>Keyboard sort<br><span class="sub">Tab, Enter<sup><a href="#note-h">h</a></sup></span></th>
+      <th>Last<br><span class="sub">release</span></th>
+      <th>Licence</th>
+    </tr></thead>
+    <tbody><tr><td colspan="12">Loading from results.js and bundles.json…</td></tr></tbody>
+  </table>
+  </div>
+  <details class="notes">
+    <summary>Footnotes and how to read the columns</summary>
+    <ul>
+      <li id="note-a"><sup>a</sup> Observable Inputs appends rows as you scroll and never removes them. The 10.8 ms is the first 60-row batch, not 500,000 rows. Scroll to the bottom and every row is live in the DOM, all 80 columns of the wide set included.</li>
+      <li id="note-b"><sup>b</sup> Tabulator's documented <code>height: "100%"</code> replaces the host's CSS height with one the parent cannot resolve, so it measures a 0 px viewport and renders every row: 88 s at 50,000 rows. Give the host a real height and the same 50,000 rows take 36 ms. Nothing warns either way.</li>
+      <li id="note-c"><sup>c</sup> Glide's 500,000 rows render as fast as its 1,000 (17 and 19 ms) because canvas paints a fixed viewport. Nothing on screen is in the DOM. It keeps a hidden <code>role="grid"</code> mirror of the visible rows, meant for screen readers; we did not test one. Selecting a range and pressing Ctrl/Cmd-C copies it as tab-separated text once <code>getCellsForSelection</code> is set; browser Ctrl-F and text selection get nothing.</li>
+      <li id="note-e"><sup>e</sup> DataTables builds its whole row model, with type detection and an <code>autoWidth</code> scan, before Scroller windows anything; its own FAQ caps client-side data at about 50,000 rows. <code>autoWidth: false</code> cuts a third to a half. No column virtualization, so the 80-column card is its slowest.</li>
+      <li id="note-f"><sup>f</sup> RevoGrid's loader fetches about 88 kB of component code when the first grid connects, so the build-time figure understates it: about 118 kB is the real cost on first render. Its <code>aftergridrender</code> event fires before any cell exists; the demo waits for the first real cell instead.</li>
+      <li id="note-g"><sup>g</sup> AG Grid's own-code figure is with <code>AllCommunityModule</code> registered, as its quick start does, and that is what this site ships. Built again through the same pipeline with only the modules the demo uses (<code>ClientSideRowModelModule</code>, the text, number and date filters, <code>CellStyleModule</code> and <code>NumberEditorModule</code>; sorting and resize are core), it is 272 kB against 334 kB for everything. Sort, filter and edit still work, with no missing-module errors. Measured by <code>scripts/measure-aggrid-lean.mjs</code>.</li>
+      <li id="note-h"><sup>h</sup> Text in the DOM, browser text selection, grid copy and accessibility are four different things. Every grid here except Glide puts the visible cells in the DOM. <strong>Select text</strong> is a mouse drag across a cell: it works in the plain table, Observable, Tabulator, TanStack and DataTables. AG Grid draws grid markup (<code>div role="grid"</code>), not a <code>&lt;table&gt;</code>, and blocks selection unless you set <code>enableCellTextSelection</code>, which our demo does not. Perspective and RevoGrid turn it off too. <strong>Grid copy</strong> (select a range, Ctrl/Cmd-C) is a library feature: Glide with <code>getCellsForSelection</code>, RevoGrid by default, Tabulator with <code>clipboard: true</code>, AG Grid only in Enterprise. <strong>Keyboard sort</strong>: Tab from the top of the 1,000-row embed until a column header has focus, press Enter, check the rows moved. AG Grid, DataTables and TanStack sort. Observable, Tabulator, Perspective and RevoGrid sort on a click, but Tab never reaches a header. The plain table and Glide demos have no header sort. <strong>Not tested:</strong> screen readers, arrow-key navigation inside the grid, focus handling while scrolling.</li>
+      <li id="note-d"><sup>d</sup> Perspective's large figure is mostly moving 500,000 JavaScript objects into a worker and rebuilding them as Arrow columns. Every library gets the same <code>Array&lt;Object&gt;</code>, which is Perspective's worst input; Arrow or CSV would cut it. Its WASM boot is timed separately and shown as "engine ready in N ms" on its page and in the gallery, not inside any render figure. Once loaded, sort and filter run in the worker.</li>
+      <li><strong>Own code</strong> nets out the <span data-harness>25 kB</span> every demo page loads (the mount harness, the Parquet reader, <code>site.css</code>) and, for the React demos, <span data-react>60 kB</span> of React. Full page weights are in <a href="/bundles.json">bundles.json</a>. Perspective's WebAssembly is its own column because gzip barely compresses it.</li>
+      <li><strong>Lines written</strong> are non-blank, non-comment lines under <code>src/demos/&lt;key&gt;/</code>. A build-cost proxy: JSX markup counts the same as logic. The sort hook and edit test that the harness asks of each demo are fenced off and not counted, so the column still measures building the table.</li>
+      <li><strong>The render clock</strong> covers building the DOM and a forced layout. Without the layout flush the plain <code>&lt;table&gt;</code> would report a fifth of its real cost. <strong>Scroll FPS</strong> is a scripted scroll of 20,000 px over 120 frames on the element that actually moves. All figures here are from the production build.</li>
+      <li><strong>Sort by price</strong> is the button on each large card: the rows go back to file order (untimed), then the library's own sort call is timed until the sorted rows are on screen, with the same clock as a render (layout forced, async engines awaited, Glide's canvas redrawn). Median of <span data-measured-sort>5 fresh page loads</span>. Glide has no sort of its own, so its figure is our index sort plus a redraw; Observable Inputs sorts every row but draws only the first 60. The plain table sorts the 100,000 rows it shows and rebuilds them, which is why it takes tens of seconds.</li>
+      <li><strong>Ctrl-F</strong> finds only mounted cells, meaning the rows on screen plus a small buffer, in every virtualized DOM grid here (Tabulator, AG Grid, TanStack, Perspective, DataTables with Scroller, RevoGrid). It finds nothing in Glide, which is canvas. The plain <code>&lt;table&gt;</code> has every row in the DOM, and Observable Inputs has every row it has appended so far. Searching the whole dataset needs the library's own search or filter.</li>
+      <li><strong>Heap is not a column.</strong> Chrome pins <code>performance.memory</code> to a placeholder unless started with <code>--enable-precise-memory-info</code>, so any figure would have been invented.</li>
+      <li>Cells with a tooltip are from a run being repeated on the versions shown; the number may move a little.</li>
+    </ul>
+  </details>
+
+  <h2 id="edit-test">The edit test</h2>
+  <p class="caption">
+    On each grid's demo page: double-click a price and type a new one, then paste three lines
+    onto a price cell. A value counts only if it reached the data, not just the screen. Run by
+    hand and by script (<code>scripts/edit-test.mjs</code>). The others are display tables and
+    were not tested.
+  </p>
+  <div class="scroll">
+  <table class="scores edit" id="edits">
+    <thead><tr><th>Library</th><th>Double-click to edit</th><th>Paste a column of three</th></tr></thead>
+    <tbody><tr><td colspan="3">Loading from results.js…</td></tr></tbody>
+  </table>
+  </div>
+
+  <h2 id="features-section">What each can do</h2>
+  <p class="caption">
+    All nine, feature by feature. "Built in" means it works as installed or with one column flag; "needs
+    config" means an option or a few lines its docs show; "free plugin" is an official extension; "paid
+    tier" means the free package does not have it; "you write it" means the library leaves it to you.
+    Read from the docs and types, and from our own tests where we ran one. Checked <span data-features-checked>21 Nov 2026</span>.
+  </p>
+  <p class="scroll-hint">The table scrolls sideways.</p>
+  <div class="scroll">
+  <table class="scores" id="features" data-notes>
+    <thead><tr><th>Feature</th></tr></thead>
+    <tbody><tr><td>Loading from features.js…</td></tr></tbody>
+  </table>
+  </div>
+
+  <h2 id="scorecard-section">How they felt to build</h2>
+  <p class="caption">
+    1 to 5, where 5 is best. Subjective, from writing the demos. The last column says why.
+  </p>
+  <div class="scroll">
+  <table class="scores" id="scorecard">
+    <thead><tr><th>Library</th></tr></thead>
+    <tbody><tr><td>Loading from results.js…</td></tr></tbody>
+  </table>
+  </div>
+
+  <h2 id="surprised">Four things that surprised us</h2>
+  <ol class="findings">
+    <li>
+      <strong>Render time does not separate the fast grids. The gap is between any virtualized grid and a
+      plain <code>&lt;table&gt;</code>.</strong> Five virtualizers land between 17 and 233 ms at 500,000
+      rows; Perspective takes 1.9 s and DataTables 8.5 s. The plain table goes superlinear instead: 2.5 s at 50,000, 6.3 s at 100,000, about 27 s
+      at 200,000, and we stopped waiting for 500,000 after ten minutes.
+    </li>
+    <li>
+      <strong>The most dangerous line of code came from a library's own docs.</strong> Tabulator's
+      <code>height: "100%"</code>, the option its docs give for filling a container, renders every
+      row when the parent has no resolved height: 88 seconds at 50,000 rows instead of 36 ms, with
+      nothing logged. AG Grid fails visibly on the same mistake. Tabulator is a good library. The
+      problem is that it fails without a warning.
+    </li>
+    <li>
+      <strong>Glide draws 500,000 rows as fast as it draws 1,000, and RevoGrid is not far behind
+      in real DOM.</strong> Glide is canvas: it paints a fixed viewport, so browser Ctrl-F and text
+      selection cannot see the cells. Its own range copy works once you set
+      <code>getCellsForSelection</code>, which the quick start does not mention. Its last
+      release was February 2024, which is why it is not a pick. RevoGrid, a web component, rendered 500,000
+      rows in 62 ms with real cells, in any framework.
+    </li>
+    <li>
+      <strong>Headless means you write the virtualizer.</strong> TanStack Table is the smallest
+      React bundle here and the most lines of code. The row and column virtualizers, the spacer
+      cells, the sticky header and the sort buttons are all ours. What comes back is an ordinary
+      <code>&lt;table&gt;</code>.
+    </li>
+  </ol>
+
+  <h2 id="method">Method</h2>
+  <div class="method">
+    <p>
+      Same four datasets, same page shell, same theme tokens and the same mounting harness for
+      every entry, and the same cell formatter for all but Perspective, which has no per-cell
+      formatter hook. Each demo supplies four render functions; the harness owns
+      the page, the clock and the FPS run, and empties the host between renders. The clock waits for
+      async work and forces layout, so a library that returns early cannot report a scheduling call
+      as a render. Agents built and measured the demos under our direction. We chose the verdict, and every timing but one comes from a script in the repo you can run yourself (<code>scripts/measure-all.mjs</code>); the Tabulator 88 seconds was timed by hand.
+    </p>
+    <p>
+      Datasets: HM Land Registry Price Paid data as Parquet. Small is 1,000 sales in 16 columns; wide
+      is the same 1,000 with 64 derived numeric columns; medium is 50,000 rows; large is a 500,000-row
+      sample of one year, loaded on demand.
+    </p>
+    <p>
+      The full method and its caveats:
+      <a href="https://github.com/datasets/tables-bakeoff/blob/main/ANALYSIS.md" target="_blank" rel="noopener">ANALYSIS.md</a>.
+      The verdict with its reasoning:
+      <a href="https://github.com/datasets/tables-bakeoff/blob/main/EVALUATION.md" target="_blank" rel="noopener">EVALUATION.md</a>.
+      Why we did it, what we left out and what DataHub chose: <a href="/why.html">Why</a>.
+    </p>
+  </div>
+
+  <p class="foot">
+    Contains HM Land Registry data © Crown copyright and database right 2026, licensed under the Open
+    Government Licence v3.0.
+  </p>
+
+</div>
+
+<footer style="border-top:1px solid var(--border);margin-top:40px;padding:36px 0;color:var(--text-muted);font-size:12.5px">
+  <div class="wrap" style="text-align:center;max-width:70ch">
+    Built by <a href="https://datahub.io" target="_blank" rel="noopener">DataHub</a>, which needed a
+    table and picked one. The picks are on the <a href="/index.html">front page</a>.
+    Source and corrections on <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener">GitHub</a>.
+    We count visits with Google Analytics.
+  </div>
+</footer>
+
+<script type="module" src="/src/harness/hub.js"></script>
+</body>
+</html>

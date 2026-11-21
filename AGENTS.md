@@ -1,6 +1,6 @@
 ## This repo
 
-A bake-off of seven open-source JavaScript table/grid libraries, built as a static site you scroll rather than a written report. Sibling of the [line-charts](https://linecharts.datahub.io/) repo.
+A bake-off of eight open-source JavaScript table/grid libraries and a plain `<table>`, built as a static site you scroll rather than a written report. Sibling of the [line-charts](https://linecharts.datahub.io/) repo.
 
 - **Live:** https://tables.datahub.io/ — deployed and current.
 - **Build:** static Vite multi-page build; `npm run build` emits `dist/`.
