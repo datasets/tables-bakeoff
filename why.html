@@ -72,9 +72,8 @@
       and no opinion about which to use. We could not find one that put the same data through all of them on one page.
     </p>
     <p>
-      So we did. We started with the obvious question: which one should I use?
-      The answer we ended with is that different jobs get different picks, and that up to a few thousand rows
-      the answer is a plain <code>&lt;table&gt;</code>.
+      So we did. The question was which one to use. The answer is that different jobs get different picks,
+      and that up to a few thousand rows it is a plain <code>&lt;table&gt;</code>.
     </p>
 
     <h2 id="how">How</h2>
@@ -87,7 +86,7 @@
     </p>
     <p>
       <strong>Same harness.</strong> Every demo is the same page shell, the same theme tokens and the same
-      mounting code. A demo supplies four render functions, one per dataset, and the harness owns the page,
+      mounting code. A demo supplies four render functions, one per dataset, and the harness runs the page,
       the clock and the scroll test, and empties the host between renders. The same cell formatter runs for
       every library except Perspective, which has no per-cell formatter hook, so differences on screen come
       from the library.
@@ -96,7 +95,7 @@
       <strong>Scripted measurements.</strong> Render time covers building the DOM and a forced layout, so a
       library that returns early cannot report a scheduling call as a render; without the layout flush the
       plain table would report a fifth of its real cost. Scroll is a scripted 20,000 px scroll over 120 frames
-      on the element that actually moves. Sort is the library's own sort call, timed until the sorted rows
+      on the element that scrolls. Sort is the library's own sort call, timed until the sorted rows
       are on screen. Every figure is the median of five fresh page loads from
       <code>scripts/measure-all.mjs</code> on one laptop (<span data-measured-machine>Apple M4, headless Chromium</span>),
       on the production build. Bundle sizes and line counts are read from the build output. One number was
@@ -129,18 +128,18 @@
       PortalJS.</strong> This is the "build your own" pick. Most people should not start here.
     </p>
     <p>
-      DataHub pages already ship React, so the table costs 24 kB, not 333. We want to own the markup and the
+      DataHub pages already ship React, so the table costs 24 kB, not 333. We want our own markup and
       CSS: a dataset preview has to be text people can find with Ctrl-F and copy a postcode out of, and the
-      theme is our own CSS variables, with no third-party theme to fight. What comes back from TanStack is an
+      theme is our own CSS variables, with no third-party theme to override. What comes back from TanStack is an
       ordinary <code>&lt;table&gt;</code>.
     </p>
     <p>
-      The cost is 150 lines we own. The row and column virtualizers, the spacer cells, the sticky header and
-      the sort buttons are ours. Ctrl-F only sees the mounted rows, so searching a whole dataset is our own
-      search box, and the keyboard sort is ours too. TanStack v9 is a redesign and its docs lagged it, so we
-      spent part of a day in the type definitions; that is paid for now. Both experiments on this site, the
+      The cost is 150 lines we wrote and maintain: the row and column virtualizers, the spacer cells, the sticky
+      header and the sort buttons. Ctrl-F only sees the mounted rows, so searching a whole dataset needs a
+      search box, and we write that and the keyboard sort too. TanStack v9 is a redesign and its docs lagged
+      it, so we spent part of a day in the type definitions. Both experiments on this site, the
       <a href="/demos/tanstack-summary.html">summary and filter table</a> and the
-      <a href="/demos/duckdb-query.html">DuckDB query demo</a>, were built on it without surprises.
+      <a href="/demos/duckdb-query.html">DuckDB query demo</a>, were built on it without problems.
     </p>
     <p>
       For a portal that is not React, we would say Tabulator, with a sized parent. For a table in a data
@@ -149,12 +148,12 @@
 
     <h2 id="not-tested">What we did not test</h2>
     <ul>
-      <li><strong>Filtering at 500,000 rows.</strong> Observed, not timed. Sorting is timed; filtering is not.</li>
+      <li><strong>Filtering at 500,000 rows.</strong> Observed, not timed, unlike sorting.</li>
       <li><strong>Editing beyond one column.</strong> The edit test covers double-click edit and pasting a column into five grids. Validation, undo, multi-column paste and fill handles were not tested.</li>
       <li><strong>Accessibility, beyond keyboard sort.</strong> No screen reader, no arrow-key navigation inside the grid, no focus handling while scrolling. Native table markup does not settle accessibility on its own.</li>
       <li><strong>Column pinning, resize, filter rows.</strong> Not in the harness. The summary-stats experiment on TanStack has a filter row.</li>
       <li><strong>Mobile performance.</strong> The layout works at 375 px; FPS was measured in desktop headless Chromium only.</li>
-      <li><strong>Arrow or CSV input for Perspective.</strong> Everyone got the same <code>Array&lt;Object&gt;</code>. An Arrow buffer would very likely cut Perspective's 500,000-row figure hard.</li>
+      <li><strong>Arrow or CSV input for Perspective.</strong> Everyone got the same <code>Array&lt;Object&gt;</code>. An Arrow buffer would cut Perspective's 500,000-row figure.</li>
       <li><strong>More machines and browsers.</strong> One machine, one headless Chromium, the median of five loads, with min to max in <code>docs/reports/measurements-2026-11-21.md</code>. Treat the numbers as an order of magnitude.</li>
     </ul>
 
@@ -163,7 +162,7 @@
       <li><strong>Handsontable</strong>: paid for commercial use since v7. Everything here is permissive open source.</li>
       <li><strong>MUI X Data Grid</strong>: the MIT tier caps pages at 100 rows and keeps column pinning, tree data and aggregation in Pro and Premium. Theming runs through MUI's system, so it could not take this site's tokens the way the others did.</li>
       <li><strong>react-data-grid</strong>: still a beta after years, and React 19 only. The TanStack demo already answers "a virtualized <code>&lt;table&gt;</code> in React".</li>
-      <li><strong>SlickGrid</strong>: 6.0 (Nov 2026) is real and MIT, and it shows what AG Grid and Tabulator already show here.</li>
+      <li><strong>SlickGrid</strong>: 6.0 (Nov 2026) is out and MIT, and it shows what AG Grid and Tabulator already show here.</li>
       <li><strong>Grid.js</strong>: no release since March 2024.</li>
       <li><strong>Kendo, DevExtreme, Syncfusion, Bryntum</strong>: commercial.</li>
       <li><strong>Vue, Svelte, Angular grids</strong>: TanStack has adapters for all three, and the vanilla entries work anywhere. Glide is React only.</li>

@@ -1,9 +1,9 @@
 # Analysis: method and caveats
 
-This documents how every number on the site was actually produced, and where each
+This documents how every number on the site was produced, and where each
 one can mislead if quoted without its caveat. It is the factual companion to
-`EVALUATION.md` (the subjective verdict) — nothing here is a judgment call about
-which library is "better."
+`EVALUATION.md` (the subjective verdict). Nothing here is a judgment call about
+which library is better.
 
 ## The datasets
 
@@ -17,8 +17,8 @@ files, loaded identically by all seven demos through `src/data/load.js`.
 | Medium | 50,000 | 16 | the point where real-DOM rendering starts to hurt |
 | Large | 500,000 | 16 | load time, sustained scroll FPS, memory, sort at scale |
 
-Every library gets the same `Array<Object>` of row data from the same loader —
-deliberately the least favorable input shape for a columnar engine like
+Every library gets the same `Array<Object>` of row data from the same loader.
+That is the least favorable input shape for a columnar engine like
 Perspective, and the most favorable for a plain `<table>`. See "What the input
 format hides," below.
 
@@ -36,17 +36,17 @@ async function timeRender(fn, host) {
 (`src/harness/mount.js`)
 
 The clock covers three things: the synchronous portion of the render function,
-any returned promise (so an async mount — a React root, `viewer.load()` — reports
-its true cost), and a forced layout via reading `host.offsetHeight`. That third
-part matters more than it looks: browsers can defer layout until something reads
+any returned promise (so an async mount, a React root or `viewer.load()`, reports
+its full cost), and a forced layout via reading `host.offsetHeight`. The third
+part matters: browsers can defer layout until something reads
 a geometry property, so a render function can return having only *queued* work.
-Forcing the read makes the clock honest — for the plain `<table>` baseline,
+Forcing the read puts the layout inside the clock. For the plain `<table>` baseline,
 forced layout is most of the 6.3 seconds at 100,000 rows; for a virtualizing grid,
-it's close to zero. That gap is the actual thing this site exists to show, and
+it is close to zero. That gap is what this site exists to show, and
 deferring the layout read would have hidden it.
 
 **What this means for reading render numbers:** a library that appears fast may
-simply not have triggered layout yet in its own use, not in this harness — this
+not have triggered layout yet in its own use. This
 harness always forces it, so all seven numbers are on equal footing with each
 other, even though a page that never reads a geometry property could see a
 render "finish" faster than the number shown here.
@@ -61,77 +61,74 @@ export function measureScrollFps(el, { distance = 20000, steps = 120 } = {}) {
 ```
 (`src/harness/metrics.js`)
 
-This is a scripted scroll, not a synthetic benchmark: it sets `el.scrollTop`
+This is a scripted scroll: it sets `el.scrollTop`
 directly once per animation frame for 120 frames (≈20,000px), on whichever
-element the demo marks with `data-scroller` — the element that actually owns the
-scroll. Libraries that virtualize scroll internally (AG Grid, Tabulator, Glide,
+element the demo marks with `data-scroller`, the element that scrolls. Libraries that virtualize scroll internally (AG Grid, Tabulator, Glide,
 Perspective) mark an inner element; libraries that use the page's own scroll
 (TanStack, Observable, the baseline) are scrolled at the host.
 
 **Caveat:** a demo that omits `data-scroller` gets scrolled at an element that
-never moves, and reports a fabricated flat 60fps. This was checked manually for
-each of the seven demos, not by an automated assertion — see "Known gaps" below.
+never moves, and reports a flat 60fps that means nothing. This was checked by hand for
+each of the seven demos, not by an automated assertion; see "Known gaps" below.
 Perspective's scroller sits two open shadow roots inside a web component; the
 lookup descends into shadow roots to find it.
 
 ## Bundle size
 
 Sizes are gzip, 1 kB = 1000 bytes, read from Vite's build manifest by
-`scripts/measure-bundles.mjs` — not estimated, not quoted from a library's own
+`scripts/measure-bundles.mjs`. They are not estimated or quoted from a library's own
 marketing.
 
 **The harness floor.** Every demo loads roughly 31.2 kB of shared code before any
 library-specific bytes: the mount harness (which pulls in `hyparquet` to decode
-the Parquet fixtures) plus `site.css`. This is why the plain `<table>` baseline
-— genuinely about 1 kB of its own code — reports 32.2 kB total. `bundles.json`
-reports this floor (`harnessKB`) as its own column precisely so it can be
-subtracted rather than misread as the baseline's actual cost.
+the Parquet fixtures) plus `site.css`. This is why the plain `<table>` baseline,
+about 1 kB of its own code, reports 32.2 kB total. `bundles.json`
+reports this floor (`harnessKB`) as its own column so it can be
+subtracted instead of being misread as the baseline's cost.
 
 **React is netted out separately.** TanStack and Glide both mount a React root;
 their `libKB` figure is `totalKB - reactKB`, where `reactKB` is pinned to a named
-Rollup chunk (see the note on silent misattribution below) rather than guessed
+Rollup chunk (see the note on misattribution below), not guessed
 from a filename pattern. This is what makes `libKB` a fair number for "what does
-this library cost on a page that already ships React" rather than double-charging
+this library cost on a page that already ships React", without charging
 every React demo for React itself.
 
 **WASM is never summed into a bundle total.** Perspective downloads roughly
 4.3 MB of compiled Rust (an engine and a viewer) before anything renders. Gzip
-buys about 1% on that binary — this is not JavaScript, and averaging or stacking
+buys about 1% on that binary. It is not JavaScript, and averaging or stacking
 it against six JS bundle sizes would compare different kinds of thing. It is
-reported as its own column, always separate.
+reported as its own column.
 
-**A silent-failure class this measurement had to guard against:** Rollup hoists
+**A failure this measurement had to guard against:** Rollup hoists
 React into a chunk shared by the two React demos, but names that chunk after
-whichever module happened to be its facade — not recognizably "React." An
+whichever module happened to be its facade, so the name does not say "React". An
 earlier draft of the measurement script used a filename heuristic
-(`/react/i.test(name)`) to find it, which matched nothing and would have quietly
-reported `reactKB: 0` for both React demos with a green build — no error, just a
-wrong number. The fix was to name the chunk explicitly in `vite.config.js`
-(`manualChunks`) so `reactKB` is a lookup, not a guess, and to make the
-byte-attribution walker throw if the build manifest ever names a file that isn't
-actually on disk.
+(`/react/i.test(name)`) to find it, which matched nothing and would have
+reported `reactKB: 0` for both React demos with a green build and no error. The fix was to name the chunk explicitly in `vite.config.js`
+(`manualChunks`) so `reactKB` is a lookup, and to make the
+byte-attribution walker throw if the build manifest ever names a file that is not
+on disk.
 
 ## Lines of code
 
 `loc` counts non-blank, non-comment lines under `src/demos/<key>/`. This is a
-build-cost proxy, not a quality measure, and it's a crude one: it counts JSX
-markup the same as logic, so a React demo's own component file is structurally
+build-cost proxy, not a quality measure, and a crude one: it counts JSX
+markup the same as logic, so a React demo's own component file is
 penalized against a vanilla demo that hands a config object to a constructor.
-TanStack's 150 lines (nearly four times AG Grid's 40) is a real number about what
-"headless" costs in code — the row virtualizer, column virtualizer, spacer
-cells, `<colgroup>`, sticky header and sort arrows are all hand-written — but
-reading it as "TanStack's code is worse" rather than "TanStack's code is yours
-to write" would be the wrong takeaway.
+TanStack's 150 lines (nearly four times AG Grid's 40) measures what
+"headless" costs in code: the row virtualizer, column virtualizer, spacer
+cells, `<colgroup>`, sticky header and sort arrows are all hand-written. It says
+that you write TanStack's code, not that the code is worse.
 
-## Heap: deliberately absent
+## Heap: not a column
 
 Chrome pins `performance.memory.usedJSHeapSize` to exactly 10,000,000 bytes
 unless the browser is launched with `--enable-precise-memory-info`. Every
-library would otherwise report an identical fabricated "10 MB," which looks like
-a measurement and isn't one. `peakMemoryMB()` in `src/harness/metrics.js`
-returns `null` in the unflagged case rather than printing the sentinel, and the
-demo pages say "heap n/a" rather than omitting the field silently — an absent
-number is honest; a silently missing one reads as an oversight.
+library would otherwise report an identical "10 MB", which looks like
+a measurement and is not one. `peakMemoryMB()` in `src/harness/metrics.js`
+returns `null` in the unflagged case instead of printing the sentinel, and the
+demo pages say "heap n/a" instead of leaving the field out, so a reader can see
+the number was withheld on purpose.
 
 For reference, one measurement pass under `--enable-precise-memory-info` on this
 machine: a fresh page used 2.2 MB; holding all 500,000 rows of the large dataset
@@ -139,44 +136,44 @@ in one library's own structures used 16.5 MB. That flag changes GC behavior, so
 those numbers are not directly comparable to what a normal visitor's browser
 would report, and are not on the scorecard for that reason.
 
-## What the shared cell formatter does and doesn't cover
+## What the shared cell formatter does and does not cover
 
 Every library is handed the same `formatCell` function (`src/data/load.js`) so
 that what differs on screen is the library's rendering, not seven different
 amounts of styling effort applied by whoever built each demo.
 
-**Perspective is the one exception**, and it's a finding about the library, not
-a flaw in the method: Perspective exposes no per-cell formatting callback at
-all — only `Intl` option bags configured per column (`number_format`,
+**Perspective is the one exception**, and it is a finding about the library, not
+a flaw in the method: Perspective exposes no per-cell formatting callback,
+only `Intl` option bags configured per column (`number_format`,
 `date_format`). Its dates render in the browser locale's short form
-(`7/26/24`) rather than the site's `2024-07-26`, and its nulls render as an
-empty cell rather than the shared em dash, because neither a callback nor a
+(`7/26/24`) where the site uses `2024-07-26`, and its nulls render as an
+empty cell where the others show the shared em dash, because neither a callback nor a
 locale field is reachable from its config. This is disclosed on Perspective's
 own page. Any screenshot comparing Perspective's columns to the others is
 comparing formatting choices as much as rendering.
 
 ## Variance and confidence
 
-All render, FPS and sort figures on the hub come from one scripted run, `node scripts/measure-all.mjs`, on 2026-11-21: Apple M4 (16 GB), macOS 15.6, headless Chromium 151.0.7922.34 (Playwright 1.62.1), 1400×1000, the production build under `vite preview`. Each figure is the median of five fresh page loads; min to max, the raw runs and the load averages seen are in `docs/reports/measurements-2026-11-21.md` and `.json`. The script waits before each library's batch while the 1-minute load average is above 4 (it was 2.3 to 3.9 at the start of every batch, and 2.5 to 3.5 during most batches; the plain `<table>` runs push it to about 7 themselves). Sort is one timed sort per fresh load, not five in one page; scroll FPS is on the 500,000-row card (the plain table's is on its 50,000-row card) and now follows the sort. The plain `<table>` large figure is its capped 100,000 rows. The plain table's 200,000-row figure (about 27 s) was not part of this run and is from the earlier one. The Tabulator `height: "100%"` cliff is measured by hand, not by the script: a bare Tabulator page (the 50,000-row file, columns without our formatter, an unsized parent, Vite dev server) took 87.5, 88.0 and 89.2 s (median 88 s, load average 3 to 5) against 36 ms with a sized host in the same page. The earlier copy said 62 s, and an earlier loaded re-measure about 480 s: the cliff is real and silent, its size is not stable.
+All render, FPS and sort figures on the hub come from one scripted run, `node scripts/measure-all.mjs`, on 2026-11-21: Apple M4 (16 GB), macOS 15.6, headless Chromium 151.0.7922.34 (Playwright 1.62.1), 1400×1000, the production build under `vite preview`. Each figure is the median of five fresh page loads; min to max, the raw runs and the load averages seen are in `docs/reports/measurements-2026-11-21.md` and `.json`. The script waits before each library's batch while the 1-minute load average is above 4 (it was 2.3 to 3.9 at the start of every batch, and 2.5 to 3.5 during most batches; the plain `<table>` runs push it to about 7 themselves). Sort is one timed sort per fresh load, not five in one page; scroll FPS is on the 500,000-row card (the plain table's is on its 50,000-row card) and now follows the sort. The plain `<table>` large figure is its capped 100,000 rows. The plain table's 200,000-row figure (about 27 s) was not part of this run and is from the earlier one. The Tabulator `height: "100%"` cliff is measured by hand, not by the script: a bare Tabulator page (the 50,000-row file, columns without our formatter, an unsized parent, Vite dev server) took 87.5, 88.0 and 89.2 s (median 88 s, load average 3 to 5) against 36 ms with a sized host in the same page. The earlier copy said 62 s, and an earlier loaded re-measure about 480 s: the cliff is there every time and nothing is logged, but its size is not stable.
 
-An earlier complete run the same hour, with the machine busier (load average 3 to 5 during the grids), gave visibly different larger numbers (Perspective's large render 2.8 s against 1.9 s here, the plain table's sort 30 s against 21 s) and was discarded: a scroll run before the sort made RevoGrid's sort hook time out, so the order was changed and everything re-run. That spread is the honest error bar on the large figures.
+An earlier complete run the same hour, with the machine busier (load average 3 to 5 during the grids), gave visibly different larger numbers (Perspective's large render 2.8 s against 1.9 s here, the plain table's sort 30 s against 21 s) and was discarded: a scroll run before the sort made RevoGrid's sort hook time out, so the order was changed and everything re-run. That spread is the error bar on the large figures.
 
 Render numbers are one machine's observations, in headless Chromium at
-1400×1000, typed into the site from the scripted run above rather than generated
-automatically on every build. Small renders are stable to within a few percent
+1400×1000, typed into the site from the scripted run above, not generated
+on every build. Small renders are stable to within a few percent
 run to run. Large renders are not: the plain `<table>`'s capped 100,000-row
 render varied by over 10% across eight runs on this machine, and by closer to
-20% at 200,000 sampled separately. **Variance grows with render cost, not just
-with measurement noise** — treat every large-dataset figure as an order of
+20% at 200,000 sampled separately. **Variance grows with render cost, not only
+with measurement noise.** Treat every large-dataset figure as an order of
 magnitude, not a benchmark result with error bars.
 
 ## Known gaps
 
-- **No automated test asserts a scroll-FPS run actually moved the element it
-  measured.** Each demo's `data-scroller` placement was checked manually and by
+- **No automated test asserts a scroll-FPS run moved the element it
+  measured.** Each demo's `data-scroller` placement was checked by hand and by
   a second reviewer reading the library's own layout CSS during build. A fixture
   that scripts a click on "Measure scroll FPS" and asserts the scrolled
-  element's `scrollTop` actually changed would close this gap; it does not
+  element's `scrollTop` changed would close this gap; it does not
   exist yet.
 - **Only bundle sizes and line counts are regenerated by `npm run build`**
   (`scripts/measure-bundles.mjs` writes `bundles.json`). Render, sort and FPS
@@ -184,7 +181,7 @@ magnitude, not a benchmark result with error bars.
   `docs/reports/`, and `src/harness/results.js` is then updated from that
   report by hand. A dependency bump can move the real numbers without moving
   the page until someone re-runs the script.
-- Full reasoning behind every build-time judgment call — which Perspective
-  package family, why the baseline stays in capped rather than excluded, why
-  heap isn't a column — is in `OPEN-QUESTIONS.md`. The complete decision log is
+- Full reasoning behind every build-time judgment call (which Perspective
+  package family, why the baseline stays in capped instead of excluded, why
+  heap is not a column) is in `OPEN-QUESTIONS.md`. The complete decision log is
   `docs/reports/build-ledger.md`.

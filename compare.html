@@ -113,7 +113,7 @@
       <li id="note-d"><sup>d</sup> Perspective's large figure is mostly moving 500,000 JavaScript objects into a worker and rebuilding them as Arrow columns. Every library gets the same <code>Array&lt;Object&gt;</code>, which is Perspective's worst input; Arrow or CSV would cut it. Its WASM boot is timed separately and shown as "engine ready in N ms" on its page and in the gallery, not inside any render figure. Once loaded, sort and filter run in the worker.</li>
       <li><strong>Own code</strong> nets out the <span data-harness>25 kB</span> every demo page loads (the mount harness, the Parquet reader, <code>site.css</code>) and, for the React demos, <span data-react>60 kB</span> of React. Full page weights are in <a href="/bundles.json">bundles.json</a>. Perspective's WebAssembly is its own column because gzip barely compresses it.</li>
       <li><strong>Lines written</strong> are non-blank, non-comment lines under <code>src/demos/&lt;key&gt;/</code>. A build-cost proxy: JSX markup counts the same as logic. The sort hook and edit test that the harness asks of each demo are fenced off and not counted, so the column still measures building the table.</li>
-      <li><strong>The render clock</strong> covers building the DOM and a forced layout. Without the layout flush the plain <code>&lt;table&gt;</code> would report a fifth of its real cost. <strong>Scroll FPS</strong> is a scripted scroll of 20,000 px over 120 frames on the element that actually moves. All figures here are from the production build.</li>
+      <li><strong>The render clock</strong> covers building the DOM and a forced layout. Without the layout flush the plain <code>&lt;table&gt;</code> would report a fifth of its real cost. <strong>Scroll FPS</strong> is a scripted scroll of 20,000 px over 120 frames on the element that scrolls. All figures here are from the production build.</li>
       <li><strong>Sort by price</strong> is the button on each large card: the rows go back to file order (untimed), then the library's own sort call is timed until the sorted rows are on screen, with the same clock as a render (layout forced, async engines awaited, Glide's canvas redrawn). Median of <span data-measured-sort>5 fresh page loads</span>. Glide has no sort of its own, so its figure is our index sort plus a redraw; Observable Inputs sorts every row but draws only the first 60. The plain table sorts the 100,000 rows it shows and rebuilds them, which is why it takes tens of seconds.</li>
       <li><strong>Ctrl-F</strong> finds only mounted cells, meaning the rows on screen plus a small buffer, in every virtualized DOM grid here (Tabulator, AG Grid, TanStack, Perspective, DataTables with Scroller, RevoGrid). It finds nothing in Glide, which is canvas. The plain <code>&lt;table&gt;</code> has every row in the DOM, and Observable Inputs has every row it has appended so far. Searching the whole dataset needs the library's own search or filter.</li>
       <li><strong>Heap is not a column.</strong> Chrome pins <code>performance.memory</code> to a placeholder unless started with <code>--enable-precise-memory-info</code>, so any figure would have been invented.</li>
@@ -124,7 +124,7 @@
   <h2 id="edit-test">The edit test</h2>
   <p class="caption">
     On each grid's demo page: double-click a price and type a new one, then paste three lines
-    onto a price cell. A value counts only if it reached the data, not just the screen. Run by
+    onto a price cell. A value counts only if it reached the data; a change on screen alone does not. Run by
     hand and by script (<code>scripts/edit-test.mjs</code>). The others are display tables and
     were not tested.
   </p>
@@ -170,11 +170,11 @@
       at 200,000, and we stopped waiting for 500,000 after ten minutes.
     </li>
     <li>
-      <strong>The most dangerous line of code came from a library's own docs.</strong> Tabulator's
+      <strong>The worst failure came from a line in a library's own docs.</strong> Tabulator's
       <code>height: "100%"</code>, the option its docs give for filling a container, renders every
       row when the parent has no resolved height: 88 seconds at 50,000 rows instead of 36 ms, with
-      nothing logged. AG Grid fails visibly on the same mistake. Tabulator is a good library. The
-      problem is that it fails without a warning.
+      nothing logged. AG Grid fails visibly on the same mistake. Tabulator is a good library; this option
+      fails without a warning.
     </li>
     <li>
       <strong>Glide draws 500,000 rows as fast as it draws 1,000, and RevoGrid is not far behind
@@ -187,7 +187,7 @@
     <li>
       <strong>Headless means you write the virtualizer.</strong> TanStack Table is the smallest
       React bundle here and the most lines of code. The row and column virtualizers, the spacer
-      cells, the sticky header and the sort buttons are all ours. What comes back is an ordinary
+      cells, the sticky header and the sort buttons are all in the demo's code. What comes back is an ordinary
       <code>&lt;table&gt;</code>.
     </li>
   </ol>
@@ -197,8 +197,8 @@
     <p>
       Same four datasets, same page shell, same theme tokens and the same mounting harness for
       every entry, and the same cell formatter for all but Perspective, which has no per-cell
-      formatter hook. Each demo supplies four render functions; the harness owns
-      the page, the clock and the FPS run, and empties the host between renders. The clock waits for
+      formatter hook. Each demo supplies four render functions; the harness runs
+      the page, the clock and the FPS test, and empties the host between renders. The clock waits for
       async work and forces layout, so a library that returns early cannot report a scheduling call
       as a render. Agents built and measured the demos under our direction. We chose the verdict, and every timing but one comes from a script in the repo you can run yourself (<code>scripts/measure-all.mjs</code>); the Tabulator 88 seconds was timed by hand.
     </p>

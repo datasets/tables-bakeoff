@@ -61,7 +61,7 @@ export const AGGRID_LEAN = {
 export const AXES = [
   { key: "look", label: "Default look", hint: "How the table looks before you touch the CSS" },
   { key: "api", label: "API feel", hint: "How much of the code reads as what you meant" },
-  { key: "firstTry", label: "Right first try", hint: "How far the library fought between code that looked right and a table that was" },
+  { key: "firstTry", label: "Right first try", hint: "How much work it took to get from code that looked right to a table that was" },
   { key: "docs", label: "Docs", hint: "Could the published docs answer the questions the build raised" },
   { key: "escape", label: "Escape hatch", hint: "When the API runs out, how far down can you reach" },
 ];
@@ -82,7 +82,7 @@ export const ENTRIES = [
     textSelect: { text: "yes" },
     kbSort: { text: "n/a", sub: "no header sort" },
     scores: { look: 4, api: 5, firstTry: 5, docs: 5, escape: 5 },
-    line: "Our CSS, no API to learn, nothing to fight. It cannot virtualize, so it stops at a few thousand rows.",
+    line: "Our CSS and no API to learn. It cannot virtualize, so it stops at a few thousand rows.",
   },
   {
     key: "observable",
@@ -122,7 +122,7 @@ export const ENTRIES = [
     textSelect: { text: "yes" },
     kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 4, firstTry: 1, docs: 4, escape: 3 },
-    line: "Complete docs, and they contain the trap: height: \"100%\" in an unsized parent cost 88 seconds at 50,000 rows with nothing logged.",
+    line: "Complete docs, and one option in them, height: \"100%\" in an unsized parent, cost 88 seconds at 50,000 rows with nothing logged.",
   },
   {
     key: "aggrid",
@@ -161,7 +161,7 @@ export const ENTRIES = [
     textSelect: { text: "yes" },
     kbSort: { text: "yes", sub: "header is a <button>" },
     scores: { look: 5, api: 3, firstTry: 2, docs: 2, escape: 5 },
-    line: "It is your table, so it looks like your site. v9 docs were the .d.ts files, and the virtualizer and spacer rows are yours to get wrong.",
+    line: "You write the table, so it looks like your site. v9 docs were the .d.ts files, and you write and debug the virtualizer and spacer rows yourself.",
   },
   {
     key: "glide",
@@ -299,7 +299,7 @@ export const VERDICTS = {
     line: "Renders 500,000 rows in 233 ms, sorts them in 369 ms and scrolls at 60 fps, with sort and filter built in, in any framework. Free, MIT; grouping, pivot and Excel export are Enterprise.",
     use: [
       "Tens of thousands to 500,000 rows and you want it done.",
-      "Loud failures: a missing module throws, a wrong host height draws an obviously empty grid.",
+      "Loud failures: a missing module throws, a wrong host height draws a visibly empty grid.",
     ],
     skip: [
       "Bundle size matters: 333 kB as the quick start ships it, 272 kB lean, the heaviest grid here.",
@@ -309,16 +309,16 @@ export const VERDICTS = {
   },
   tanstack: {
     role: "DataHub's pick: build your own",
-    line: "Headless: it computes rows, sorting and columns, you write every element. Your table in your markup, 24 kB over React.",
+    line: "Headless: it computes rows, sorting and columns, you write every element. You get a table in your own markup for 24 kB over React.",
     use: [
-      "You ship React and want to own the markup and CSS.",
+      "You ship React and want your own markup and CSS.",
       "Browser Ctrl-F, text selection and copy must work on the rows on screen.",
     ],
     skip: [
-      "You want a grid done. The virtualizer, spacer rows and sticky header are yours to write: 150 lines here.",
+      "You want a grid done. You write the virtualizer, spacer rows and sticky header: 150 lines here.",
       "You need docs. When we built this, v9's were the .d.ts files.",
     ],
-    watch: "The spacer-row and column-group arithmetic is yours to get wrong. We got it wrong twice.",
+    watch: "The spacer-row and column-group arithmetic is easy to get wrong. We got it wrong twice.",
   },
   glide: {
     role: "Also consider, for an editable grid",

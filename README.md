@@ -6,7 +6,7 @@ We built the same table with eight open-source JavaScript table libraries and a 
 
 The nine entries:
 
-- Plain `<table>` — the baseline/control, no library at all
+- Plain `<table>`, the baseline, no library at all
 - [Observable Inputs](https://observablehq.com/framework/inputs/table)
 - [Tabulator](https://tabulator.info/)
 - [AG Grid Community](https://www.ag-grid.com/)
@@ -20,7 +20,7 @@ The nine entries:
 
 ```
 npm install
-npm run data      # regenerates the Parquet fixtures — only needed if you
+npm run data      # regenerates the Parquet fixtures; only needed if you
                    # want to rebuild them; the files are already committed
 npm run dev        # dev server
 npm run build      # production build + bundle-size measurement
@@ -46,7 +46,7 @@ formatter (`formatCell` in `src/data/load.js`). The intent is that what you're
 comparing on screen is the library's own rendering and interaction behaviour,
 not different amounts of styling effort. **Perspective is the one
 exception**: it exposes no per-cell formatting callback, so its cells are
-formatted by its own plugin config instead of the shared formatter — this is
+formatted by its own plugin config instead of the shared formatter. This is
 disclosed in its demo's notes.
 
 The front page (`index.html`) renders from two sources: `bundles.json`, which
