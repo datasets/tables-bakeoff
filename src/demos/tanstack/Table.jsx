@@ -123,12 +123,15 @@ export function TanStackTable({ data, formatCell, api }) {
               return (
                 <th
                   key={h.id}
-                  onClick={h.column.getToggleSortingHandler()}
+                  aria-sort={dir === "asc" ? "ascending" : dir === "desc" ? "descending" : undefined}
                   style={{ textAlign: h.column.columnDef.meta.align }}
                   title={h.column.id}
                 >
-                  {flexRender(h.column.columnDef.header, h.getContext())}
-                  <span className="sort">{dir === "asc" ? " ▲" : dir === "desc" ? " ▼" : ""}</span>
+                  {/* A real button, so Tab reaches it and Enter or Space sorts. */}
+                  <button type="button" onClick={h.column.getToggleSortingHandler()}>
+                    {flexRender(h.column.columnDef.header, h.getContext())}
+                    <span className="sort">{dir === "asc" ? " ▲" : dir === "desc" ? " ▼" : ""}</span>
+                  </button>
                 </th>
               );
             })}
