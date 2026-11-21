@@ -6,7 +6,7 @@ Every typed-in number here is also in `src/harness/results.js`, which the front 
 
 ## The verdict
 
-No library won overall, so we picked one per job.
+One pick per job:
 
 | Job | Use | Runner-up |
 |---|---|---|
