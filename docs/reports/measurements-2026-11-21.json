@@ -1,0 +1,2137 @@
+{
+  "meta": {
+    "date": "2026-11-21",
+    "script": "scripts/measure-all.mjs",
+    "runsPerFigure": 5,
+    "loadLimit": 4,
+    "viewport": "1400x1000",
+    "browser": "Chromium 151.0.7922.34 (headless, Playwright 1.62.1)",
+    "build": "npm run build, served by vite preview",
+    "machine": "Apple M4, 16 GB, macOS 15.6 (24.6.0)",
+    "node": "v26.4.0",
+    "startedAt": "2026-11-21T01:00:24.486Z",
+    "finishedAt": "2026-11-21T01:15:23.026Z"
+  },
+  "libs": {
+    "baseline": {
+      "load": {
+        "firstSeen": 2.33,
+        "atStart": 2.33,
+        "waitedMin": 0,
+        "perRun": [
+          5.61,
+          5.82,
+          5.75,
+          7.35,
+          5.47
+        ],
+        "max": 7.35,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "100,000 of 500,000 rows",
+      "render": {
+        "small": {
+          "median": 55,
+          "min": 55,
+          "max": 59,
+          "runs": [
+            55,
+            55,
+            59,
+            56,
+            55
+          ]
+        },
+        "wide": {
+          "median": 546,
+          "min": 525,
+          "max": 552,
+          "runs": [
+            525,
+            552,
+            546,
+            550,
+            541
+          ]
+        },
+        "medium": {
+          "median": 2468,
+          "min": 2443,
+          "max": 2880,
+          "runs": [
+            2880,
+            2468,
+            2510,
+            2445,
+            2443
+          ]
+        },
+        "large": {
+          "median": 6333,
+          "min": 6266,
+          "max": 7179,
+          "runs": [
+            7179,
+            6292,
+            6774,
+            6266,
+            6333
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 21178.4,
+        "min": 19872.9,
+        "max": 21797,
+        "runs": [
+          21178.4,
+          21435.9,
+          21797,
+          20599.7,
+          19872.9
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 30,
+          "min": 27,
+          "max": 31,
+          "runs": [
+            27,
+            30,
+            28,
+            30,
+            31
+          ]
+        },
+        "medium": {
+          "median": 13,
+          "min": 12,
+          "max": 17,
+          "runs": [
+            12,
+            17,
+            17,
+            13,
+            13
+          ]
+        },
+        "large": {
+          "median": 4,
+          "min": 3,
+          "max": 5,
+          "runs": [
+            4,
+            5,
+            4,
+            4,
+            3
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 119,
+          "min": 111,
+          "max": 146,
+          "runs": [
+            146,
+            119,
+            133,
+            116,
+            111
+          ]
+        },
+        "medium": {
+          "median": 413,
+          "min": 309,
+          "max": 470,
+          "runs": [
+            470,
+            310,
+            309,
+            420,
+            413
+          ]
+        },
+        "large": {
+          "median": 1908,
+          "min": 1368,
+          "max": 1986,
+          "runs": [
+            1908,
+            1368,
+            1921,
+            1843,
+            1986
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 55,
+            "wide": 525,
+            "medium": 2880,
+            "large": 7179
+          },
+          "fps": {
+            "wide": 27,
+            "medium": 12,
+            "large": 4
+          },
+          "dropped": {
+            "wide": 146,
+            "medium": 470,
+            "large": 1908
+          },
+          "largeRows": "100,000 of 500,000 rows",
+          "sort": 21178.4,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 55,
+            "wide": 552,
+            "medium": 2468,
+            "large": 6292
+          },
+          "fps": {
+            "wide": 30,
+            "medium": 17,
+            "large": 5
+          },
+          "dropped": {
+            "wide": 119,
+            "medium": 310,
+            "large": 1368
+          },
+          "largeRows": "100,000 of 500,000 rows",
+          "sort": 21435.9,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 59,
+            "wide": 546,
+            "medium": 2510,
+            "large": 6774
+          },
+          "fps": {
+            "wide": 28,
+            "medium": 17,
+            "large": 4
+          },
+          "dropped": {
+            "wide": 133,
+            "medium": 309,
+            "large": 1921
+          },
+          "largeRows": "100,000 of 500,000 rows",
+          "sort": 21797,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 56,
+            "wide": 550,
+            "medium": 2445,
+            "large": 6266
+          },
+          "fps": {
+            "wide": 30,
+            "medium": 13,
+            "large": 4
+          },
+          "dropped": {
+            "wide": 116,
+            "medium": 420,
+            "large": 1843
+          },
+          "largeRows": "100,000 of 500,000 rows",
+          "sort": 20599.7,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 55,
+            "wide": 541,
+            "medium": 2443,
+            "large": 6333
+          },
+          "fps": {
+            "wide": 31,
+            "medium": 13,
+            "large": 3
+          },
+          "dropped": {
+            "wide": 111,
+            "medium": 413,
+            "large": 1986
+          },
+          "largeRows": "100,000 of 500,000 rows",
+          "sort": 19872.9,
+          "errs": []
+        }
+      ]
+    },
+    "observable": {
+      "load": {
+        "firstSeen": 5.47,
+        "atStart": 3.86,
+        "waitedMin": 1,
+        "perRun": [
+          3.5,
+          3.38,
+          3.19,
+          2.93,
+          2.78
+        ],
+        "max": 3.86,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 6.4,
+          "min": 6.2,
+          "max": 6.5,
+          "runs": [
+            6.4,
+            6.3,
+            6.2,
+            6.4,
+            6.5
+          ]
+        },
+        "wide": {
+          "median": 51,
+          "min": 50,
+          "max": 51,
+          "runs": [
+            51,
+            50,
+            51,
+            51,
+            51
+          ]
+        },
+        "medium": {
+          "median": 5.4,
+          "min": 5.2,
+          "max": 5.6,
+          "runs": [
+            5.4,
+            5.6,
+            5.2,
+            5.4,
+            5.3
+          ]
+        },
+        "large": {
+          "median": 10.8,
+          "min": 10.8,
+          "max": 11.2,
+          "runs": [
+            10.8,
+            10.8,
+            10.8,
+            11.2,
+            10.9
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 103.5,
+        "min": 101.4,
+        "max": 106.9,
+        "runs": [
+          106.9,
+          101.4,
+          102.3,
+          103.5,
+          105.6
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 44,
+          "min": 43,
+          "max": 44,
+          "runs": [
+            44,
+            44,
+            44,
+            43,
+            44
+          ]
+        },
+        "large": {
+          "median": 53,
+          "min": 52,
+          "max": 53,
+          "runs": [
+            52,
+            53,
+            52,
+            53,
+            53
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 44,
+          "min": 43,
+          "max": 47,
+          "runs": [
+            43,
+            44,
+            44,
+            47,
+            45
+          ]
+        },
+        "large": {
+          "median": 16,
+          "min": 15,
+          "max": 17,
+          "runs": [
+            17,
+            16,
+            17,
+            15,
+            16
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 6.4,
+            "wide": 51,
+            "medium": 5.4,
+            "large": 10.8
+          },
+          "fps": {
+            "wide": 44,
+            "large": 52
+          },
+          "dropped": {
+            "wide": 43,
+            "large": 17
+          },
+          "largeRows": "500,000 rows",
+          "sort": 106.9,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 6.3,
+            "wide": 50,
+            "medium": 5.6,
+            "large": 10.8
+          },
+          "fps": {
+            "wide": 44,
+            "large": 53
+          },
+          "dropped": {
+            "wide": 44,
+            "large": 16
+          },
+          "largeRows": "500,000 rows",
+          "sort": 101.4,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 6.2,
+            "wide": 51,
+            "medium": 5.2,
+            "large": 10.8
+          },
+          "fps": {
+            "wide": 44,
+            "large": 52
+          },
+          "dropped": {
+            "wide": 44,
+            "large": 17
+          },
+          "largeRows": "500,000 rows",
+          "sort": 102.3,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 6.4,
+            "wide": 51,
+            "medium": 5.4,
+            "large": 11.2
+          },
+          "fps": {
+            "wide": 43,
+            "large": 53
+          },
+          "dropped": {
+            "wide": 47,
+            "large": 15
+          },
+          "largeRows": "500,000 rows",
+          "sort": 103.5,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 6.5,
+            "wide": 51,
+            "medium": 5.3,
+            "large": 10.9
+          },
+          "fps": {
+            "wide": 44,
+            "large": 53
+          },
+          "dropped": {
+            "wide": 45,
+            "large": 16
+          },
+          "largeRows": "500,000 rows",
+          "sort": 105.6,
+          "errs": []
+        }
+      ]
+    },
+    "tabulator": {
+      "load": {
+        "firstSeen": 2.78,
+        "atStart": 2.78,
+        "waitedMin": 0,
+        "perRun": [
+          2.64,
+          2.54,
+          2.57,
+          2.85,
+          2.86
+        ],
+        "max": 2.86,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 32.8,
+          "min": 32.3,
+          "max": 33,
+          "runs": [
+            33,
+            32.4,
+            32.3,
+            32.8,
+            32.8
+          ]
+        },
+        "wide": {
+          "median": 149,
+          "min": 148,
+          "max": 151,
+          "runs": [
+            151,
+            149,
+            149,
+            148,
+            148
+          ]
+        },
+        "medium": {
+          "median": 48.4,
+          "min": 48,
+          "max": 49.2,
+          "runs": [
+            48,
+            49.2,
+            48.4,
+            48.7,
+            48
+          ]
+        },
+        "large": {
+          "median": 185,
+          "min": 125,
+          "max": 199,
+          "runs": [
+            199,
+            181,
+            125,
+            189,
+            185
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 414.8,
+        "min": 401.2,
+        "max": 419.2,
+        "runs": [
+          410.7,
+          414.8,
+          401.2,
+          419.2,
+          415.8
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 56,
+          "min": 56,
+          "max": 57,
+          "runs": [
+            56,
+            57,
+            56,
+            56,
+            56
+          ]
+        },
+        "large": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 8,
+          "min": 7,
+          "max": 8,
+          "runs": [
+            8,
+            7,
+            8,
+            8,
+            8
+          ]
+        },
+        "large": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 33,
+            "wide": 151,
+            "medium": 48,
+            "large": 199
+          },
+          "fps": {
+            "wide": 56,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 8,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 410.7,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 32.4,
+            "wide": 149,
+            "medium": 49.2,
+            "large": 181
+          },
+          "fps": {
+            "wide": 57,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 7,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 414.8,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 32.3,
+            "wide": 149,
+            "medium": 48.4,
+            "large": 125
+          },
+          "fps": {
+            "wide": 56,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 8,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 401.2,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 32.8,
+            "wide": 148,
+            "medium": 48.7,
+            "large": 189
+          },
+          "fps": {
+            "wide": 56,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 8,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 419.2,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 32.8,
+            "wide": 148,
+            "medium": 48,
+            "large": 185
+          },
+          "fps": {
+            "wide": 56,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 8,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 415.8,
+          "errs": []
+        }
+      ]
+    },
+    "aggrid": {
+      "load": {
+        "firstSeen": 2.86,
+        "atStart": 2.86,
+        "waitedMin": 0,
+        "perRun": [
+          2.79,
+          2.65,
+          2.55,
+          2.75,
+          3.25
+        ],
+        "max": 3.25,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 30.1,
+          "min": 30,
+          "max": 31.4,
+          "runs": [
+            31.4,
+            30.7,
+            30,
+            30.1,
+            30
+          ]
+        },
+        "wide": {
+          "median": 10,
+          "min": 9.8,
+          "max": 10.2,
+          "runs": [
+            9.9,
+            10,
+            10.1,
+            10.2,
+            9.8
+          ]
+        },
+        "medium": {
+          "median": 33.4,
+          "min": 32.4,
+          "max": 33.7,
+          "runs": [
+            32.4,
+            33.2,
+            33.7,
+            33.4,
+            33.6
+          ]
+        },
+        "large": {
+          "median": 233,
+          "min": 229,
+          "max": 237,
+          "runs": [
+            229,
+            237,
+            233,
+            235,
+            232
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 368.8,
+        "min": 365.6,
+        "max": 374.3,
+        "runs": [
+          367.4,
+          370.3,
+          374.3,
+          365.6,
+          368.8
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        },
+        "large": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 1,
+          "min": 0,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            0,
+            1,
+            1
+          ]
+        },
+        "large": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 31.4,
+            "wide": 9.9,
+            "medium": 32.4,
+            "large": 229
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 367.4,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 30.7,
+            "wide": 10,
+            "medium": 33.2,
+            "large": 237
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 370.3,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 30,
+            "wide": 10.1,
+            "medium": 33.7,
+            "large": 233
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 0,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 374.3,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 30.1,
+            "wide": 10.2,
+            "medium": 33.4,
+            "large": 235
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 365.6,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 30,
+            "wide": 9.8,
+            "medium": 33.6,
+            "large": 232
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 368.8,
+          "errs": []
+        }
+      ]
+    },
+    "tanstack": {
+      "load": {
+        "firstSeen": 3.25,
+        "atStart": 3.25,
+        "waitedMin": 0,
+        "perRun": [
+          3.23,
+          3.44,
+          3.24,
+          3.14,
+          3.21
+        ],
+        "max": 3.44,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 10.3,
+          "min": 10.1,
+          "max": 11.3,
+          "runs": [
+            10.3,
+            11.3,
+            10.1,
+            10.2,
+            10.3
+          ]
+        },
+        "wide": {
+          "median": 4.4,
+          "min": 4.4,
+          "max": 4.8,
+          "runs": [
+            4.4,
+            4.8,
+            4.4,
+            4.5,
+            4.4
+          ]
+        },
+        "medium": {
+          "median": 12.3,
+          "min": 11.7,
+          "max": 12.7,
+          "runs": [
+            12.3,
+            12.3,
+            12.7,
+            11.7,
+            12
+          ]
+        },
+        "large": {
+          "median": 124,
+          "min": 77,
+          "max": 137,
+          "runs": [
+            124,
+            77,
+            127,
+            137,
+            122
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 418.3,
+        "min": 408.8,
+        "max": 442.8,
+        "runs": [
+          418.3,
+          442.8,
+          413.8,
+          408.8,
+          419.6
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 60,
+          "min": 59,
+          "max": 60,
+          "runs": [
+            59,
+            60,
+            60,
+            60,
+            60
+          ]
+        },
+        "large": {
+          "median": 60,
+          "min": 59,
+          "max": 60,
+          "runs": [
+            60,
+            59,
+            60,
+            60,
+            60
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "large": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 10.3,
+            "wide": 4.4,
+            "medium": 12.3,
+            "large": 124
+          },
+          "fps": {
+            "wide": 59,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 418.3,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 11.3,
+            "wide": 4.8,
+            "medium": 12.3,
+            "large": 77
+          },
+          "fps": {
+            "wide": 60,
+            "large": 59
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 442.8,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 10.1,
+            "wide": 4.4,
+            "medium": 12.7,
+            "large": 127
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 413.8,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 10.2,
+            "wide": 4.5,
+            "medium": 11.7,
+            "large": 137
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 408.8,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 10.3,
+            "wide": 4.4,
+            "medium": 12,
+            "large": 122
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 419.6,
+          "errs": []
+        }
+      ]
+    },
+    "glide": {
+      "load": {
+        "firstSeen": 3.21,
+        "atStart": 3.21,
+        "waitedMin": 0,
+        "perRun": [
+          2.87,
+          2.72,
+          2.74,
+          2.68,
+          2.55
+        ],
+        "max": 3.21,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 19.1,
+          "min": 15.3,
+          "max": 26.4,
+          "runs": [
+            15.9,
+            15.3,
+            24.4,
+            26.4,
+            19.1
+          ]
+        },
+        "wide": {
+          "median": 22.7,
+          "min": 21.4,
+          "max": 30.6,
+          "runs": [
+            21.6,
+            21.4,
+            22.7,
+            30.6,
+            26.6
+          ]
+        },
+        "medium": {
+          "median": 9.6,
+          "min": 4.9,
+          "max": 11.4,
+          "runs": [
+            9.6,
+            10.1,
+            11.4,
+            4.9,
+            5.9
+          ]
+        },
+        "large": {
+          "median": 16.8,
+          "min": 14.7,
+          "max": 52,
+          "runs": [
+            14.8,
+            19,
+            52,
+            14.7,
+            16.8
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 97.5,
+        "min": 96.5,
+        "max": 98.3,
+        "runs": [
+          96.5,
+          98.3,
+          97.6,
+          97.1,
+          97.5
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        },
+        "large": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 1,
+          "min": 0,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        "large": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 15.9,
+            "wide": 21.6,
+            "medium": 9.6,
+            "large": 14.8
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 96.5,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 15.3,
+            "wide": 21.4,
+            "medium": 10.1,
+            "large": 19
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 98.3,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 24.4,
+            "wide": 22.7,
+            "medium": 11.4,
+            "large": 52
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 97.6,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 26.4,
+            "wide": 30.6,
+            "medium": 4.9,
+            "large": 14.7
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 97.1,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 19.1,
+            "wide": 26.6,
+            "medium": 5.9,
+            "large": 16.8
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 0,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 97.5,
+          "errs": []
+        }
+      ]
+    },
+    "perspective": {
+      "load": {
+        "firstSeen": 2.55,
+        "atStart": 2.55,
+        "waitedMin": 0,
+        "perRun": [
+          2.46,
+          2.69,
+          2.63,
+          2.54,
+          2.62
+        ],
+        "max": 2.69,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 58,
+          "min": 57,
+          "max": 61,
+          "runs": [
+            57,
+            58,
+            61,
+            57,
+            58
+          ]
+        },
+        "wide": {
+          "median": 36.9,
+          "min": 35.7,
+          "max": 37.6,
+          "runs": [
+            37.6,
+            37.5,
+            36.9,
+            36.8,
+            35.7
+          ]
+        },
+        "medium": {
+          "median": 191,
+          "min": 190,
+          "max": 195,
+          "runs": [
+            191,
+            191,
+            195,
+            190,
+            194
+          ]
+        },
+        "large": {
+          "median": 1908,
+          "min": 1881,
+          "max": 1920,
+          "runs": [
+            1881,
+            1908,
+            1920,
+            1897,
+            1917
+          ]
+        }
+      },
+      "setup": {
+        "median": 87,
+        "min": 86,
+        "max": 91,
+        "runs": [
+          87,
+          88,
+          87,
+          91,
+          86
+        ]
+      },
+      "sort": {
+        "median": 345.6,
+        "min": 343.4,
+        "max": 353.8,
+        "runs": [
+          345,
+          346.9,
+          345.6,
+          343.4,
+          353.8
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        },
+        "large": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "large": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 57,
+            "wide": 37.6,
+            "medium": 191,
+            "large": 1881
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "setup": 87,
+          "largeRows": "500,000 rows",
+          "sort": 345,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 58,
+            "wide": 37.5,
+            "medium": 191,
+            "large": 1908
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "setup": 88,
+          "largeRows": "500,000 rows",
+          "sort": 346.9,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 61,
+            "wide": 36.9,
+            "medium": 195,
+            "large": 1920
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "setup": 87,
+          "largeRows": "500,000 rows",
+          "sort": 345.6,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 57,
+            "wide": 36.8,
+            "medium": 190,
+            "large": 1897
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "setup": 91,
+          "largeRows": "500,000 rows",
+          "sort": 343.4,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 58,
+            "wide": 35.7,
+            "medium": 194,
+            "large": 1917
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "setup": 86,
+          "largeRows": "500,000 rows",
+          "sort": 353.8,
+          "errs": []
+        }
+      ]
+    },
+    "datatables": {
+      "load": {
+        "firstSeen": 2.62,
+        "atStart": 2.62,
+        "waitedMin": 0,
+        "perRun": [
+          2.95,
+          2.83,
+          2.63,
+          2.8,
+          3.13
+        ],
+        "max": 3.13,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 43.7,
+          "min": 42.9,
+          "max": 45.6,
+          "runs": [
+            43.7,
+            42.9,
+            45,
+            45.6,
+            43.4
+          ]
+        },
+        "wide": {
+          "median": 448,
+          "min": 444,
+          "max": 455,
+          "runs": [
+            452,
+            455,
+            444,
+            448,
+            448
+          ]
+        },
+        "medium": {
+          "median": 810,
+          "min": 802,
+          "max": 819,
+          "runs": [
+            815,
+            819,
+            802,
+            810,
+            810
+          ]
+        },
+        "large": {
+          "median": 8452,
+          "min": 8017,
+          "max": 8469,
+          "runs": [
+            8469,
+            8461,
+            8445,
+            8017,
+            8452
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 458.9,
+        "min": 399.6,
+        "max": 474.5,
+        "runs": [
+          467.2,
+          474.5,
+          458.9,
+          399.6,
+          441.2
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 48,
+          "min": 48,
+          "max": 48,
+          "runs": [
+            48,
+            48,
+            48,
+            48,
+            48
+          ]
+        },
+        "large": {
+          "median": 47,
+          "min": 46,
+          "max": 52,
+          "runs": [
+            47,
+            46,
+            47,
+            52,
+            47
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 29,
+          "min": 28,
+          "max": 29,
+          "runs": [
+            28,
+            29,
+            29,
+            29,
+            29
+          ]
+        },
+        "large": {
+          "median": 33,
+          "min": 18,
+          "max": 36,
+          "runs": [
+            35,
+            36,
+            33,
+            18,
+            33
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 43.7,
+            "wide": 452,
+            "medium": 815,
+            "large": 8469
+          },
+          "fps": {
+            "wide": 48,
+            "large": 47
+          },
+          "dropped": {
+            "wide": 28,
+            "large": 35
+          },
+          "largeRows": "500,000 rows",
+          "sort": 467.2,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 42.9,
+            "wide": 455,
+            "medium": 819,
+            "large": 8461
+          },
+          "fps": {
+            "wide": 48,
+            "large": 46
+          },
+          "dropped": {
+            "wide": 29,
+            "large": 36
+          },
+          "largeRows": "500,000 rows",
+          "sort": 474.5,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 45,
+            "wide": 444,
+            "medium": 802,
+            "large": 8445
+          },
+          "fps": {
+            "wide": 48,
+            "large": 47
+          },
+          "dropped": {
+            "wide": 29,
+            "large": 33
+          },
+          "largeRows": "500,000 rows",
+          "sort": 458.9,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 45.6,
+            "wide": 448,
+            "medium": 810,
+            "large": 8017
+          },
+          "fps": {
+            "wide": 48,
+            "large": 52
+          },
+          "dropped": {
+            "wide": 29,
+            "large": 18
+          },
+          "largeRows": "500,000 rows",
+          "sort": 399.6,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 43.4,
+            "wide": 448,
+            "medium": 810,
+            "large": 8452
+          },
+          "fps": {
+            "wide": 48,
+            "large": 47
+          },
+          "dropped": {
+            "wide": 29,
+            "large": 33
+          },
+          "largeRows": "500,000 rows",
+          "sort": 441.2,
+          "errs": []
+        }
+      ]
+    },
+    "revogrid": {
+      "load": {
+        "firstSeen": 3.13,
+        "atStart": 3.13,
+        "waitedMin": 0,
+        "perRun": [
+          3.12,
+          3.19,
+          3.18,
+          2.92,
+          2.84
+        ],
+        "max": 3.19,
+        "busy": false
+      },
+      "failed": 0,
+      "largeRows": "500,000 rows",
+      "render": {
+        "small": {
+          "median": 89,
+          "min": 81,
+          "max": 93,
+          "runs": [
+            86,
+            89,
+            91,
+            93,
+            81
+          ]
+        },
+        "wide": {
+          "median": 71,
+          "min": 52,
+          "max": 72,
+          "runs": [
+            71,
+            72,
+            71,
+            70,
+            52
+          ]
+        },
+        "medium": {
+          "median": 55,
+          "min": 48.7,
+          "max": 64,
+          "runs": [
+            60,
+            55,
+            54,
+            48.7,
+            64
+          ]
+        },
+        "large": {
+          "median": 62,
+          "min": 52,
+          "max": 72,
+          "runs": [
+            62,
+            56,
+            72,
+            52,
+            69
+          ]
+        }
+      },
+      "setup": null,
+      "sort": {
+        "median": 194.1,
+        "min": 193.3,
+        "max": 201.7,
+        "runs": [
+          201.7,
+          194.1,
+          193.3,
+          193.8,
+          196
+        ]
+      },
+      "fps": {
+        "wide": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        },
+        "large": {
+          "median": 60,
+          "min": 60,
+          "max": 60,
+          "runs": [
+            60,
+            60,
+            60,
+            60,
+            60
+          ]
+        }
+      },
+      "dropped": {
+        "wide": {
+          "median": 1,
+          "min": 0,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        "large": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "runs": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      },
+      "raw": [
+        {
+          "render": {
+            "small": 86,
+            "wide": 71,
+            "medium": 60,
+            "large": 62
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 201.7,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 89,
+            "wide": 72,
+            "medium": 55,
+            "large": 56
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 194.1,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 91,
+            "wide": 71,
+            "medium": 54,
+            "large": 72
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 193.3,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 93,
+            "wide": 70,
+            "medium": 48.7,
+            "large": 52
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 1,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 193.8,
+          "errs": []
+        },
+        {
+          "render": {
+            "small": 81,
+            "wide": 52,
+            "medium": 64,
+            "large": 69
+          },
+          "fps": {
+            "wide": 60,
+            "large": 60
+          },
+          "dropped": {
+            "wide": 0,
+            "large": 1
+          },
+          "largeRows": "500,000 rows",
+          "sort": 196,
+          "errs": []
+        }
+      ]
+    }
+  }
+}
