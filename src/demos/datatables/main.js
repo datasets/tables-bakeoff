@@ -32,7 +32,7 @@ function build(host, data, ctx) {
       data: data.rows,
       columns: data.columns.map((c) => ({
         data: c.name,
-        title: c.name,
+        title: c.label,
         className: c.align === "right" ? "dt-right" : "dt-left",
         // DataTables asks the renderer for a value per purpose. Only the
         // on-screen copy goes through the shared formatter; sorting and
@@ -41,10 +41,22 @@ function build(host, data, ctx) {
       })),
       // scrollY is the body height only. The search box above and the info
       // line below sit outside it, so it is the host minus those two rows.
+      // DataTables sorts by the first column on load unless told otherwise.
+      // Every other table here shows the rows in file order, so this one does
+      // too, and it skips a sort the others never do.
+      order: [],
       scrollY: host.clientHeight - 160,
       scrollX: true,
       scroller: true,
       initComplete: () => {
+        // #region sort hook for the harness (not counted in lines written)
+        // order() + draw() sorts and redraws synchronously. DataTables 3 has
+        // no "back to load order" call, so clearing sorts by the transaction
+        // id instead, which is unrelated to price: each timed sort still
+        // starts from rows in no price order.
+        const col = (name) => data.columns.findIndex((c) => c.name === name);
+        ctx.provideSort((field) => dt.order([[col(field ?? "id"), "asc"]]).draw());
+        // #endregion
         // DataTables scrolls div.dt-scroll-body; the host div never moves.
         host.querySelector(".dt-scroll-body")?.setAttribute("data-scroller", "");
         resolve(() => dt.destroy());

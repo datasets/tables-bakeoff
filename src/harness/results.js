@@ -5,7 +5,11 @@
  * /bundles.json, which `npm run build` writes.
  *
  * `verify: true` marks a value typed in from a measurement run that is being
- * repeated (Nov 2026 versions, sort at 500k, edit test). hub.js renders those
+ * repeated (Nov 2026 versions, sort at 500k, edit test).
+ *
+ * `sort500k` is the large card's "Sort by price" button: rows put back in file
+ * order (untimed), then the library's own sort API timed to sorted rows on
+ * screen, median of 5. Re-measure with scripts/measure-sort.mjs. hub.js renders those
  * cells with a data-verify attribute. Clear the flag when the number has been
  * re-measured on the version shown.
  *
@@ -13,10 +17,33 @@
  * src/demos/<key>/. The gallery, the measured table and the scorecard all
  * render from this list. Keep `key` equal to the demo key in vite.config.js. */
 
+/** The edit test's verdicts, as printed on the demo card and the front page. */
+export const EDIT_STATUS = {
+  yes: "Works out of the box",
+  config: "Needs config",
+  paid: "Needs the paid tier",
+  no: "Not available",
+};
+
 /** Where the typed-in render and FPS numbers come from. */
 export const MEASURED = {
   machine: "one laptop, headless Chromium, 1400×1000", // VERIFY after the re-measure
   when: "Sep 2026 run; the Nov 2026 re-measure is in progress", // VERIFY after the re-measure
+  // Sort at 500,000: production build, headless Chromium, 1400x1000, median of
+  // 5 per library, 2026-11-21. Other jobs were running: load average 3.3 to
+  // 5.4 for the grids and 10 to 13 for the plain <table> runs. Provisional
+  // until the quiet re-measure.
+  sort: "21 Nov 2026, production build, median of 5, busy machine (load average 3 to 5; 10 to 13 for the plain table)",
+};
+
+/** AG Grid Community, everything vs only the modules the demo uses, from
+ *  scripts/measure-aggrid-lean.mjs (2026-11-21, AG Grid 36.3.0): the demo page
+ *  built twice through the same pipeline, own code net of the shared harness,
+ *  gzip. The site ships the quick-start version (`all`). */
+export const AGGRID_LEAN = {
+  allKB: 334,
+  leanKB: 272,
+  modules: ["ClientSideRowModelModule", "TextFilterModule", "NumberFilterModule", "DateFilterModule", "CellStyleModule", "NumberEditorModule"],
 };
 
 /** Scorecard axes, 1 (worst) to 5 (best). Subjective, from doing the build. */
@@ -39,6 +66,7 @@ export const ENTRIES = [
     framework: "none",
     render50k: { text: "2,625 ms", verify: true },
     render500k: { text: "did not finish", sub: "100,000 rows: 6.9 s", verify: true },
+    sort500k: { text: "23 to 52 s", sub: "100,000 rows; rebuilds the table", verify: true },
     fps: { text: "n/a", sub: "15 fps at 50,000", verify: true },
     scores: { look: 4, api: 5, firstTry: 5, docs: 5, escape: 5 },
     line: "Our CSS, no API to learn, nothing to fight. It cannot virtualize, so it stops at a few thousand rows.",
@@ -54,9 +82,10 @@ export const ENTRIES = [
     note: "a",
     render50k: { text: "5.8 ms", verify: true },
     render500k: { text: "6.7 ms", sub: "first 60 rows only", verify: true },
+    sort500k: { text: "101 ms", sub: "redraws the first 60 rows", verify: true },
     fps: { text: "60 fps", verify: true },
-    scores: { look: 2, api: 5, firstTry: 3, docs: 3, escape: 2 },
-    line: "Inputs.table(rows) is the best call in the set. The default look wraps ids and dates, the CSS is light-only, and there is no theming hook.",
+    scores: { look: 3, api: 5, firstTry: 3, docs: 3, escape: 2 },
+    line: "Inputs.table(rows) is the best call in the set. Load its stylesheet and pass select: false and it looks tidy; the CSS is light only and there is no theming hook.",
   },
   {
     key: "tabulator",
@@ -69,6 +98,11 @@ export const ENTRIES = [
     note: "b",
     render50k: { text: "68 ms", verify: true },
     render500k: { text: "280 ms", verify: true },
+    sort500k: { text: "397 ms", verify: true },
+    edit: {
+      dblclick: { status: "yes", text: "editor: \"number\" on the column" },
+      paste: { status: "config", text: "selectableRange, clipboard: true and clipboardPasteParser/Action: \"range\", from its spreadsheet example. Free" },
+    },
     fps: { text: "60 fps", verify: true },
     scores: { look: 3, api: 4, firstTry: 1, docs: 4, escape: 3 },
     line: "Complete docs, and they contain the trap: height: \"100%\" in an unsized parent cost 62 seconds at 50,000 rows with nothing logged.",
@@ -80,9 +114,15 @@ export const ENTRIES = [
     license: "MIT",
     released: "2026-11-04",
     paywalled: "Enterprise: grouping, pivot, range selection, clipboard, Excel export",
+    bundleSub: "lean: 272 kB",
     framework: "none",
     render50k: { text: "35 ms", verify: true },
     render500k: { text: "248 ms", verify: true },
+    sort500k: { text: "377 ms", verify: true },
+    edit: {
+      dblclick: { status: "yes", text: "editable: true with the Community number editor" },
+      paste: { status: "paid", text: "clipboard and cell selection are Enterprise modules; in Community, Ctrl/Cmd-V on a cell does nothing" },
+    },
     fps: { text: "60 fps", sub: "0 dropped", verify: true },
     scores: { look: 4, api: 4, firstTry: 3, docs: 4, escape: 4 },
     line: "Threw on a missing ModuleRegistry and had renamed its scroller class, but both failures were visible. The theming API is good.",
@@ -97,6 +137,7 @@ export const ENTRIES = [
     framework: "React (adapters for Vue, Svelte, Solid, Angular)",
     render50k: { text: "20.0 ms", verify: true },
     render500k: { text: "141 ms", verify: true },
+    sort500k: { text: "397 ms", verify: true },
     fps: { text: "59 fps", verify: true },
     scores: { look: 5, api: 3, firstTry: 2, docs: 2, escape: 5 },
     line: "It is your table, so it looks like your site. v9 docs were the .d.ts files, and the virtualizer and spacer rows are yours to get wrong.",
@@ -112,9 +153,14 @@ export const ENTRIES = [
     note: "c",
     render50k: { text: "17.4 ms", verify: true },
     render500k: { text: "24.6 ms", verify: true },
+    sort500k: { text: "106 ms", sub: "app code: no built-in sort", verify: true },
+    edit: {
+      dblclick: { status: "config", text: "Glide holds no data: return an editable Number cell and write the value back in onCellEdited" },
+      paste: { status: "config", text: "onPaste: true (without it only the first value lands) and getCellsForSelection" },
+    },
     fps: { text: "60 fps", verify: true },
     scores: { look: 4, api: 4, firstTry: 3, docs: 3, escape: 2 },
-    line: "The best theming object here, one plain token bag. Canvas means no DOM to reach, and it will not size itself from CSS.",
+    line: "The best theming object here, one plain token bag. Grid copy works once getCellsForSelection is set, but canvas means browser Ctrl-F and text selection see nothing.",
   },
   {
     key: "perspective",
@@ -127,6 +173,7 @@ export const ENTRIES = [
     note: "d",
     render50k: { text: "274 ms", verify: true },
     render500k: { text: "2.1 to 2.7 s", verify: true },
+    sort500k: { text: "346 ms", sub: "in the worker", verify: true },
     fps: { text: "60 fps", verify: true },
     scores: { look: 3, api: 3, firstTry: 4, docs: 2, escape: 1 },
     line: "Worked on the first run. No per-cell formatter, no locale option, and two WASM URLs to wire up by hand.",
@@ -144,6 +191,11 @@ export const ENTRIES = [
     note: "e",
     render50k: { text: "957 ms", verify: true },
     render500k: { text: "10.1 s", verify: true },
+    sort500k: { text: "440 ms", verify: true },
+    edit: {
+      dblclick: { status: "paid", text: "the free core has no cell editing; Editor is part of DataTables Plus, from $219 per developer" },
+      paste: { status: "paid", text: "Editor again" },
+    },
     fps: { text: "52 fps", sub: "48 fps on 80 columns", verify: true },
     scores: { look: 3, api: 4, firstTry: 2, docs: 4, escape: 4 },
     line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. It builds its whole model before showing anything, so 500,000 rows is ten seconds.",
@@ -159,6 +211,11 @@ export const ENTRIES = [
     note: "f",
     render50k: { text: "59 ms", verify: true },
     render500k: { text: "55 ms", verify: true },
+    sort500k: { text: "211 ms", verify: true },
+    edit: {
+      dblclick: { status: "yes", text: "readonly off" },
+      paste: { status: "yes", text: "pastes down from the focused cell; range: true is only for drag-selecting" },
+    },
     fps: { text: "60 fps", sub: "1 dropped", verify: true },
     scores: { look: 3, api: 4, firstTry: 3, docs: 3, escape: 3 },
     line: "The fastest DOM grid at 500,000 rows, in any framework. Its render event fires before any cell exists, its columns do not auto-size, and its community is a quarter of AG Grid's.",
@@ -170,5 +227,7 @@ export const ENTRIES = [
  *   live pages" must be literally true of whoever did it.
  * - "Considered, not included": MUI X 100-row page cap, react-data-grid beta
  *   status, SlickGrid 6.0 date.
- * - The editable-grid pick is provisional until the edit test lands. */
+ * - The edit test (`edit` above) was run by scripts/edit-test.mjs on
+ *   2026-11-21: double-click a price and type, then paste three lines onto a
+ *   price cell, reading the values back from the data. */
 export const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];

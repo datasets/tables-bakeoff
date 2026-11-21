@@ -18,17 +18,18 @@ function renderTable(host, data, ctx, rowLimit = Infinity) {
   const rows = data.rows.length > rowLimit ? data.rows.slice(0, rowLimit) : data.rows;
   const cols = data.columns;
 
-  const head = cols.map((c) => `<th>${c.name}</th>`).join("");
-  const body = rows
-    .map(
-      (r) =>
-        "<tr>" +
-        cols
-          .map((c) => `<td class="${c.align === "right" ? "num" : ""}">${ctx.formatCell(r[c.name], c)}</td>`)
-          .join("") +
-        "</tr>"
-    )
-    .join("");
+  const head = cols.map((c) => `<th class="${c.align === "right" ? "num" : ""}">${c.label}</th>`).join("");
+  const bodyOf = (list) =>
+    list
+      .map(
+        (r) =>
+          "<tr>" +
+          cols
+            .map((c) => `<td class="${c.align === "right" ? "num" : ""}">${ctx.formatCell(r[c.name], c)}</td>`)
+            .join("") +
+          "</tr>"
+      )
+      .join("");
 
   // A cap has to be visible where the table is, not only in the page notes —
   // otherwise the card reads as a fair 500,000-row render. reportRows tells the
@@ -39,8 +40,24 @@ function renderTable(host, data, ctx, rowLimit = Infinity) {
       ? `<p class="cap-note">Showing ${rows.length.toLocaleString()} of ${data.rows.length.toLocaleString()} rows — uncapped, this never finished rendering.</p>`
       : "";
 
-  host.innerHTML = `${capped}<table class="plain"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+  const draw = (list) => {
+    host.innerHTML = `${capped}<table class="plain"><thead><tr>${head}</tr></thead><tbody>${bodyOf(list)}</tbody></table>`;
+  };
+  draw(rows);
+
+  // #region sort hook for the harness (not counted in lines written)
+  // No library, so sorting is ours: sort a copy of the rows and rebuild the
+  // table. On the large card that is the 100,000 rows shown, re-laid out.
+  // Clearing (file order) is left as a no-op: the next sort starts from the
+  // unsorted array either way, and re-rendering 100,000 rows just to undo
+  // would add seconds to the wait between runs for nothing.
+  ctx.provideSort((field) => {
+    if (field) draw(rows.slice().sort((a, b) => compare(a[field], b[field])));
+  });
+  // #endregion
 }
+
+const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 export const tables = {
   small: (host, data, ctx) => renderTable(host, data, ctx),

@@ -3,6 +3,9 @@
  * appending rows as you scroll — not real windowing, see meta.notes. */
 
 import * as Inputs from "@observablehq/inputs";
+// The stylesheet its README loads next to the script. Without it cells wrap
+// mid-token and every row shows its selection checkbox.
+import "@observablehq/inputs/dist/index.css";
 import { mountDemo } from "../../harness/mount.js";
 import { parseFrontmatter } from "../../harness/frontmatter.js";
 import readme from "./README.md?raw";
@@ -16,10 +19,16 @@ export const meta = { ...frontmatter, notes };
 function table(host, data, ctx) {
   const el = Inputs.table(data.rows, {
     columns: data.columns.map((c) => c.name),
+    header: Object.fromEntries(data.columns.map((c) => [c.name, c.label])),
     format: Object.fromEntries(
       data.columns.map((c) => [c.name, (v) => ctx.formatCell(v, c)])
     ),
     align: Object.fromEntries(data.columns.map((c) => [c.name, c.align])),
+    // A read-only table: no selection checkboxes in the first column.
+    select: false,
+    // Auto layout sizes columns from their content (the default from 12
+    // columns up, stated here so the small and wide cards match).
+    layout: "auto",
     rows: 30,
     height: 460,
   });
@@ -40,6 +49,23 @@ function table(host, data, ctx) {
   }
 
   host.append(el);
+
+  // #region sort hook for the harness (not counted in lines written)
+  // Inputs.table has no sort API after construction; its documented way to
+  // sort is a header click, so that is what this does. A Cmd/Meta-click on
+  // the sorted header is its own "back to input order".
+  let sortedBy = null;
+  const th = (name) => el.querySelector(`thead th[title="${name}"]`);
+  ctx.provideSort((field) => {
+    if (!field) {
+      if (sortedBy) th(sortedBy).dispatchEvent(new MouseEvent("click", { metaKey: true }));
+      sortedBy = null;
+      return;
+    }
+    th(field).click();
+    sortedBy = field;
+  });
+  // #endregion
 }
 
 export const tables = { small: table, wide: table, medium: table, large: table };

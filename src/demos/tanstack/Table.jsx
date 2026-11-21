@@ -32,15 +32,19 @@ const features = tableFeatures({
 const ROW_H = 32;
 const WIDTH_FOR = { number: 112, date: 118, string: 152 };
 
-export function TanStackTable({ data, formatCell }) {
+export function TanStackTable({ data, formatCell, api }) {
   const [sorting, setSorting] = useState([]);
+  // #region sort hook for the harness (not counted in lines written)
+  // The harness's sort action drives the same state a header click does.
+  if (api) api.setSorting = setSorting;
+  // #endregion
   const scrollRef = useRef(null);
 
   const columns = useMemo(
     () =>
       data.columns.map((c) => ({
         accessorKey: c.name,
-        header: c.name,
+        header: c.label ?? c.name,
         meta: { align: c.align },
         cell: (info) => formatCell(info.getValue(), c),
         // Keys of the sortFns registry passed to tableFeatures above; a name

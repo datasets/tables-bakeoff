@@ -32,6 +32,10 @@ const SOURCE_TOKEN = {
   revogrid: "revogr-data .rgCell", // the first real cell build() waits for (aftergridrender fires too early)
 };
 
+/* Grids whose edit test result is in results.js. DataTables shows the card
+ * with its paid-tier result and no grid. */
+const EDIT_TESTED = ["tabulator", "aggrid", "glide", "revogrid", "datatables"];
+
 test.describe("hub", () => {
   test("links to every demo page from the measured table", async ({ page }) => {
     await page.goto("/index.html");
@@ -147,6 +151,27 @@ for (const key of BUILT) {
       await expect(card.locator(".metric b")).toHaveText("—");
       await card.getByRole("button", { name: /load/i }).click();
       await expect(card.locator(".metric b")).not.toHaveText("—", { timeout: 120000 });
+    });
+
+    // Every demo hands the harness a sort; the button stays disabled until
+    // the large table exists.
+    test("offers a timed sort on the large card once it has loaded", async ({ page }) => {
+      await page.goto(`/demos/${key}.html`);
+      const card = page.locator(`[data-card="large"]`);
+      await expect(card.locator(".sort-btn")).toBeDisabled();
+      await card.getByRole("button", { name: /load/i }).click();
+      await expect(card.locator(".metric b")).not.toHaveText(/—|loading/, { timeout: 300000 });
+      await expect(card.locator(".sort-btn")).toBeEnabled();
+    });
+
+    test("shows the edit test card exactly for the grids that were edit-tested", async ({ page }) => {
+      await page.goto(`/demos/${key}.html`);
+      await expect(page.locator(`[data-card="small"] .metric b`)).not.toHaveText("—", { timeout: 30000 });
+      const card = page.locator(`[data-card="edit"]`);
+      if (!EDIT_TESTED.includes(key)) return expect(card).toHaveCount(0);
+      await expect(card.locator(".edit-result li")).toHaveCount(2);
+      // A grid is mounted wherever the demo exports an edit renderer.
+      if (key !== "datatables") await expect(card.locator(".edit-readout b")).not.toHaveText("…", { timeout: 30000 });
     });
   });
 }

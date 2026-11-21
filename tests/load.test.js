@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { DATASETS } from "../src/data/datasets.js";
-import { inferColumns, formatCell } from "../src/data/load.js";
+import { inferColumns, formatCell, arrangeColumns } from "../src/data/load.js";
 
 describe("inferColumns", () => {
   it("types numbers, dates and strings from sample rows", () => {
@@ -16,6 +16,27 @@ describe("inferColumns", () => {
 
   it("returns an empty array for no rows rather than throwing", () => {
     expect(inferColumns([])).toEqual([]);
+  });
+});
+
+describe("arrangeColumns", () => {
+  const cols = (...names) => names.map((name) => ({ name, type: "string", align: "left" }));
+
+  it("puts the human columns first, the GUID last, and labels every column", () => {
+    const out = arrangeColumns(cols("id", "price", "date", "postcode", "propertyType", "street", "town"));
+    expect(out.map((c) => c.name)).toEqual(["date", "price", "propertyType", "town", "street", "postcode", "id"]);
+    expect(out.map((c) => c.label)).toEqual(["Date", "Price", "Property type", "Town", "Street", "Postcode", "Transaction ID"]);
+  });
+
+  it("keeps unknown columns in their own order, after the known ones and before id", () => {
+    const out = arrangeColumns(cols("id", "price", "metric_02", "metric_01"));
+    expect(out.map((c) => c.name)).toEqual(["price", "metric_02", "metric_01", "id"]);
+    expect(out[1].label).toBe("Metric 02");
+  });
+
+  it("keeps the inferred type and alignment", () => {
+    const [c] = arrangeColumns([{ name: "price", type: "number", align: "right" }]);
+    expect(c).toEqual({ name: "price", label: "Price", type: "number", align: "right" });
   });
 });
 

@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 const { meta: frontmatter, body: notes } = parseFrontmatter(readme);
 export const meta = { ...frontmatter, notes };
 
-function build(host, data, ctx) {
+function build(host, data, ctx, editable = false) {
   // No explicit height here: the harness's host div already carries a real
   // CSS height. Setting host.style.height = "100%" (the pattern most AG Grid
   // tutorials show) would overwrite that with a value the host's own parent
@@ -38,11 +38,19 @@ function build(host, data, ctx) {
     rowData: data.rows,
     columnDefs: data.columns.map((c) => ({
       field: c.name,
-      type: c.type === "number" ? "rightAligned" : undefined,
+      headerName: c.label,
+      // Right-align the numbers, not the header. The built-in "rightAligned"
+      // column type mirrors the header too, which puts the filter icon on the
+      // left of the label: beside a left-aligned neighbour that read as an
+      // extra, blank-headed column. The cell class is the half of it we want.
+      cellClass: c.type === "number" ? "ag-right-aligned-cell" : undefined,
       sortable: true,
       filter: true,
       resizable: true,
       valueFormatter: (p) => ctx.formatCell(p.value, c),
+      // #region edit test (not counted in lines written)
+      ...(editable && c.name === "price" ? { editable: true, cellEditor: "agNumberCellEditor" } : {}),
+      // #endregion
     })),
     defaultColDef: { minWidth: 110 },
     rowHeight: 32,
@@ -55,6 +63,16 @@ function build(host, data, ctx) {
   // FPS run must be pointed here.
   host.querySelector(".ag-grid-viewport")?.setAttribute("data-scroller", "");
 
+  // #region sort hook for the harness (not counted in lines written)
+  // Sorting is column state. defaultState clears every other column's sort.
+  ctx.provideSort((field) =>
+    api.applyColumnState({
+      state: field ? [{ colId: field, sort: "asc" }] : [],
+      defaultState: { sort: null },
+    })
+  );
+  // #endregion
+
   return () => api.destroy();
 }
 
@@ -62,4 +80,12 @@ export const tables = { small: build, wide: build, medium: build, large: build }
 
 export const source = build;
 
-mountDemo({ meta, tables, source });
+// #region edit test (not counted in lines written)
+/** The edit test: Price editable with the Community number editor, which
+ *  opens on a double-click. Pasting a column needs the clipboard and cell
+ *  selection modules, which are Enterprise only; in Community, Ctrl/Cmd-V on
+ *  a cell does nothing. */
+export const edit = (host, data, ctx) => build(host, data, ctx, true);
+// #endregion
+
+mountDemo({ meta, tables, source, edit });

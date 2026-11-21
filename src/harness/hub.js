@@ -3,7 +3,7 @@
  * fills bundle size and lines written from the real build output in
  * /bundles.json, so those cannot drift from what shipped. */
 import { restoreTheme, installThemeToggle, onThemeChange } from "./theme.js";
-import { ENTRIES, AXES, MEASURED, NUMBER_WORDS } from "./results.js";
+import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS } from "./results.js";
 
 restoreTheme();
 const toggleBtn = document.querySelector(".toggle");
@@ -34,6 +34,7 @@ for (const el of document.querySelectorAll("[data-library-count]")) {
 }
 for (const el of document.querySelectorAll("[data-measured-machine]")) el.textContent = MEASURED.machine;
 for (const el of document.querySelectorAll("[data-measured-when]")) el.textContent = MEASURED.when;
+for (const el of document.querySelectorAll("[data-measured-sort]")) el.textContent = MEASURED.sort;
 
 /* ---- gallery: the same 1,000 rows, one iframe per entry ----------------- */
 const gallery = document.getElementById("gallery");
@@ -49,7 +50,7 @@ if (gallery) {
       <iframe title="${e(d.name)} rendering 1,000 property sales"
               loading="${i < 3 ? "eager" : "lazy"}" scrolling="no"
               src="${demoHref(d.key)}?bare=1&dataset=small"></iframe>
-      <div class="cell__foot">rendered in <b data-ms>—</b> in your browser</div>
+      <div class="cell__foot">rendered in <b data-ms>—</b> in your browser<span data-setup></span></div>
     </article>`).join("");
 
   const frames = [...gallery.querySelectorAll("iframe")];
@@ -57,7 +58,13 @@ if (gallery) {
   addEventListener("message", (ev) => {
     const c = cellOf(ev.source);
     if (!c || !ev.data || typeof ev.data !== "object") return;
-    if (ev.data.type === "tb:rendered") c.querySelector("[data-ms]").textContent = fmtMs(ev.data.ms);
+    if (ev.data.type === "tb:rendered") {
+      c.querySelector("[data-ms]").textContent = fmtMs(ev.data.ms);
+      // A one-off engine boot (Perspective's WASM) is reported beside the
+      // render, not inside it and not left out.
+      const boot = c.querySelector("[data-setup]");
+      if (boot && ev.data.setupMs != null) boot.textContent = ` · engine boot ${fmtMs(ev.data.setupMs)} first`;
+    }
     if (ev.data.type === "tb:failed") c.querySelector("[data-ms]").textContent = "failed";
   });
 
@@ -81,9 +88,23 @@ if (measured) {
       <td data-loc="${e(d.key)}">—</td>
       ${cell(d.render50k)}
       ${cell(d.render500k, d.render500k?.text?.startsWith("did not") ? "no" : "")}
+      ${cell(d.sort500k)}
       ${cell(d.fps)}
       <td>${month(d.released)}</td>
       <td class="lic">${e(d.license)}<span class="sub">paywalled: ${e(d.paywalled)}</span></td>
+    </tr>`).join("");
+}
+
+/* ---- edit test -------------------------------------------------------------- */
+const edits = document.querySelector("#edits tbody");
+if (edits) {
+  const verdict = (r) =>
+    `<b class="${r.status === "paid" ? "paid" : ""}">${e(EDIT_STATUS[r.status])}</b><span class="sub">${e(r.text)}</span>`;
+  edits.innerHTML = ENTRIES.filter((d) => d.edit).map((d) => `
+    <tr>
+      <td><a href="${demoHref(d.key)}#edit">${e(d.name)}</a></td>
+      <td>${verdict(d.edit.dblclick)}</td>
+      <td>${verdict(d.edit.paste)}</td>
     </tr>`).join("");
 }
 
@@ -137,6 +158,8 @@ fetch("/bundles.json")
       for (const el of document.querySelectorAll(`[data-bundle="${key}"]`)) {
         el.textContent = `${fmt(d.libKB - d.harnessKB)} kB`;
         if (d.lazyKB > 0 && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">+ ${fmt(d.lazyKB)} kB lazy</span>`);
+        const sub = ENTRIES.find((x) => x.key === key)?.bundleSub;
+        if (sub && el.closest("#measured")) el.insertAdjacentHTML("beforeend", `<span class="sub">${e(sub)}<sup><a href="#note-g">g</a></sup></span>`);
       }
       // Rounded variant for prose: "21 kB over React".
       for (const el of document.querySelectorAll(`[data-bundle-round="${key}"]`)) {

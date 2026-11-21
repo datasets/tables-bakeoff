@@ -4,7 +4,8 @@
  * passes through the grid at all.
  *
  * The bill for that arrives elsewhere: nothing on screen is in the DOM, so
- * Ctrl-F, screen readers and select-and-copy all see an empty box. */
+ * browser Ctrl-F and native text selection see an empty box. The grid's own
+ * selection and copy work (getCellsForSelection below). */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DataEditor, GridCellKind } from "@glideapps/glide-data-grid";
@@ -16,9 +17,16 @@ const WIDTH_FOR = { number: 112, date: 118, string: 152 };
  *  first paint is an empty grid. `initial` is the harness host measured before
  *  the mount so frame one is already correct; the observer below only has to
  *  handle later resizes. */
-export function GlideGrid({ data, formatCell, theme, initial }) {
+export function GlideGrid({ data, formatCell, theme, initial, api, editable = false }) {
   const wrapRef = useRef(null);
   const [box, setBox] = useState(initial);
+  // #region sort hook and edit test for the harness (not counted in lines written)
+  // Glide has no sorting of its own: the app owns row order. `order` maps a
+  // display row to a source row, or is null for file order.
+  const [order, setOrder] = useState(null);
+  const [edits, setEdits] = useState(0);
+  if (api) api.setOrder = setOrder;
+  // #endregion
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -34,7 +42,7 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
   const columns = useMemo(
     () =>
       data.columns.map((c) => ({
-        title: c.name,
+        title: c.label,
         id: c.name,
         width: WIDTH_FOR[c.type] ?? WIDTH_FOR.string,
       })),
@@ -49,7 +57,22 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
   const getCellContent = useCallback(
     ([col, row]) => {
       const spec = data.columns[col];
-      const text = formatCell(data.rows[row]?.[spec.name], spec);
+      const source = order ? order[row] : row;
+      const value = data.rows[source]?.[spec.name];
+      const text = formatCell(value, spec);
+      // #region edit test (not counted in lines written)
+      // The edit test: Price becomes a Number cell that opens Glide's own
+      // editor overlay. Every other cell stays read-only text.
+      if (editable && spec.name === "price") {
+        return {
+          kind: GridCellKind.Number,
+          data: value,
+          displayData: text,
+          allowOverlay: true,
+          contentAlign: spec.align,
+        };
+      }
+      // #endregion
       return {
         kind: GridCellKind.Text,
         data: text,
@@ -58,8 +81,22 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
         contentAlign: spec.align,
       };
     },
-    [data, formatCell]
+    [data, formatCell, order, editable, edits]
   );
+
+  // #region edit test (not counted in lines written)
+  /* Glide never holds data, so an edit is ours to write back. Bumping
+   * `edits` gives getCellContent a new identity, which redraws the canvas. */
+  const onCellEdited = useCallback(
+    ([col, row], cell) => {
+      const spec = data.columns[col];
+      const source = order ? order[row] : row;
+      if (cell.kind === GridCellKind.Number && data.rows[source]) data.rows[source][spec.name] = cell.data;
+      setEdits((n) => n + 1);
+    },
+    [data, order]
+  );
+  // #endregion
 
   return (
     <div ref={wrapRef} style={{ width: "100%", height: "100%" }}>
@@ -71,10 +108,20 @@ export function GlideGrid({ data, formatCell, theme, initial }) {
         rowHeight={32}
         headerHeight={34}
         rowMarkers="none"
+        // The documented clipboard switch: without it Glide's copy does
+        // nothing. `true` answers copy requests from getCellContent, so a
+        // selected range copies as tab-separated text, off-screen rows too.
+        getCellsForSelection={true}
         smoothScrollX
         smoothScrollY
         width={box.width}
         height={box.height}
+        // #region edit test (not counted in lines written)
+        // The edit test. Glide holds no data, so an edit is ours to write back
+        // (onCellEdited). onPaste: true splits pasted text across cells;
+        // without it only the first value lands, in the focused cell.
+        {...(editable ? { onCellEdited, onPaste: true } : {})}
+        // #endregion
       />
     </div>
   );

@@ -10,13 +10,17 @@
  *   export const meta   = { name, version, license, docs, tagline, notes?, npm };
  *   export const tables = { small, wide, medium, large };
  *   export const source = renderFn;   // optional, see (3) — usually wanted
- *   mountDemo({ meta, tables, source });
+ *   export const setup  = asyncFn;   // optional, see (4)
+ *   export const edit   = renderFn;  // optional, see (6)
+ *   mountDemo({ meta, tables, source, setup, edit });
  *
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
  *   dataset — Task 3's { key, rows, numRows, columns, timings }; `columns` are
- *             { name, type: 'string'|'number'|'date', align: 'left'|'right' }.
- *   ctx     — { theme, key, formatCell, reportRows }:
+ *             { name, label, type: 'string'|'number'|'date', align: 'left'|'right' },
+ *             already in the shared display order (src/data/load.js). Use
+ *             `label` for the header and `name` as the field.
+ *   ctx     — { theme, key, formatCell, reportRows, provideSort }:
  *               theme      a snapshot of theme.js's tokens taken just before
  *                          this render — `theme.dark` is the light/dark
  *                          discriminator, plus palette, surface, page, text,
@@ -27,6 +31,7 @@
  *               formatCell the single shared formatter; use it for every cell
  *                          so differences on screen come from the library.
  *               reportRows see (2).
+ *               provideSort see (5).
  * It may return nothing, or a cleanup function, or a promise of either. The
  * promise is awaited inside the timed region, so async mounts (a React root,
  * Perspective's viewer.load) report their true cost. Cleanup runs before the
@@ -57,29 +62,60 @@
  *     implementation across the four datasets, so tables[key] is a one-line
  *     delegating stub and the panel shows nothing worth reading. Export the
  *     function that does the work — one function, or a per-key map — and the
- *     panel shows the stub followed by that implementation. */
+ *     panel shows the stub followed by that implementation.
+ *
+ * (4) export const setup — a one-off, per-page cost that is not a render.
+ *     Perspective boots two WebAssembly engines before it can draw anything.
+ *     Left inside the first render it made 1,000 rows read as three seconds;
+ *     left out silently it would vanish. A demo with such a cost exports it
+ *     as `setup`: the harness awaits it once, before any card renders, times
+ *     it with the same clock, and prints it on its own line ("engine ready in
+ *     N ms") above the cards and in the gallery embed.
+ *
+ * (5) ctx.provideSort(fn) — the large card's "Sort by price" action.
+ *     Hand the harness a function `fn(field)` that sorts the table ascending
+ *     by `field` through the library's own API, or, given null, puts the rows
+ *     back in file order. The harness clears (untimed), then times
+ *     fn("price") with the same clock as a render: it awaits a returned
+ *     promise, then forces layout. Resolve the promise only once the sorted
+ *     rows are on screen, as the render predicates do.
+ *
+ * (6) export const edit — the edit test card, for libraries that edit.
+ *     `edit(host, data, ctx)` renders the small dataset with the price column
+ *     editable, configured as the library's docs say, so that a user can
+ *     double-click a price to change it and paste a column of three values.
+ *     `data.rows` is a copy, so edits never reach the other cards. The card
+ *     shows the first three prices read back from that copy, which is what
+ *     proves an edit reached the data and not only the screen. What each
+ *     library needed is recorded in results.js (`edit`) and printed on the
+ *     card; an entry with a result but no `edit` export (DataTables, whose
+ *     editing is the paid Editor) gets the card with the result only. */
 
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
 import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.js";
 import { renderMarkdown } from "./markdown.js";
+import { ENTRIES, EDIT_STATUS } from "./results.js";
 
 restoreTheme();
 
-export async function mountDemo({ meta, tables, source }) {
+export async function mountDemo({ meta, tables, source, setup, edit }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
 
   // ?bare=1: the front page embeds each demo as an iframe showing only the
   // small dataset, no page chrome. Same loader, same formatter, same clock.
   const params = new URLSearchParams(location.search);
-  if (params.get("bare") === "1") return mountBare({ meta, tables, root, dataset: params.get("dataset") || "small" });
+  if (params.get("bare") === "1") return mountBare({ meta, tables, setup, root, dataset: params.get("dataset") || "small" });
 
-  root.innerHTML = shell(meta);
+  const entry = ENTRIES.find((d) => d.key === demoKey());
+  root.innerHTML = shell(meta, entry, !!edit);
   installThemeToggle(root.querySelector(".toggle"));
 
   const cleanups = {};
+  const sorters = {};
+  const sortRuns = {};
 
   // Wire every card before rendering any of them, so the large card's Load
   // button is live while the eager cards are still working.
@@ -93,12 +129,34 @@ export async function mountDemo({ meta, tables, source }) {
     fpsBtn.disabled = true;
     fpsBtn.addEventListener("click", () => runFps(card));
 
+    const sortBtn = card.querySelector(".sort-btn");
+    if (sortBtn) {
+      sortBtn.disabled = true;
+      sortBtn.addEventListener("click", () => runSort(key, card));
+    }
+
     if (!DATASETS[key].eager) {
       card.querySelector(".load-btn").addEventListener("click", (e) => {
         e.target.disabled = true;
         e.target.textContent = "loading…";
         render(key, card);
       });
+    }
+  }
+
+  // A one-off engine boot, timed on its own and shown on its own line, so it is
+  // neither hidden nor charged to whichever card happens to render first.
+  if (setup) {
+    const line = root.querySelector(".setup-line");
+    line.hidden = false;
+    try {
+      const ms = await timeSetup(setup);
+      line.querySelector("b").textContent = formatMs(ms);
+    } catch (err) {
+      line.querySelector("b").textContent = "failed";
+      line.insertAdjacentHTML("beforeend", `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`);
+      console.error(`[${meta.name}] setup`, err);
+      return;
     }
   }
 
@@ -134,6 +192,7 @@ export async function mountDemo({ meta, tables, source }) {
 
     try { cleanups[key]?.(); } catch {}
     cleanups[key] = null;
+    sorters[key] = null;
     host.innerHTML = "";
 
     // A demo that presents the whole dataset says nothing; one that caps or
@@ -144,12 +203,14 @@ export async function mountDemo({ meta, tables, source }) {
       key,
       formatCell,
       reportRows: (n) => { renderedRows = n; },
+      provideSort: (fn) => { sorters[key] = fn; },
     };
     try {
       const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
       cleanups[key] = typeof result === "function" ? result : null;
       badge.textContent = formatMs(ms);
       card.querySelector(".fps-btn").disabled = false;
+      resetSort(key, card);
       detail.textContent =
         `${rowsLabel(renderedRows, data.numRows)} · ` +
         `load ${formatMs(data.timings.fetchMs + data.timings.decodeMs)} · ` +
@@ -163,6 +224,45 @@ export async function mountDemo({ meta, tables, source }) {
     }
   }
 
+  /* Sort by price, timed. Each click puts the rows back in file order first,
+   * untimed, so every run sorts the same input: a second ascending sort of
+   * already-sorted rows would be a much cheaper, different job. The card keeps
+   * every run and shows the median. */
+  function resetSort(key, card) {
+    sortRuns[key] = [];
+    const btn = card.querySelector(".sort-btn");
+    if (!btn) return;
+    const out = card.querySelector(".sort-out");
+    btn.disabled = !sorters[key];
+    out.textContent = sorters[key] ? "" : "no sort in this demo";
+  }
+
+  async function runSort(key, card) {
+    const sorter = sorters[key];
+    if (!sorter) return;
+    const btn = card.querySelector(".sort-btn");
+    const out = card.querySelector(".sort-out");
+    const host = card.querySelector(".demo-host");
+    btn.disabled = true;
+    out.textContent = "sorting…";
+    try {
+      await sorter(null);
+      await nextFrame();
+      const { ms } = await timeRender(() => sorter("price"), host);
+      const runs = sortRuns[key];
+      runs.push(ms);
+      out.dataset.median = String(median(runs));
+      out.dataset.runs = String(runs.length);
+      out.textContent = runs.length === 1
+        ? `sorted in ${formatMs(ms)}`
+        : `sorted in ${formatMs(ms)} · median of ${runs.length}: ${formatMs(median(runs))}`;
+    } catch (err) {
+      out.textContent = `sort failed: ${err.message || err}`;
+      console.error(`[${meta.name}] sort`, err);
+    }
+    btn.disabled = false;
+  }
+
   async function runFps(card) {
     const btn = card.querySelector(".fps-btn");
     const out = card.querySelector(".fps-out");
@@ -172,6 +272,8 @@ export async function mountDemo({ meta, tables, source }) {
     out.textContent = `${fps} fps · ${droppedFrames} dropped`;
     btn.disabled = false;
   }
+
+  if (entry?.edit) await renderEdit(root.querySelector('[data-card="edit"]'), edit, meta);
 
   onThemeChange(() => {
     for (const key of DATASET_KEYS) {
@@ -183,11 +285,55 @@ export async function mountDemo({ meta, tables, source }) {
 
 /* ---------------------------------------------------------------- */
 
+/** The page's demo key, from /demos/<key>.html. */
+function demoKey() {
+  return location.pathname.split("/").pop().replace(/\.html$/, "");
+}
+
+/** The edit test card (see (6) in the contract). Not timed: the result is
+ *  what a user can do, not how fast. */
+async function renderEdit(card, edit, meta) {
+  if (!card || !edit) return;
+  const host = card.querySelector(".demo-host");
+  const readout = card.querySelector(".edit-readout b");
+  let data;
+  try {
+    data = await loadDataset("small");
+  } catch (err) {
+    host.innerHTML = `<pre class="err">${escapeHtml(String(err))}</pre>`;
+    return;
+  }
+  const rows = data.rows.map((r) => ({ ...r }));
+  const copy = { ...data, rows };
+  const price = data.columns.find((c) => c.name === "price");
+  const show = () => {
+    readout.textContent = rows.slice(0, 3).map((r) => formatCell(r.price, price)).join(" · ");
+  };
+  let cleanup = null;
+  const draw = async () => {
+    try { cleanup?.(); } catch {}
+    host.innerHTML = "";
+    try {
+      const result = await edit(host, copy, { theme: theme(), key: "small", formatCell, reportRows: () => {}, provideSort: () => {} });
+      cleanup = typeof result === "function" ? result : null;
+    } catch (err) {
+      host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
+      console.error(`[${meta.name}] edit`, err);
+    }
+  };
+  await draw();
+  show();
+  // Libraries write edits into the row objects on their own schedule, so
+  // the readout polls rather than hooking each library's change event.
+  setInterval(show, 400);
+  onThemeChange(draw);
+}
+
 /** The embed used by the front page gallery: one dataset, one host filling
  *  the iframe, nothing else. Reports the render time to the parent window
  *  (`{ type: "tb:rendered", key, ms }`) and follows the parent's theme
  *  (`{ type: "tb:theme", value: "light" | "dark" | null }`). */
-async function mountBare({ meta, tables, root, dataset }) {
+async function mountBare({ meta, tables, setup, root, dataset }) {
   const key = DATASETS[dataset] ? dataset : "small";
   document.documentElement.classList.add("bare");
   root.innerHTML = `<div class="demo-host bare-host"></div>`;
@@ -196,7 +342,15 @@ async function mountBare({ meta, tables, root, dataset }) {
 
   const post = (msg) => { if (parent !== window) parent.postMessage({ demo: meta.name, key, ...msg }, "*"); };
 
+  let setupMs = null;
   async function render() {
+    if (setup && setupMs === null) {
+      try { setupMs = await timeSetup(setup); } catch (err) {
+        host.innerHTML = `<pre class="err">${escapeHtml(String(err))}</pre>`;
+        post({ type: "tb:failed" });
+        return;
+      }
+    }
     let data;
     try {
       data = await loadDataset(key);
@@ -208,11 +362,11 @@ async function mountBare({ meta, tables, root, dataset }) {
     try { cleanup?.(); } catch {}
     cleanup = null;
     host.innerHTML = "";
-    const ctx = { theme: theme(), key, formatCell, reportRows: () => {} };
+    const ctx = { theme: theme(), key, formatCell, reportRows: () => {}, provideSort: () => {} };
     try {
       const { result, ms } = await timeRender(() => tables[key](host, data, ctx), host);
       cleanup = typeof result === "function" ? result : null;
-      post({ type: "tb:rendered", ms });
+      post({ type: "tb:rendered", ms, setupMs });
     } catch (err) {
       host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
       post({ type: "tb:failed" });
@@ -249,6 +403,22 @@ async function timeRender(fn, host) {
   const result = raw && typeof raw.then === "function" ? await raw : raw;
   void host.offsetHeight;
   return { result, ms: syncMs + (performance.now() - t0) };
+}
+
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
+
+function median(xs) {
+  const s = [...xs].sort((a, b) => a - b);
+  const m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+/** A demo's one-off setup (see (4) in the contract). Same clock as a render,
+ *  without the layout flush, since nothing is on screen yet. */
+async function timeSetup(setup) {
+  const t0 = performance.now();
+  await setup();
+  return performance.now() - t0;
 }
 
 /** Libraries that own their own viewport (AG Grid, Glide) scroll an element
@@ -353,7 +523,7 @@ export function footer() {
   </footer>`;
 }
 
-function shell(meta) {
+function shell(meta, entry, hasEdit) {
   // meta values are escaped: the baseline's own name is literally "Plain
   // <table>", which would otherwise open a real element in the header. Notes
   // go through the changelog's small Markdown renderer, which escapes HTML
@@ -364,6 +534,7 @@ function shell(meta) {
     meta.github ? `<a href="${e(meta.github)}" target="_blank" rel="noopener">github${meta.stars ? ` · ${meta.stars.toLocaleString()} ★` : ""}</a>` : null,
     `<a href="${e(meta.docs)}" target="_blank" rel="noopener">docs</a>`,
     meta.npm ? `<code>${e(meta.npm)}</code>` : null,
+    meta.notes ? `<a href="#notes">notes from the build</a>` : null,
   ].filter(Boolean).join(" &nbsp;·&nbsp; ");
 
   return `
@@ -376,12 +547,42 @@ function shell(meta) {
     <p style="margin:10px 0 0;font-size:12.5px;color:var(--text-muted)">
       ${links} &nbsp;·&nbsp; ${e(meta.license)}
     </p>
-    ${meta.notes ? `<div class="demo-notes">${renderMarkdown(meta.notes)}</div>` : ""}
+    <p class="setup-line" hidden>${e(meta.setupLabel || "setup")} in <b>…</b>
+      <span>${e(meta.setupNote || "once per page, before any table; not included in the render times below")}</span></p>
   </header>
   <main class="wrap" style="padding-bottom:60px">
     ${DATASET_KEYS.map(cardHTML).join("")}
+    ${entry?.edit ? editCardHTML(entry.edit, hasEdit) : ""}
+    ${meta.notes ? `<section class="demo-notes-section" id="notes"><h2>Notes from the build</h2><div class="demo-notes">${renderMarkdown(meta.notes)}</div></section>` : ""}
   </main>
   ${footer()}`;
+}
+
+function editCardHTML(result, hasEdit) {
+  const line = (label, r) =>
+    `<li><b>${label}:</b> ${escapeHtml(EDIT_STATUS[r.status])}${
+      !r.text ? "" : r.status === "yes" ? ` (${escapeHtml(r.text)})` : `: ${escapeHtml(r.text)}`
+    }</li>`;
+  return `
+  <section class="card" id="edit" data-card="edit" style="margin-top:24px;scroll-margin-top:16px">
+    <div class="card__head">
+      <h2 class="card__title">Edit test: change a price, paste a column</h2>
+      <p class="card__desc">${hasEdit
+        ? "The small dataset with Price editable. Double-click a price, type a number, press Enter. Then copy the three numbers below, click a price cell and paste (Ctrl/Cmd-V): they should fill that cell and the two below it."
+        : "No editable grid here: see the result below."}</p>
+      <ul class="edit-result">
+        ${line("Double-click to edit", result.dblclick)}
+        ${line("Paste a column of three values", result.paste)}
+      </ul>
+    </div>
+    ${hasEdit ? `<div class="demo-host"></div>
+    <div class="card__actions edit-actions">
+      <label>Copy these: <textarea readonly rows="3" cols="8" class="edit-paste">111111
+222222
+333333</textarea></label>
+      <span class="edit-readout">First three prices in the data now: <b>…</b></span>
+    </div>` : `<div style="height:14px"></div>`}
+  </section>`;
 }
 
 function cardHTML(key) {
@@ -402,6 +603,7 @@ function cardHTML(key) {
       ${d.eager ? "" : `<button class="load-btn">Load ${key === "large" ? "500,000 rows" : "data"}</button>`}
       <button class="fps-btn">Measure scroll FPS</button>
       <span class="fps-out"></span>
+      ${key === "large" ? `<button class="sort-btn">Sort by price</button><span class="sort-out"></span>` : ""}
     </div>
     <details class="src"><summary>source</summary><pre></pre></details>
   </section>`;

@@ -1,4 +1,5 @@
 import "@glideapps/glide-data-grid/dist/index.css";
+import { flushSync } from "react-dom";
 import { mountDemo } from "../../harness/mount.js";
 import { mountReact } from "../../harness/react-host.js";
 import { GlideGrid, glideTheme } from "./Grid.jsx";
@@ -15,10 +16,20 @@ export const meta = { ...frontmatter, notes };
  *  painted yet. */
 function mount(host, data, ctx) {
   const initial = { width: host.clientWidth, height: host.clientHeight };
+  // #region sort hook for the harness (not counted in lines written)
+  // Sorting is app code: sort an index of row numbers, hand Glide the new
+  // order. A new getCellContent makes Glide redraw its canvas in a layout
+  // effect, so the repaint is done when flushSync returns.
+  const api = {};
+  ctx.provideSort((field) =>
+    flushSync(() => api.setOrder(field ? sortIndex(data.rows, field) : null))
+  );
+  // #endregion
   return mountReact(
     host,
     <GlideGrid
       data={data}
+      api={api}
       formatCell={ctx.formatCell}
       theme={glideTheme(ctx.theme)}
       initial={initial}
@@ -36,8 +47,35 @@ function mount(host, data, ctx) {
   );
 }
 
+// #region sort hook for the harness (not counted in lines written)
+/** Row numbers ordered by `field`, ascending. */
+function sortIndex(rows, field) {
+  const idx = Array.from({ length: rows.length }, (_, i) => i);
+  return idx.sort((a, b) => {
+    const x = rows[a][field], y = rows[b][field];
+    return x < y ? -1 : x > y ? 1 : 0;
+  });
+}
+// #endregion
+
+// #region edit test (not counted in lines written)
+/** The edit test: the same grid with Price editable. */
+function edit(host, data, ctx) {
+  return mountReact(
+    host,
+    <GlideGrid
+      data={data}
+      editable
+      formatCell={ctx.formatCell}
+      theme={glideTheme(ctx.theme)}
+      initial={{ width: host.clientWidth, height: host.clientHeight }}
+    />
+  );
+}
+// #endregion
+
 export const tables = { small: mount, wide: mount, medium: mount, large: mount };
 
 export const source = mount;
 
-mountDemo({ meta, tables, source });
+mountDemo({ meta, tables, source, edit });
