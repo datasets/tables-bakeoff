@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T00:25:57.189Z",
+  "generatedAt": "2026-11-21T00:27:19.260Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -15,7 +15,7 @@
       "assets/results-Bl9ZEqxA.js",
       "assets/markdown-B_sAtjw3.js",
       "assets/frontmatter-BYBBUU76.js",
-      "assets/mount-CEUmoje2.js",
+      "assets/mount-CfyUNV5X.js",
       "assets/theme-DTs1rE8-.js",
       "assets/theme-CQW_ahdP.css"
     ],
@@ -44,11 +44,11 @@
       "loc": 39,
       "files": {
         "js": [
-          "assets/baseline-KY-kuvbN.js",
+          "assets/baseline-B1myKHe6.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -79,11 +79,11 @@
       "loc": 36,
       "files": {
         "js": [
-          "assets/observable-3h5YLylq.js",
+          "assets/observable-CVlMzd0_.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -115,11 +115,11 @@
       "loc": 70,
       "files": {
         "js": [
-          "assets/tabulator-CPBPln9P.js",
+          "assets/tabulator-D7KAm2R3.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -151,11 +151,11 @@
       "loc": 40,
       "files": {
         "js": [
-          "assets/aggrid-C4-hhhGy.js",
+          "assets/aggrid-BWGjPeQq.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -186,14 +186,14 @@
       "loc": 147,
       "files": {
         "js": [
-          "assets/tanstack-DWOKte0Y.js",
+          "assets/tanstack-DJAmnILI.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/Table-DRgYDsge.js",
           "assets/react-XG3B2r_u.js",
           "assets/react-host-CTZUpMtF.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -224,14 +224,14 @@
       "loc": 128,
       "files": {
         "js": [
-          "assets/glide-DerzLUOp.js",
+          "assets/glide-BmDXzIos.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
           "assets/preload-helper-BXl3LOEh.js",
           "assets/react-host-CTZUpMtF.js",
           "assets/react-XG3B2r_u.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -240,8 +240,8 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/number-overlay-editor-DJ3PCpGA.js",
-          "assets/data-grid-overlay-editor-Dc1YVcEa.js"
+          "assets/number-overlay-editor-tJ0y0iSs.js",
+          "assets/data-grid-overlay-editor-B9H7E4ZL.js"
         ]
       }
     },
@@ -266,10 +266,10 @@
       "loc": 63,
       "files": {
         "js": [
-          "assets/perspective-DwVWxkXL.js",
+          "assets/perspective-DWrg--oc.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js",
           "assets/frontmatter-BYBBUU76.js"
         ],
@@ -305,11 +305,11 @@
       "loc": 56,
       "files": {
         "js": [
-          "assets/datatables-BPbZbEZM.js",
+          "assets/datatables-CxvukZfD.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js"
         ],
         "css": [
@@ -341,11 +341,11 @@
       "loc": 52,
       "files": {
         "js": [
-          "assets/revogrid-Ds8jyTYs.js",
+          "assets/revogrid-D6iM-eO7.js",
           "assets/results-Bl9ZEqxA.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
-          "assets/mount-CEUmoje2.js",
+          "assets/mount-CfyUNV5X.js",
           "assets/theme-DTs1rE8-.js",
           "assets/preload-helper-BXl3LOEh.js"
         ],
@@ -354,20 +354,20 @@
         ],
         "wasm": [],
         "lazy": [
-          "assets/revogr-data_4.entry-ALRWOEfB.js",
+          "assets/revogr-data_4.entry-CvzfLIRv.js",
           "assets/debounce-PCRWZliA-CMxTb8Pi.js",
-          "assets/throttle-DDvljWu0-CPBLLCAT.js",
-          "assets/viewport.helpers-CoCAvmZs-CsUgGM9-.js",
-          "assets/dimension.helpers-DLH6njyw-B8JS8Wr9.js",
-          "assets/header-cell-renderer-XoW6IWU0-Bucsk3TK.js",
-          "assets/filter.button-BwxfX4Ix-DYt_KijP.js",
-          "assets/revogr-clipboard_3.entry-DB9-uR7Z.js",
-          "assets/index-BvBMdMR3-Cpc7HRUV.js",
-          "assets/edit.utils-Cm899OWt-D9QBy9Ds.js",
-          "assets/revogr-attribution_7.entry-DieHQHxg.js",
-          "assets/events-BvSmBueA-BVaah-XR.js",
-          "assets/revogr-filter-panel.entry-BiXO2Xnt.js",
-          "assets/revo-grid.entry-B-k6hWyG.js"
+          "assets/throttle-DDvljWu0-BZgdrYQM.js",
+          "assets/viewport.helpers-CoCAvmZs-Fy_zOR34.js",
+          "assets/dimension.helpers-DLH6njyw-vz4aknXW.js",
+          "assets/header-cell-renderer-XoW6IWU0-BFTtQj3b.js",
+          "assets/filter.button-BwxfX4Ix-BJBu_ZNt.js",
+          "assets/revogr-clipboard_3.entry-BnNhEkts.js",
+          "assets/index-BvBMdMR3-DnGTzUYK.js",
+          "assets/edit.utils-Cm899OWt-Cbu0e8P2.js",
+          "assets/revogr-attribution_7.entry-DpeVsS_U.js",
+          "assets/events-BvSmBueA-CHjyVdOY.js",
+          "assets/revogr-filter-panel.entry-D8ezXccc.js",
+          "assets/revo-grid.entry-D5vxW8Ap.js"
         ]
       }
     }
