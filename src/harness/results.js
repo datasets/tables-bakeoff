@@ -382,3 +382,19 @@ export const VERDICTS = {
  *   2026-11-21: double-click a price and type, then paste three lines onto a
  *   price cell, reading the values back from the data. */
 export const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+
+/* Cards a library page does not run, keyed by library then dataset, as a
+ * Markdown note shown in place of the table. The plain <table> cannot render
+ * 500,000 rows without hanging the page. The note lives here rather than in
+ * the demo so it does not count toward the demo's lines. Bare mode and
+ * ?cards=all ignore it, so the measurement scripts still time the capped
+ * 100,000-row render. */
+export const SKIP_CARDS = {
+  baseline: {
+    large: `We do not render 500,000 rows here. A plain \`<table>\` puts every row in the DOM, and at this size the page hangs. Uncapped, it had not finished after ten minutes.
+
+What we measured on our machine: 2.5 s at 50,000 rows, 6.3 s at 100,000, about 27 s at 200,000. The cost is table layout, and it grows faster than the row count.
+
+For a grid this size use [AG Grid Community](/demos/aggrid.html), our pick for a big grid. Those numbers come from this page with every card on: [run it yourself](/demos/baseline.html?cards=all#large), and expect a wait.`,
+  },
+};

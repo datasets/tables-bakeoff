@@ -76,15 +76,4 @@ export const tables = {
  * panel would show only the delegation. */
 export const source = renderTable;
 
-/* The page does not run the 500,000-row card: see the note. The measurement
- * scripts (?cards=all) and the gallery embed (?bare=1) still render the capped
- * 100,000 rows, so the numbers in results.js stay reproducible. */
-export const skip = {
-  large: `We do not render 500,000 rows here. A plain \`<table>\` puts every row in the DOM, and at this size the page hangs. Uncapped, it had not finished after ten minutes.
-
-What we measured on our machine: 2.5 s at 50,000 rows, 6.3 s at 100,000, about 27 s at 200,000. The cost is table layout, and it grows faster than the row count.
-
-For a grid this size use [AG Grid Community](/demos/aggrid.html), our pick for a big grid. Those numbers come from this page with every card on: [run it yourself](/demos/baseline.html?cards=all#large), and expect a wait.`,
-};
-
-mountDemo({ meta, tables, source, skip });
+mountDemo({ meta, tables, source });

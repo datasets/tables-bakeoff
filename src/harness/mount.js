@@ -18,8 +18,7 @@
  *   export const source = renderFn;   // optional, see (3) — usually wanted
  *   export const setup  = asyncFn;   // optional, see (4)
  *   export const edit   = renderFn;  // optional, see (6)
- *   export const skip   = { large: markdown };  // optional, see (7)
- *   mountDemo({ meta, tables, source, setup, edit, skip });
+ *   mountDemo({ meta, tables, source, setup, edit });
  *
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
@@ -98,10 +97,10 @@
  *     card; an entry with a result but no `edit` export (DataTables, whose
  *     editing is the paid Editor) gets the card with the result only.
  *
- * (7) export const skip — a card the page should not run.
+ * (7) SKIP_CARDS in results.js — a card the page should not run.
  *     The plain <table> cannot render 500,000 rows: the page hangs. Its page
- *     shows a note in the large card instead of a Load button. `skip` maps a
- *     dataset key to that note, in Markdown. The card keeps its title and
+ *     shows a note in the large card instead of a Load button. SKIP_CARDS maps
+ *     a library and dataset key to that note, in Markdown. The card keeps its title and
  *     source panel. Bare mode and `?cards=all` ignore it, so the measurement
  *     scripts still get the capped render they time. */
 
@@ -112,7 +111,7 @@ import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
 import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.js";
 import { renderMarkdown } from "./markdown.js";
-import { ENTRIES, EDIT_STATUS, VERDICTS } from "./results.js";
+import { ENTRIES, EDIT_STATUS, VERDICTS, SKIP_CARDS } from "./results.js";
 import { SNIPPETS } from "./snippets.js";
 
 restoreTheme();
@@ -122,7 +121,7 @@ restoreTheme();
  *  on the page they told the reader nothing the other two did not. */
 const PAGE_KEYS = ["small", "large"];
 
-export async function mountDemo({ meta, tables, source, setup, edit, skip = {} }) {
+export async function mountDemo({ meta, tables, source, setup, edit }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
 
@@ -135,9 +134,8 @@ export async function mountDemo({ meta, tables, source, setup, edit, skip = {} }
   // scripts, which time all four and the plain table's capped 100,000 rows.
   const allCards = params.get("cards") === "all";
   const keys = allCards ? DATASET_KEYS : PAGE_KEYS;
-  const skipped = allCards ? {} : skip;
-
   const key = demoKey();
+  const skipped = allCards ? {} : SKIP_CARDS[key] || {};
   const entry = ENTRIES.find((d) => d.key === key);
   root.innerHTML = shell({ meta, entry, hasEdit: !!edit, keys, skipped, verdict: VERDICTS[key], snippet: SNIPPETS[key] });
   installThemeToggle(root.querySelector(".toggle"));
