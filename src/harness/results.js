@@ -225,7 +225,7 @@ export const ENTRIES = [
     textSelect: { text: "yes" },
     kbSort: { text: "yes" },
     scores: { look: 3, api: 4, firstTry: 2, docs: 4, escape: 4 },
-    line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. It builds its whole model before showing anything, so 500,000 rows is ten seconds.",
+    line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. It builds its whole model before showing anything, so 500,000 rows took 8.5 seconds.",
   },
   {
     key: "revogrid",
