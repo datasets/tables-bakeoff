@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 const { meta: frontmatter, body: notes } = parseFrontmatter(readme);
 export const meta = { ...frontmatter, notes };
 
-function build(host, data, ctx) {
+function build(host, data, ctx, editable = false) {
   // No explicit height here: the harness's host div already carries a real
   // CSS height. Setting host.style.height = "100%" (the pattern most AG Grid
   // tutorials show) would overwrite that with a value the host's own parent
@@ -48,6 +48,7 @@ function build(host, data, ctx) {
       filter: true,
       resizable: true,
       valueFormatter: (p) => ctx.formatCell(p.value, c),
+      ...(editable && c.name === "price" ? { editable: true, cellEditor: "agNumberCellEditor" } : {}),
     })),
     defaultColDef: { minWidth: 110 },
     rowHeight: 32,
@@ -75,4 +76,10 @@ export const tables = { small: build, wide: build, medium: build, large: build }
 
 export const source = build;
 
-mountDemo({ meta, tables, source });
+/** The edit test: Price editable with the Community number editor, which
+ *  opens on a double-click. Pasting a column needs the clipboard and cell
+ *  selection modules, which are Enterprise only; in Community, Ctrl/Cmd-V on
+ *  a cell does nothing. */
+export const edit = (host, data, ctx) => build(host, data, ctx, true);
+
+mountDemo({ meta, tables, source, edit });

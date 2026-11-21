@@ -17,6 +17,14 @@
  * src/demos/<key>/. The gallery, the measured table and the scorecard all
  * render from this list. Keep `key` equal to the demo key in vite.config.js. */
 
+/** The edit test's verdicts, as printed on the demo card and the front page. */
+export const EDIT_STATUS = {
+  yes: "Works out of the box",
+  config: "Needs config",
+  paid: "Needs the paid tier",
+  no: "Not available",
+};
+
 /** Where the typed-in render and FPS numbers come from. */
 export const MEASURED = {
   machine: "one laptop, headless Chromium, 1400×1000", // VERIFY after the re-measure
@@ -81,6 +89,10 @@ export const ENTRIES = [
     render50k: { text: "68 ms", verify: true },
     render500k: { text: "280 ms", verify: true },
     sort500k: { text: "397 ms", verify: true },
+    edit: {
+      dblclick: { status: "yes", text: "editor: \"number\" on the column" },
+      paste: { status: "config", text: "selectableRange, clipboard: true and clipboardPasteParser/Action: \"range\", from its spreadsheet example. Free" },
+    },
     fps: { text: "60 fps", verify: true },
     scores: { look: 3, api: 4, firstTry: 1, docs: 4, escape: 3 },
     line: "Complete docs, and they contain the trap: height: \"100%\" in an unsized parent cost 62 seconds at 50,000 rows with nothing logged.",
@@ -96,6 +108,10 @@ export const ENTRIES = [
     render50k: { text: "35 ms", verify: true },
     render500k: { text: "248 ms", verify: true },
     sort500k: { text: "377 ms", verify: true },
+    edit: {
+      dblclick: { status: "yes", text: "editable: true with the Community number editor" },
+      paste: { status: "paid", text: "clipboard and cell selection are Enterprise modules; in Community, Ctrl/Cmd-V on a cell does nothing" },
+    },
     fps: { text: "60 fps", sub: "0 dropped", verify: true },
     scores: { look: 4, api: 4, firstTry: 3, docs: 4, escape: 4 },
     line: "Threw on a missing ModuleRegistry and had renamed its scroller class, but both failures were visible. The theming API is good.",
@@ -127,6 +143,10 @@ export const ENTRIES = [
     render50k: { text: "17.4 ms", verify: true },
     render500k: { text: "24.6 ms", verify: true },
     sort500k: { text: "106 ms", sub: "app code: no built-in sort", verify: true },
+    edit: {
+      dblclick: { status: "config", text: "Glide holds no data: return an editable Number cell and write the value back in onCellEdited" },
+      paste: { status: "config", text: "onPaste: true (without it only the first value lands) and getCellsForSelection" },
+    },
     fps: { text: "60 fps", verify: true },
     scores: { look: 4, api: 4, firstTry: 3, docs: 3, escape: 2 },
     line: "The best theming object here, one plain token bag. Grid copy works once getCellsForSelection is set, but canvas means browser Ctrl-F and text selection see nothing.",
@@ -161,6 +181,10 @@ export const ENTRIES = [
     render50k: { text: "957 ms", verify: true },
     render500k: { text: "10.1 s", verify: true },
     sort500k: { text: "440 ms", verify: true },
+    edit: {
+      dblclick: { status: "paid", text: "the free core has no cell editing; Editor is part of DataTables Plus, from $219 per developer" },
+      paste: { status: "paid", text: "Editor again" },
+    },
     fps: { text: "52 fps", sub: "48 fps on 80 columns", verify: true },
     scores: { look: 3, api: 4, firstTry: 2, docs: 4, escape: 4 },
     line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. It builds its whole model before showing anything, so 500,000 rows is ten seconds.",
@@ -177,6 +201,10 @@ export const ENTRIES = [
     render50k: { text: "59 ms", verify: true },
     render500k: { text: "55 ms", verify: true },
     sort500k: { text: "211 ms", verify: true },
+    edit: {
+      dblclick: { status: "yes", text: "readonly off" },
+      paste: { status: "yes", text: "pastes down from the focused cell; range: true is only for drag-selecting" },
+    },
     fps: { text: "60 fps", sub: "1 dropped", verify: true },
     scores: { look: 3, api: 4, firstTry: 3, docs: 3, escape: 3 },
     line: "The fastest DOM grid at 500,000 rows, in any framework. Its render event fires before any cell exists, its columns do not auto-size, and its community is a quarter of AG Grid's.",
@@ -188,5 +216,7 @@ export const ENTRIES = [
  *   live pages" must be literally true of whoever did it.
  * - "Considered, not included": MUI X 100-row page cap, react-data-grid beta
  *   status, SlickGrid 6.0 date.
- * - The editable-grid pick is provisional until the edit test lands. */
+ * - The edit test (`edit` above) was run by scripts/edit-test.mjs on
+ *   2026-11-21: double-click a price and type, then paste three lines onto a
+ *   price cell, reading the values back from the data. */
 export const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];

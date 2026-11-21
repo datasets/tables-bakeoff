@@ -3,7 +3,7 @@
  * fills bundle size and lines written from the real build output in
  * /bundles.json, so those cannot drift from what shipped. */
 import { restoreTheme, installThemeToggle, onThemeChange } from "./theme.js";
-import { ENTRIES, AXES, MEASURED, NUMBER_WORDS } from "./results.js";
+import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS } from "./results.js";
 
 restoreTheme();
 const toggleBtn = document.querySelector(".toggle");
@@ -92,6 +92,19 @@ if (measured) {
       ${cell(d.fps)}
       <td>${month(d.released)}</td>
       <td class="lic">${e(d.license)}<span class="sub">paywalled: ${e(d.paywalled)}</span></td>
+    </tr>`).join("");
+}
+
+/* ---- edit test -------------------------------------------------------------- */
+const edits = document.querySelector("#edits tbody");
+if (edits) {
+  const verdict = (r) =>
+    `<b class="${r.status === "paid" ? "paid" : ""}">${e(EDIT_STATUS[r.status])}</b><span class="sub">${e(r.text)}</span>`;
+  edits.innerHTML = ENTRIES.filter((d) => d.edit).map((d) => `
+    <tr>
+      <td><a href="${demoHref(d.key)}#edit">${e(d.name)}</a></td>
+      <td>${verdict(d.edit.dblclick)}</td>
+      <td>${verdict(d.edit.paste)}</td>
     </tr>`).join("");
 }
 

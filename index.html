@@ -28,8 +28,6 @@
   .verdict strong { font-weight: 650; }
   .tie { font-size: 14.5px; line-height: 1.5; color: var(--text-secondary); max-width: 70ch; margin: 8px 0 0; }
   .badge { display: inline-block; vertical-align: 2px; margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em; }
-  .pick--provisional { border-style: dashed; }
-  .pick--provisional .use em { color: var(--series-2); }
   .caption { font-size: 13px; color: var(--text-secondary); max-width: 90ch; margin: 0 0 12px; }
   code { font-family: var(--font-mono); font-size: 0.92em; background: color-mix(in srgb, var(--text-primary) 6%, transparent); padding: 1px 4px; border-radius: 4px; }
 
@@ -87,6 +85,9 @@
   table#scorecard thead th[title] { cursor: help; text-decoration: underline dotted; text-decoration-color: var(--baseline); text-underline-offset: 3px; }
   table.scores th:first-child, table.scores td:first-child { position: sticky; left: 0; background: var(--bg); z-index: 1; }
   table#scorecard td .why-inline { display: none; }
+  table#edits td { white-space: normal; min-width: 22ch; max-width: 46ch; font-variant-numeric: normal; }
+  table#edits td b { font-weight: 650; color: var(--text-primary); }
+  table#edits td b.paid { color: var(--series-2); }
   .scroll-hint { display: none; font-size: 11.5px; color: var(--text-muted); margin: 0 0 6px; }
   @media (max-width: 660px) {
     table#scorecard .why { display: none; }
@@ -201,16 +202,16 @@
       </p>
       <div class="alt">Runner-up: <a href="/demos/tabulator.html">Tabulator</a>, if the portal is not React.</div>
     </article>
-    <article class="pick pick--provisional">
-      <div class="use">An editable grid <em>· provisional</em></div>
-      <h3><a href="/demos/tabulator.html">Tabulator</a></h3>
+    <article class="pick">
+      <div class="use">An editable grid</div>
+      <h3><a href="/demos/tabulator.html#edit">Tabulator</a></h3>
       <p>
-        Cell editors, clipboard and range selection are free and vanilla. AG Grid Community keeps
-        those behind the Enterprise licence. <span data-verify="edit-test">Picked from the feature
-        lists and a spot check. An edit test is in progress; until it lands this is our best
-        guess.</span>
+        Passed the <a href="#edit-test">edit test</a>: double-click a price with one column
+        option, paste a column with the range and clipboard options from its own spreadsheet
+        example. All free, vanilla, MIT. AG Grid Community edits a cell but keeps paste in
+        Enterprise.
       </p>
-      <div class="alt">Runner-up: <a href="/demos/glide.html">Glide Data Grid</a> on React 18, for the spreadsheet feel. Last release Feb 2024.</div>
+      <div class="alt">Runner-up: <a href="/demos/revogrid.html#edit">RevoGrid</a> passed with no extra config at all, if you accept its corner link. <a href="/demos/glide.html#edit">Glide</a> passes with two props, on React 18.</div>
     </article>
   </section>
 
@@ -299,6 +300,20 @@
       <li>Cells with a tooltip are from a run being repeated on the versions shown; the number may move a little.</li>
     </ul>
   </details>
+
+  <h2 id="edit-test" style="scroll-margin-top:16px">The edit test</h2>
+  <p class="caption">
+    On each grid's demo page: double-click a price and type a new one, then paste three lines
+    onto a price cell. A value counts only if it reached the data, not just the screen. Run by
+    hand and by script (<code>scripts/edit-test.mjs</code>). The others are display tables and
+    were not tested.
+  </p>
+  <div class="scroll">
+  <table class="scores edit" id="edits">
+    <thead><tr><th>Library</th><th>Double-click to edit</th><th>Paste a column of three</th></tr></thead>
+    <tbody><tr><td colspan="3">Loading from results.js…</td></tr></tbody>
+  </table>
+  </div>
 
   <h2>How they felt to build</h2>
   <p class="caption">

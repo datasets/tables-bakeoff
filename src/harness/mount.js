@@ -11,7 +11,8 @@
  *   export const tables = { small, wide, medium, large };
  *   export const source = renderFn;   // optional, see (3) — usually wanted
  *   export const setup  = asyncFn;   // optional, see (4)
- *   mountDemo({ meta, tables, source, setup });
+ *   export const edit   = renderFn;  // optional, see (6)
+ *   mountDemo({ meta, tables, source, setup, edit });
  *
  * Each render function is called as `fn(host, dataset, ctx)` where
  *   host    — an empty scrolling <div class="demo-host">, already sized.
@@ -77,17 +78,29 @@
  *     back in file order. The harness clears (untimed), then times
  *     fn("price") with the same clock as a render: it awaits a returned
  *     promise, then forces layout. Resolve the promise only once the sorted
- *     rows are on screen, as the render predicates do. */
+ *     rows are on screen, as the render predicates do.
+ *
+ * (6) export const edit — the edit test card, for libraries that edit.
+ *     `edit(host, data, ctx)` renders the small dataset with the price column
+ *     editable, configured as the library's docs say, so that a user can
+ *     double-click a price to change it and paste a column of three values.
+ *     `data.rows` is a copy, so edits never reach the other cards. The card
+ *     shows the first three prices read back from that copy, which is what
+ *     proves an edit reached the data and not only the screen. What each
+ *     library needed is recorded in results.js (`edit`) and printed on the
+ *     card; an entry with a result but no `edit` export (DataTables, whose
+ *     editing is the paid Editor) gets the card with the result only. */
 
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
 import { theme, onThemeChange, installThemeToggle, restoreTheme } from "./theme.js";
 import { renderMarkdown } from "./markdown.js";
+import { ENTRIES, EDIT_STATUS } from "./results.js";
 
 restoreTheme();
 
-export async function mountDemo({ meta, tables, source, setup }) {
+export async function mountDemo({ meta, tables, source, setup, edit }) {
   document.title = `${meta.name} — Tables Bakeoff`;
   const root = document.getElementById("app");
 
@@ -96,7 +109,8 @@ export async function mountDemo({ meta, tables, source, setup }) {
   const params = new URLSearchParams(location.search);
   if (params.get("bare") === "1") return mountBare({ meta, tables, setup, root, dataset: params.get("dataset") || "small" });
 
-  root.innerHTML = shell(meta);
+  const entry = ENTRIES.find((d) => d.key === demoKey());
+  root.innerHTML = shell(meta, entry, !!edit);
   installThemeToggle(root.querySelector(".toggle"));
 
   const cleanups = {};
@@ -259,6 +273,8 @@ export async function mountDemo({ meta, tables, source, setup }) {
     btn.disabled = false;
   }
 
+  if (entry?.edit) await renderEdit(root.querySelector('[data-card="edit"]'), edit, meta);
+
   onThemeChange(() => {
     for (const key of DATASET_KEYS) {
       const card = root.querySelector(`[data-card="${key}"]`);
@@ -268,6 +284,50 @@ export async function mountDemo({ meta, tables, source, setup }) {
 }
 
 /* ---------------------------------------------------------------- */
+
+/** The page's demo key, from /demos/<key>.html. */
+function demoKey() {
+  return location.pathname.split("/").pop().replace(/\.html$/, "");
+}
+
+/** The edit test card (see (6) in the contract). Not timed: the result is
+ *  what a user can do, not how fast. */
+async function renderEdit(card, edit, meta) {
+  if (!card || !edit) return;
+  const host = card.querySelector(".demo-host");
+  const readout = card.querySelector(".edit-readout b");
+  let data;
+  try {
+    data = await loadDataset("small");
+  } catch (err) {
+    host.innerHTML = `<pre class="err">${escapeHtml(String(err))}</pre>`;
+    return;
+  }
+  const rows = data.rows.map((r) => ({ ...r }));
+  const copy = { ...data, rows };
+  const price = data.columns.find((c) => c.name === "price");
+  const show = () => {
+    readout.textContent = rows.slice(0, 3).map((r) => formatCell(r.price, price)).join(" · ");
+  };
+  let cleanup = null;
+  const draw = async () => {
+    try { cleanup?.(); } catch {}
+    host.innerHTML = "";
+    try {
+      const result = await edit(host, copy, { theme: theme(), key: "small", formatCell, reportRows: () => {}, provideSort: () => {} });
+      cleanup = typeof result === "function" ? result : null;
+    } catch (err) {
+      host.innerHTML = `<pre class="err">${escapeHtml(String(err.stack || err))}</pre>`;
+      console.error(`[${meta.name}] edit`, err);
+    }
+  };
+  await draw();
+  show();
+  // Libraries write edits into the row objects on their own schedule, so
+  // the readout polls rather than hooking each library's change event.
+  setInterval(show, 400);
+  onThemeChange(draw);
+}
 
 /** The embed used by the front page gallery: one dataset, one host filling
  *  the iframe, nothing else. Reports the render time to the parent window
@@ -463,7 +523,7 @@ export function footer() {
   </footer>`;
 }
 
-function shell(meta) {
+function shell(meta, entry, hasEdit) {
   // meta values are escaped: the baseline's own name is literally "Plain
   // <table>", which would otherwise open a real element in the header. Notes
   // go through the changelog's small Markdown renderer, which escapes HTML
@@ -492,9 +552,37 @@ function shell(meta) {
   </header>
   <main class="wrap" style="padding-bottom:60px">
     ${DATASET_KEYS.map(cardHTML).join("")}
+    ${entry?.edit ? editCardHTML(entry.edit, hasEdit) : ""}
     ${meta.notes ? `<section class="demo-notes-section" id="notes"><h2>Notes from the build</h2><div class="demo-notes">${renderMarkdown(meta.notes)}</div></section>` : ""}
   </main>
   ${footer()}`;
+}
+
+function editCardHTML(result, hasEdit) {
+  const line = (label, r) =>
+    `<li><b>${label}:</b> ${escapeHtml(EDIT_STATUS[r.status])}${
+      !r.text ? "" : r.status === "yes" ? ` (${escapeHtml(r.text)})` : `: ${escapeHtml(r.text)}`
+    }</li>`;
+  return `
+  <section class="card" id="edit" data-card="edit" style="margin-top:24px;scroll-margin-top:16px">
+    <div class="card__head">
+      <h2 class="card__title">Edit test: change a price, paste a column</h2>
+      <p class="card__desc">${hasEdit
+        ? "The small dataset with Price editable. Double-click a price, type a number, press Enter. Then copy the three numbers below, click a price cell and paste (Ctrl/Cmd-V): they should fill that cell and the two below it."
+        : "No editable grid here: see the result below."}</p>
+      <ul class="edit-result">
+        ${line("Double-click to edit", result.dblclick)}
+        ${line("Paste a column of three values", result.paste)}
+      </ul>
+    </div>
+    ${hasEdit ? `<div class="demo-host"></div>
+    <div class="card__actions edit-actions">
+      <label>Copy these: <textarea readonly rows="3" cols="8" class="edit-paste">111111
+222222
+333333</textarea></label>
+      <span class="edit-readout">First three prices in the data now: <b>…</b></span>
+    </div>` : `<div style="height:14px"></div>`}
+  </section>`;
 }
 
 function cardHTML(key) {

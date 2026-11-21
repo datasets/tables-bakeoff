@@ -13,3 +13,4 @@ tagline: Vanilla, batteries-included: grouping, tree data, editing, export.
 - Its docs use `height: "100%"` to fill a container. In a parent with no resolved height that renders every row: over 60 seconds at 50,000 rows, with nothing in the console. Our host already has a height, so the option is left out and 500,000 rows take under 300 ms.
 - The constructor returns before rows are drawn, so this demo waits for the `tableBuilt` event.
 - The stock themes are plain CSS with no variables, so dark mode is an override stylesheet written against Tabulator's class names.
+- Editing, clipboard and range selection are in the free package. The edit test card shows what pasting a column needs: the options from its own spreadsheet example.

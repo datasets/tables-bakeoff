@@ -54,8 +54,22 @@ function sortIndex(rows, field) {
   });
 }
 
+/** The edit test: the same grid with Price editable. */
+function edit(host, data, ctx) {
+  return mountReact(
+    host,
+    <GlideGrid
+      data={data}
+      editable
+      formatCell={ctx.formatCell}
+      theme={glideTheme(ctx.theme)}
+      initial={{ width: host.clientWidth, height: host.clientHeight }}
+    />
+  );
+}
+
 export const tables = { small: mount, wide: mount, medium: mount, large: mount };
 
 export const source = mount;
 
-mountDemo({ meta, tables, source });
+mountDemo({ meta, tables, source, edit });

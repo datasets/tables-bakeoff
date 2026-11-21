@@ -2,7 +2,7 @@
 
 The verdict from building the same table with eight open-source JavaScript table libraries and a plain `<table>`, over the same four datasets (1,000 rows, 1,000 rows by 80 columns, 50,000 rows, 500,000 rows of UK property sales), inside the same harness, with the same cell formatter. The method and its caveats are in [ANALYSIS.md](./ANALYSIS.md). What happened while building each demo is in that demo's notes (`src/demos/<key>/README.md`). Scores are 1 to 5, subjective, and come from doing the building.
 
-Every typed-in number here is also in `src/harness/results.js`, which the front page renders from. When the numbers are re-measured, that file and this one are swept together. Bundle sizes and line counts come from `bundles.json`, which the build writes. <!-- VERIFY: numbers below are from the Sep 2026 run on Nov 2026 versions; sweep after the re-measure, the sort-at-500k test and the edit test land -->
+Every typed-in number here is also in `src/harness/results.js`, which the front page renders from. When the numbers are re-measured, that file and this one are swept together. Bundle sizes and line counts come from `bundles.json`, which the build writes. <!-- VERIFY: render and FPS numbers are from the Sep 2026 run on Nov 2026 versions; sort-at-500k is a Nov 2026 busy-machine run. Sweep after the quiet re-measure. -->
 
 ## The verdict
 
@@ -41,13 +41,21 @@ The costs. v9 is a redesign (`getCoreRowModel()` is gone, features are opt-in th
 
 ### Editable, spreadsheet-like: Tabulator
 
-Cell editors, clipboard, range selection, grouping and export are in the free MIT package, vanilla, no framework. AG Grid Community puts range selection and clipboard behind Enterprise. Handsontable is paid for commercial use. That leaves Tabulator as the one maintained vanilla grid where editing is free.
+Cell editors, clipboard, range selection, grouping and export are in the free MIT package, vanilla, no framework. The edit test backs the pick: on each grid's demo page we double-clicked a price and typed a new one, then pasted three lines onto a price cell, and counted a value only if it reached the data.
 
-**This is the weakest call on the page.** No demo here tests editing yet; the pick is from the feature lists and a spot check. An edit test (double-click a price, paste a column) is in progress. <!-- VERIFY after the edit test -->
+| Library | Double-click to edit | Paste a column of three |
+|---|---|---|
+| Tabulator | Works out of the box (`editor: "number"` on the column) | Needs config: `selectableRange`, `clipboard: true`, `clipboardPasteParser`/`clipboardPasteAction: "range"`, from its own spreadsheet example. Free |
+| AG Grid Community | Works out of the box (`editable: true`) | Needs the paid tier: clipboard and cell selection are Enterprise modules; in Community, Ctrl/Cmd-V on a cell does nothing |
+| Glide Data Grid | Needs config: Glide holds no data, so you return an editable Number cell and write the value back in `onCellEdited` | Needs config: `onPaste: true` (without it only the first value lands) and `getCellsForSelection` |
+| RevoGrid | Works out of the box (`readonly` off) | Works out of the box: pastes down from the focused cell |
+| DataTables 3 | Needs the paid tier: the free core has no cell editing; Editor is DataTables Plus, from $219 per developer | Needs the paid tier |
+
+Tabulator stays the pick, now on evidence rather than feature lists: everything an editable grid needs passed, free, with options its own docs show. RevoGrid did slightly better on this test (no extra config at all) and is the runner-up; its corner link and smaller community are why it is not the pick. Handsontable is paid for commercial use.
 
 The trap, since it is the most dangerous configuration in the whole exercise: `height: "100%"`, the option Tabulator's own docs give for filling a container, overrides the host's CSS height with one the parent cannot resolve. Tabulator then measures a 0 px viewport and renders every row. 62 seconds at 50,000 rows, 500,000 effectively never, nothing in the console. Give the host a real height and it is 280 ms. Tabulator is a good library. The documented pattern is the trap, and you will not notice it on a page of 200 rows.
 
-**Runner-up: Glide Data Grid**, on React 18, when you want the Sheets feel. Canvas, so 500,000 rows render in 25 ms and memory does not move as you scroll. Grid copy works once `getCellsForSelection` is set, which the quick start does not mention: select a range, Ctrl/Cmd-C, and it arrives as tab-separated text. Browser Ctrl-F and text selection cannot see a canvas. Last release February 2024.
+**Also consider Glide Data Grid**, on React 18, when you want the Sheets feel. Canvas, so 500,000 rows render in 25 ms and memory does not move as you scroll. Grid copy works once `getCellsForSelection` is set, which the quick start does not mention: select a range, Ctrl/Cmd-C, and it arrives as tab-separated text. Browser Ctrl-F and text selection cannot see a canvas. Last release February 2024.
 
 ### Not a pick: Perspective
 
@@ -89,7 +97,7 @@ Perspective is a query engine with a grid attached. Its WebAssembly boot is time
 ## What we did not test
 
 - **Filtering at 500,000 rows.** Observed, not timed. Sorting is timed (above and on each large card); filtering is not.
-- **Editing.** No demo edits a cell yet. See the Tabulator pick. <!-- VERIFY -->
+- **Editing beyond one column.** The edit test covers double-click edit and pasting a column into five grids (above). Validation, undo, multi-column paste and fill handles were not tested.
 - **Accessibility.** One library (Glide) was checked for its hidden `role="grid"` mirror. Keyboard navigation and screen-reader announcements were not tested across the set. Native table markup does not settle this on its own; the TanStack demo sorts on a header click with no focusable button.
 - **Column pinning, resize, filter rows.** Not in the harness. The summary-stats spike on TanStack has a filter row.
 - **Mobile performance.** The layout works at 375 px; FPS was measured in desktop headless Chromium only.

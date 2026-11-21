@@ -18,10 +18,10 @@ export const meta = { ...frontmatter, notes };
  *  it is in the DOM. Its `aftergridrender` event looks like the finish line
  *  but fires before a single cell exists (checked on this page: zero cells at
  *  that moment), so the promise settles on the first data cell instead. */
-function build(host, data, ctx) {
+function build(host, data, ctx, editable = false) {
   const grid = document.createElement("revo-grid");
   grid.theme = ctx.theme.dark ? "darkCompact" : "compact";
-  grid.readonly = true;
+  grid.readonly = !editable;
   grid.columns = data.columns.map((c) => ({
     prop: c.name,
     name: c.label,
@@ -31,6 +31,8 @@ function build(host, data, ctx) {
     // straight in. Sorting still compares the raw value.
     cellTemplate: (h, { value }) => ctx.formatCell(value, c),
     cellProperties: () => ({ style: { "text-align": c.align } }),
+    // In the edit test only Price is editable.
+    readonly: editable && c.name !== "price",
   }));
   grid.source = data.rows;
   applyTheme(grid, ctx.theme);
@@ -114,4 +116,10 @@ export const tables = { small: build, wide: build, medium: build, large: build }
 
 export const source = build;
 
-mountDemo({ meta, tables, source });
+/** The edit test: the grid with readonly off, Price the only editable column.
+ *  That is all it takes: double-click edits, and Ctrl/Cmd-V pastes a column
+ *  of values down from the focused cell. (`range: true` is only needed to
+ *  drag-select a range.) */
+export const edit = (host, data, ctx) => build(host, data, ctx, true);
+
+mountDemo({ meta, tables, source, edit });

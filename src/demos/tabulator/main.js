@@ -18,7 +18,7 @@ export const meta = { ...frontmatter, notes };
  *
  *  No `height` option is passed: the host already has a real, resolved CSS
  *  height (see meta.notes for what passing "100%" here does instead). */
-function build(host, data, ctx, opts = {}) {
+function build(host, data, ctx, opts = {}, columnOpts = {}) {
   ensureThemeOverride(ctx.theme);
   return new Promise((resolve) => {
     const t = new Tabulator(host, {
@@ -32,6 +32,7 @@ function build(host, data, ctx, opts = {}) {
         hozAlign: c.align,
         headerSort: true,
         formatter: (cell) => ctx.formatCell(cell.getValue(), c),
+        ...columnOpts[c.name],
       })),
       ...opts,
     });
@@ -98,4 +99,26 @@ export const tables = {
 
 export const source = build;
 
-mountDemo({ meta, tables, source });
+/** The edit test. `editor: "number"` alone makes Price editable on a click
+ *  or double-click. Pasting a column needs the range-selection and clipboard
+ *  options from Tabulator's own spreadsheet example; without them Ctrl/Cmd-V
+ *  does nothing. All of it is in the free package. */
+export function edit(host, data, ctx) {
+  return build(
+    host,
+    data,
+    ctx,
+    {
+      editTriggerEvent: "dblclick",
+      selectableRange: 1,
+      selectableRangeColumns: true,
+      selectableRangeRows: true,
+      clipboard: true,
+      clipboardPasteParser: "range",
+      clipboardPasteAction: "range",
+    },
+    { price: { editor: "number" } }
+  );
+}
+
+mountDemo({ meta, tables, source, edit });

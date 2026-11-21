@@ -17,12 +17,13 @@ const WIDTH_FOR = { number: 112, date: 118, string: 152 };
  *  first paint is an empty grid. `initial` is the harness host measured before
  *  the mount so frame one is already correct; the observer below only has to
  *  handle later resizes. */
-export function GlideGrid({ data, formatCell, theme, initial, api }) {
+export function GlideGrid({ data, formatCell, theme, initial, api, editable = false }) {
   const wrapRef = useRef(null);
   const [box, setBox] = useState(initial);
   // Glide has no sorting of its own: the app owns row order. `order` maps a
   // display row to a source row, or is null for file order.
   const [order, setOrder] = useState(null);
+  const [edits, setEdits] = useState(0);
   if (api) api.setOrder = setOrder;
 
   useEffect(() => {
@@ -55,7 +56,19 @@ export function GlideGrid({ data, formatCell, theme, initial, api }) {
     ([col, row]) => {
       const spec = data.columns[col];
       const source = order ? order[row] : row;
-      const text = formatCell(data.rows[source]?.[spec.name], spec);
+      const value = data.rows[source]?.[spec.name];
+      const text = formatCell(value, spec);
+      // The edit test: Price becomes a Number cell that opens Glide's own
+      // editor overlay. Every other cell stays read-only text.
+      if (editable && spec.name === "price") {
+        return {
+          kind: GridCellKind.Number,
+          data: value,
+          displayData: text,
+          allowOverlay: true,
+          contentAlign: spec.align,
+        };
+      }
       return {
         kind: GridCellKind.Text,
         data: text,
@@ -64,7 +77,19 @@ export function GlideGrid({ data, formatCell, theme, initial, api }) {
         contentAlign: spec.align,
       };
     },
-    [data, formatCell, order]
+    [data, formatCell, order, editable, edits]
+  );
+
+  /* Glide never holds data, so an edit is ours to write back. Bumping
+   * `edits` gives getCellContent a new identity, which redraws the canvas. */
+  const onCellEdited = useCallback(
+    ([col, row], cell) => {
+      const spec = data.columns[col];
+      const source = order ? order[row] : row;
+      if (cell.kind === GridCellKind.Number && data.rows[source]) data.rows[source][spec.name] = cell.data;
+      setEdits((n) => n + 1);
+    },
+    [data, order]
   );
 
   return (
@@ -85,6 +110,10 @@ export function GlideGrid({ data, formatCell, theme, initial, api }) {
         smoothScrollY
         width={box.width}
         height={box.height}
+        // The edit test. Glide holds no data, so an edit is ours to write back
+        // (onCellEdited). onPaste: true splits pasted text across cells;
+        // without it only the first value lands, in the focused cell.
+        {...(editable ? { onCellEdited, onPaste: true } : {})}
       />
     </div>
   );
