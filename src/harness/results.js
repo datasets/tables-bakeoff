@@ -247,7 +247,7 @@ export const ENTRIES = [
     textSelect: { text: "no", sub: "off by default" },
     kbSort: { text: "no", sub: "click only" },
     scores: { look: 3, api: 4, firstTry: 3, docs: 3, escape: 3 },
-    line: "The fastest DOM grid at 500,000 rows, in any framework. Its render event fires before any cell exists, its columns do not auto-size, and its community is a quarter of AG Grid's.",
+    line: "The fastest DOM grid at 500,000 rows, in any framework. Its render event fires before any cell exists, its columns do not auto-size by default, and its community is a quarter of AG Grid's.",
   },
 ];
 
@@ -296,7 +296,7 @@ export const VERDICTS = {
   },
   aggrid: {
     role: "Our pick for a big grid",
-    line: "Sorts and filters 500,000 rows at 60 fps out of the box, in any framework. Free, MIT; grouping, pivot and Excel export are Enterprise.",
+    line: "Renders 500,000 rows in 233 ms, sorts them in 369 ms and scrolls at 60 fps, with sort and filter built in, in any framework. Free, MIT; grouping, pivot and Excel export are Enterprise.",
     use: [
       "Tens of thousands to 500,000 rows and you want it done.",
       "Loud failures: a missing module throws, a wrong host height draws an obviously empty grid.",
@@ -348,7 +348,7 @@ export const VERDICTS = {
   },
   datatables: {
     role: "A special case: a search box over a few thousand rows",
-    line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. 52 kB, MIT.",
+    line: "The right tool for making a few thousand rows of HTML sortable and searchable, now without jQuery. 53 kB, MIT.",
     use: [
       "A few thousand rows of HTML with a search box and sort for free.",
       "Real <td>s the browser can find, select and copy.",
@@ -366,10 +366,10 @@ export const VERDICTS = {
       "Editing and pasting ranges with no extra config.",
     ],
     skip: [
-      "You cannot show its corner link. Removing it is Pro, $199 to $499 per developer per year.",
+      "You cannot show its corner link. A hideAttribution option exists, but its docs ask companies to keep the link or pay for Pro ($199 to $499 per developer per year).",
       "You want a large community. Its is about a quarter of AG Grid's.",
     ],
-    watch: "Its render event fires before any cell exists, and columns do not auto-size.",
+    watch: "Its render event fires before any cell exists, and columns do not auto-size by default.",
   },
 };
 

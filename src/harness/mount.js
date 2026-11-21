@@ -325,8 +325,15 @@ function fillBundleSize(root, key) {
     .then((b) => {
       const d = b?.demos?.[key];
       if (!d) return;
+      // Same qualifiers as the comparison table: what else the page must load
+      // for the grid to draw is named, not left out.
+      const extra = [
+        d.lazyKB > 0 && `+ ${Math.round(d.lazyKB)} kB lazy`,
+        d.reactKB > 0 && `+ React ${Math.round(d.reactKB)} kB`,
+        d.wasmKB > 0 && `+ ${(d.wasmKB / 1000).toFixed(1)} MB WASM`,
+      ].filter(Boolean);
       const kb = Math.round(d.libKB - d.harnessKB);
-      for (const el of cells) el.textContent = `${kb} kB`;
+      for (const el of cells) el.textContent = [`${kb} kB`, ...extra].join(" ");
     })
     .catch(() => {});
 }
