@@ -17,6 +17,20 @@ describe("countLoc", () => {
   it("counts a line with code and a trailing comment once", () => {
     expect(countLoc("const a = 1; // set a")).toBe(1);
   });
+
+  it("skips code fenced as not counted (the harness's sort and edit hooks)", () => {
+    const src = [
+      "const a = 1;",
+      "// #region sort hook (not counted in lines written)",
+      "ctx.provideSort((f) => sort(f));",
+      "// #endregion",
+      "{/* #region edit test (not counted) */}",
+      "onCellEdited={x}",
+      "{/* #endregion */}",
+      "const b = 2;",
+    ].join("\n");
+    expect(countLoc(src)).toBe(2);
+  });
 });
 
 describe("attributeChunks", () => {

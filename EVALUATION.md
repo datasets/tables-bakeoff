@@ -11,7 +11,7 @@ Every typed-in number here is also in `src/harness/results.js`, which the front 
 The race everyone expects, 500,000 rows, is close to a tie. Every virtualizing grid scrolls at or near 60 fps and renders in 25 to 300 ms, except Perspective at about two seconds, most of which is marshalling 500,000 objects into its WebAssembly worker, and DataTables at ten, which builds its whole model before it shows a row. At 60 fps you cannot see the difference between 25 ms and 250 ms. Sorting all 500,000 rows by price is close too: 0.1 to 0.45 s in every grid, median of 5 on a busy machine (AG Grid 377 ms, Tabulator 397 ms, TanStack 397 ms, DataTables 440 ms, Perspective 346 ms in its worker, RevoGrid 211 ms, Glide 106 ms with our own index sort, Observable Inputs 101 ms). Speed does not pick a winner. Four other things do:
 
 1. **Is the text in the DOM?** A canvas grid is pixels. Browser Ctrl-F and text selection cannot see it, and a screen reader gets whatever hidden mirror the library keeps; copy works only through the grid's own clipboard support. A virtualized DOM grid gives you Ctrl-F, selection, copy and assistive tech for the mounted rows, the ones on screen, and the plain `<table>` for every row. For a data site that is most of the job.
-2. **What does it weigh?** Own code, gzipped, over the shared harness: plain `<table>` 1 kB, Observable Inputs 7 kB, TanStack Table 24 kB on a page that already ships React, DataTables 52 kB, Glide 105 kB plus React, RevoGrid about 112 kB once its lazy components load, Perspective 107 kB plus 4.3 MB of WebAssembly, Tabulator 112 kB, AG Grid Community 333 kB with every Community module registered (272 kB with only the modules it uses).
+2. **What does it weigh?** Own code, gzipped, over the shared harness: plain `<table>` 1 kB, Observable Inputs 8 kB with its stylesheet, TanStack Table 24 kB on a page that already ships React, DataTables 52 kB, Glide 105 kB plus React, RevoGrid about 118 kB once its lazy components load, Perspective 107 kB plus 4.3 MB of WebAssembly, Tabulator 112 kB, AG Grid Community 333 kB with every Community module registered (272 kB with only the modules it uses).
 3. **How does it fail?** Tabulator's documented `height: "100%"` silently renders every row when the parent has no resolved height: 62 seconds at 50,000 rows instead of 68 ms, nothing logged. AG Grid, given the same mistake, draws a visibly broken 0 px viewport. A silent failure costs more than a missing feature.
 4. **Is anyone still shipping it?** Glide Data Grid's last stable release was February 2024 and its peer range is React 16 to 18. Our first draft recommended it for large data on the strength of a 25 ms render. We reversed that. A grid you will live with for three years needs a maintainer more than it needs 200 ms.
 
@@ -19,23 +19,23 @@ The race everyone expects, 500,000 rows, is close to a tie. Every virtualizing g
 
 ### A table in a report or data story, up to a few thousand rows: plain `<table>`
 
-34 lines, 1 kB, about 100 ms for 1,000 rows including layout. It prints, it copies, dark mode is CSS, and nothing can go out of date. Sorting is ten more lines if you want it. The control won its own weight class, and that is the finding: the libraries exist for the point where layout cost goes superlinear, which on this machine was between 10,000 and 50,000 rows (2.6 s at 50,000, 6.9 s at 100,000, about 27 s at 200,000).
+39 lines, 1 kB, about 100 ms for 1,000 rows including layout. It prints, it copies, dark mode is CSS, and nothing can go out of date. Sorting is ten more lines if you want it. The control won its own weight class, and that is the finding: the libraries exist for the point where layout cost goes superlinear, which on this machine was between 10,000 and 50,000 rows (2.6 s at 50,000, 6.9 s at 100,000, about 27 s at 200,000).
 
 **Runner-up: Observable Inputs.** `Inputs.table(rows)` is the best single call in the set: column types inferred, numbers right-aligned, sort on header click. Two caveats. It needs its stylesheet loaded and `select: false` for a read-only table (the demo as first built missed the stylesheet, so ids and dates wrapped mid-word; that was our mistake, not the library's), and it appends rows as you scroll without removing them, so keep it under about ten thousand rows.
 
 ### A big grid you want done, in any framework: AG Grid Community
 
-39 lines for sort, filter, row and column virtualization and 500,000 rows at 60 fps with no dropped frames. It was the only library whose configuration mistakes failed loudly: a missing `ModuleRegistry` call throws, and a wrong host height draws an obviously empty grid. The theming API (`themeQuartz.withParams`) took our tokens cleanly.
+40 lines for sort, filter, row and column virtualization and 500,000 rows at 60 fps with no dropped frames. It was the only library whose configuration mistakes failed loudly: a missing `ModuleRegistry` call throws, and a wrong host height draws an obviously empty grid. The theming API (`themeQuartz.withParams`) took our tokens cleanly.
 
 The costs. It is 333 kB as shipped here, because the demo registers `AllCommunityModule`, which is what the quick start does. Registering only the six modules the demo uses (client-side row model, text, number and date filters, cell style, number editor) measured 272 kB against 334 kB through the same build, so about a fifth comes off and it stays the heaviest grid here (`scripts/measure-aggrid-lean.mjs`). And Community is the free tier of a company that sells Enterprise: row grouping, pivot, range selection, clipboard, Excel export and the server-side row model are paywalled. Community is MIT and does everything in this test.
 
-**Runners-up: Tabulator and RevoGrid.** Tabulator is a third of the size, vanilla, MIT, with editors and clipboard free; one trap, below. RevoGrid is the surprise of the set: a framework-free web component that rendered 500,000 rows in 55 ms, the fastest DOM grid measured, at 60 fps everywhere, with row and column virtualization, keyboard navigation and clipboard in the free core, for about 112 kB once its lazily loaded components arrive. Two things keep it from being the default. Its community is a quarter of AG Grid's, and its licence is MIT on paper but the free core shows a "RevoGrid" link in the corner that the docs ask companies to keep or pay $199 to $499 per developer per year. If you can live with that link, it belongs on the shortlist next to AG Grid and Tabulator. <!-- VERIFY: RevoGrid numbers are from a busy-machine run -->
+**Runners-up: Tabulator and RevoGrid.** Tabulator is a third of the size, vanilla, MIT, with editors and clipboard free; one trap, below. RevoGrid is the surprise of the set: a framework-free web component that rendered 500,000 rows in 55 ms, the fastest DOM grid measured, at 60 fps everywhere, with row and column virtualization, keyboard navigation and clipboard in the free core, for about 118 kB once its lazily loaded components arrive. Two things keep it from being the default. Its community is a quarter of AG Grid's, and its licence is MIT on paper but the free core shows a "RevoGrid" link in the corner that the docs ask companies to keep or pay $199 to $499 per developer per year. If you can live with that link, it belongs on the shortlist next to AG Grid and Tabulator. <!-- VERIFY: RevoGrid numbers are from a busy-machine run -->
 
 **Not for this job: DataTables 3.** DataTables builds its whole internal model before showing anything (10 seconds for 500,000 rows here, against 0.3 to 0.6 s for Tabulator and AG Grid in the same session), has no column virtualization, and its own FAQ caps client-side data at about 50,000 rows. It is still the right tool for the job it was built for: make a few thousand rows of HTML sortable and searchable, with a search box over every row and real `<td>`s, now without jQuery, in 52 kB. Pick it over a plain `<table>` when you want that search box and sort for free; pick Tabulator over it for anything grid-shaped. <!-- VERIFY: DataTables numbers are from a busy-machine run -->
 
 ### A big grid you want to own: TanStack Table with a virtualizer
 
-Headless means it computes rows, sorting and columns and you write every element. The demo is 146 lines because the row virtualizer, the column virtualizer, the spacer cells, the `<colgroup>`, the sticky header and the sort arrows are all ours. What you get back is an ordinary `<table>` in your own markup and your own CSS, 24 kB over React, with adapters for Vue, Svelte, Solid and Angular. Dark mode is the site's variables; there is no theming API because there is nothing to theme.
+Headless means it computes rows, sorting and columns and you write every element. The demo is 147 lines because the row virtualizer, the column virtualizer, the spacer cells, the `<colgroup>`, the sticky header and the sort arrows are all ours. What you get back is an ordinary `<table>` in your own markup and your own CSS, 24 kB over React, with adapters for Vue, Svelte, Solid and Angular. Dark mode is the site's variables; there is no theming API because there is nothing to theme.
 
 The costs. v9 is a redesign (`getCoreRowModel()` is gone, features are opt-in through `tableFeatures`), the published docs lag it, and most of what is online describes v8. We spent part of a day in the `.d.ts` files. The spacer-row and column-group arithmetic is yours to get wrong, and we got it wrong twice.
 
@@ -65,15 +65,15 @@ Perspective is a query engine with a grid attached. Its WebAssembly boot is time
 
 | Library | Lines | Own kB | Default look | API feel | Right first try | Docs | Escape hatch |
 |---|---|---|---|---|---|---|---|
-| Plain `<table>` | 34 | 1.1 | 4 | 5 | 5 | 5 | 5 |
-| Observable Inputs | 32 | 6.7 | 3 | 5 | 3 | 3 | 2 |
-| Tabulator | 69 | 112 | 3 | 4 | 1 | 4 | 3 |
-| AG Grid Community | 39 | 333 | 4 | 4 | 3 | 4 | 4 |
-| TanStack Table | 146 | 24 (+69 React) | 5 | 3 | 2 | 2 | 5 |
-| Glide Data Grid | 123 | 105 (+69 React) | 4 | 4 | 3 | 3 | 2 |
-| Perspective | 48 | 107 (+4.3 MB WASM) | 3 | 3 | 4 | 2 | 1 |
-| DataTables 3 | 55 | 52 | 3 | 4 | 2 | 4 | 4 |
-| RevoGrid | 52 | 30 (+82 lazy) | 3 | 4 | 3 | 3 | 3 |
+| Plain `<table>` | 39 | 1.0 | 4 | 5 | 5 | 5 | 5 |
+| Observable Inputs | 36 | 8.3 | 3 | 5 | 3 | 3 | 2 |
+| Tabulator | 70 | 112 | 3 | 4 | 1 | 4 | 3 |
+| AG Grid Community | 40 | 332 (272 lean) | 4 | 4 | 3 | 4 | 4 |
+| TanStack Table | 147 | 24 (+69 React) | 5 | 3 | 2 | 2 | 5 |
+| Glide Data Grid | 128 | 105 (+69 React) | 4 | 4 | 3 | 3 | 2 |
+| Perspective | 63 | 107 (+4.3 MB WASM) | 3 | 3 | 4 | 2 | 1 |
+| DataTables 3 | 56 | 52 | 3 | 4 | 2 | 4 | 4 |
+| RevoGrid | 52 | 30 (+88 lazy) | 3 | 4 | 3 | 3 | 3 |
 
 **Default look** is how the table looks before you touch the CSS. Plain and TanStack are our CSS, so they look like the site (4 and 5). Observable is tidy once its stylesheet is loaded, but the CSS is light only with no theming hook (3). Perspective is monospace, blue numbers, locale-short dates and a title bar (3). Glide's theme object is the best of the set, one plain bag of tokens (4). DataTables themes through CSS variables but its dark mode keys on a class this site does not set, so the first try was a dark page with light stripes (3). RevoGrid's columns are a fixed 100 px with no auto-fit, and the free core puts its own link in the corner (3).
 
@@ -90,7 +90,7 @@ Perspective is a query engine with a grid attached. Its WebAssembly boot is time
 - **A hand-written `<table>` cannot render 500,000 rows at all.** Uncapped, we gave up after ten minutes with the tab unresponsive. The cost is layout, not string building: auto table layout must measure every cell in a column before it can size the column, and that goes superlinear past about 100,000 rows.
 - **The most dangerous line of code came from a library's own docs.** Tabulator's `height: "100%"`, above. The failure is the silence.
 - **Glide draws 500,000 rows faster than 1,000.** Canvas paints a fixed viewport and is handed a row count and a cell callback; it never touches the data. The bill is everything the DOM would have given you.
-- **Headless means you write the virtualizer.** TanStack is the smallest React bundle here and the most lines. The spread, 32 lines to 146, is the spread between "hand it rows" and "own the table".
+- **Headless means you write the virtualizer.** TanStack is the smallest React bundle here and the most lines. The spread, 36 lines to 147, is the spread between "hand it rows" and "own the table".
 - **The fastest DOM grid was the one nobody shortlists.** RevoGrid, 55 ms at 500,000 rows, real cells, any framework. Its community and its attribution link are what keep it off the top line.
 - **Render time is not the differentiator.** Between 25 ms and 300 ms at 500,000 rows, nobody can tell. Bundle size spans two and a half orders of magnitude, 1 kB to 333 kB, and that is a load-time cost every visitor pays.
 
@@ -108,7 +108,7 @@ Perspective is a query engine with a grid attached. Its WebAssembly boot is time
 
 **TanStack Table with react-virtual, wrapped once as a `<DataTable>` component in PortalJS.**
 
-DataHub pages already ship React, so the table costs 24 kB, not 333. The dataset preview has to be text: people copy a postcode out of it, search it, read it with assistive tech, and search engines index it. The theme is our own CSS variables, with no third-party theme to fight. Both spikes on this site, the summary-statistics-and-filter table and the DuckDB-WASM query demo, were built on it and composed without surprises. The cost is 146 lines we own, written once, and a v9 docs gap we have already paid for.
+DataHub pages already ship React, so the table costs 24 kB, not 333. The dataset preview has to be text: people copy a postcode out of it, search it, read it with assistive tech, and search engines index it. The theme is our own CSS variables, with no third-party theme to fight. Both spikes on this site, the summary-statistics-and-filter table and the DuckDB-WASM query demo, were built on it and composed without surprises. The cost is 147 lines we own, written once, and a v9 docs gap we have already paid for.
 
 For portals that are not React (CKAN, for instance), we would say Tabulator, with a sized parent. For a quick table in a data story, we will keep writing `<table>`.
 

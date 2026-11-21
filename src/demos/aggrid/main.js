@@ -48,7 +48,9 @@ function build(host, data, ctx, editable = false) {
       filter: true,
       resizable: true,
       valueFormatter: (p) => ctx.formatCell(p.value, c),
+      // #region edit test (not counted in lines written)
       ...(editable && c.name === "price" ? { editable: true, cellEditor: "agNumberCellEditor" } : {}),
+      // #endregion
     })),
     defaultColDef: { minWidth: 110 },
     rowHeight: 32,
@@ -61,6 +63,7 @@ function build(host, data, ctx, editable = false) {
   // FPS run must be pointed here.
   host.querySelector(".ag-grid-viewport")?.setAttribute("data-scroller", "");
 
+  // #region sort hook for the harness (not counted in lines written)
   // Sorting is column state. defaultState clears every other column's sort.
   ctx.provideSort((field) =>
     api.applyColumnState({
@@ -68,6 +71,7 @@ function build(host, data, ctx, editable = false) {
       defaultState: { sort: null },
     })
   );
+  // #endregion
 
   return () => api.destroy();
 }
@@ -76,10 +80,12 @@ export const tables = { small: build, wide: build, medium: build, large: build }
 
 export const source = build;
 
+// #region edit test (not counted in lines written)
 /** The edit test: Price editable with the Community number editor, which
  *  opens on a double-click. Pasting a column needs the clipboard and cell
  *  selection modules, which are Enterprise only; in Community, Ctrl/Cmd-V on
  *  a cell does nothing. */
 export const edit = (host, data, ctx) => build(host, data, ctx, true);
+// #endregion
 
 mountDemo({ meta, tables, source, edit });

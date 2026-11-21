@@ -50,6 +50,7 @@ function table(host, data, ctx) {
 
   host.append(el);
 
+  // #region sort hook for the harness (not counted in lines written)
   // Inputs.table has no sort API after construction; its documented way to
   // sort is a header click, so that is what this does. A Cmd/Meta-click on
   // the sorted header is its own "back to input order".
@@ -64,6 +65,7 @@ function table(host, data, ctx) {
     th(field).click();
     sortedBy = field;
   });
+  // #endregion
 }
 
 export const tables = { small: table, wide: table, medium: table, large: table };

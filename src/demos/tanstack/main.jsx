@@ -13,12 +13,14 @@ export const meta = { ...frontmatter, notes };
  *  schedule itself, so mountReact holds the clock open until a real data row
  *  exists in the DOM. */
 function mount(host, data, ctx) {
+  // #region sort hook for the harness (not counted in lines written)
   // Sort through the same state a header click sets. flushSync makes React
   // build the sorted row model and commit inside the clock.
   const api = {};
   ctx.provideSort((field) =>
     flushSync(() => api.setSorting(field ? [{ id: field, desc: false }] : []))
   );
+  // #endregion
   return mountReact(
     host,
     <TanStackTable data={data} formatCell={ctx.formatCell} api={api} />,

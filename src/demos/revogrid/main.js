@@ -31,13 +31,16 @@ function build(host, data, ctx, editable = false) {
     // straight in. Sorting still compares the raw value.
     cellTemplate: (h, { value }) => ctx.formatCell(value, c),
     cellProperties: () => ({ style: { "text-align": c.align } }),
+    // #region edit test (not counted in lines written)
     // In the edit test only Price is editable.
     readonly: editable && c.name !== "price",
+    // #endregion
   }));
   grid.source = data.rows;
   applyTheme(grid, ctx.theme);
 
   return new Promise((resolve) => {
+    // #region sort hook for the harness (not counted in lines written)
     // Sorting is the grid's own method. Its promise settles before the new
     // rows are drawn, so wait for the first price cell to change as well.
     // Clearing waits the same way, so the next timed sort starts from rows
@@ -57,6 +60,7 @@ function build(host, data, ctx, editable = false) {
       await redrawn(() => grid.updateColumnSorting({ prop: field }, "asc", false));
       sorted = true;
     });
+    // #endregion
     const done = () => {
       // RevoGrid draws its own vertical scrollbar element and keeps the
       // body in step with it. Setting scrollTop on the body div directly
@@ -74,6 +78,7 @@ function build(host, data, ctx, editable = false) {
   });
 }
 
+// #region sort hook for the harness (not counted in lines written)
 /** Text of the first visible row's cell in column `name`. */
 function firstCellText(grid, data, name) {
   const i = data.columns.findIndex((c) => c.name === name);
@@ -94,6 +99,7 @@ function untilFrame(check) {
     tick();
   });
 }
+// #endregion
 
 /** The built-in compact and darkCompact themes read CSS custom properties,
  *  so the site's tokens go straight onto the element. */
@@ -116,10 +122,12 @@ export const tables = { small: build, wide: build, medium: build, large: build }
 
 export const source = build;
 
+// #region edit test (not counted in lines written)
 /** The edit test: the grid with readonly off, Price the only editable column.
  *  That is all it takes: double-click edits, and Ctrl/Cmd-V pastes a column
  *  of values down from the focused cell. (`range: true` is only needed to
  *  drag-select a range.) */
 export const edit = (host, data, ctx) => build(host, data, ctx, true);
+// #endregion
 
 mountDemo({ meta, tables, source, edit });

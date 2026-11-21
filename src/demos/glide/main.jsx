@@ -16,6 +16,7 @@ export const meta = { ...frontmatter, notes };
  *  painted yet. */
 function mount(host, data, ctx) {
   const initial = { width: host.clientWidth, height: host.clientHeight };
+  // #region sort hook for the harness (not counted in lines written)
   // Sorting is app code: sort an index of row numbers, hand Glide the new
   // order. A new getCellContent makes Glide redraw its canvas in a layout
   // effect, so the repaint is done when flushSync returns.
@@ -23,6 +24,7 @@ function mount(host, data, ctx) {
   ctx.provideSort((field) =>
     flushSync(() => api.setOrder(field ? sortIndex(data.rows, field) : null))
   );
+  // #endregion
   return mountReact(
     host,
     <GlideGrid
@@ -45,6 +47,7 @@ function mount(host, data, ctx) {
   );
 }
 
+// #region sort hook for the harness (not counted in lines written)
 /** Row numbers ordered by `field`, ascending. */
 function sortIndex(rows, field) {
   const idx = Array.from({ length: rows.length }, (_, i) => i);
@@ -53,7 +56,9 @@ function sortIndex(rows, field) {
     return x < y ? -1 : x > y ? 1 : 0;
   });
 }
+// #endregion
 
+// #region edit test (not counted in lines written)
 /** The edit test: the same grid with Price editable. */
 function edit(host, data, ctx) {
   return mountReact(
@@ -67,6 +72,7 @@ function edit(host, data, ctx) {
     />
   );
 }
+// #endregion
 
 export const tables = { small: mount, wide: mount, medium: mount, large: mount };
 

@@ -36,11 +36,20 @@ import { DEMOS } from "../vite.config.js";
 const DIST = "dist";
 const OUT = "public/bundles.json";
 
-/** Non-blank, non-comment lines. Crude, but applied identically to every demo. */
+/** Non-blank, non-comment lines. Crude, but applied identically to every demo.
+ *
+ *  Code fenced in a `#region ... (not counted)` / `#endregion` pair is skipped:
+ *  the sort hook and edit test that the harness asks every demo for. "Lines
+ *  written" measures building the table; without the fence it would charge
+ *  each library for measurement plumbing a user would never write (waiting for
+ *  a paint, say), unevenly, since only five demos have an edit test. */
 export function countLoc(src) {
   let inBlock = false;
+  let fenced = false;
   let n = 0;
   for (const raw of src.split("\n")) {
+    if (/#region\b.*\(not counted/.test(raw)) { fenced = true; continue; }
+    if (fenced) { if (/#endregion\b/.test(raw)) fenced = false; continue; }
     let line = raw.trim();
     if (inBlock) {
       const end = line.indexOf("*/");

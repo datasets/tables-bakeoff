@@ -36,9 +36,11 @@ function build(host, data, ctx, opts = {}, columnOpts = {}) {
       })),
       ...opts,
     });
+    // #region sort hook for the harness (not counted in lines written)
     // Sort and clear go through Tabulator's own API; both redraw before
     // returning.
     ctx.provideSort((field) => (field ? t.setSort(field, "asc") : t.clearSort()));
+    // #endregion
     t.on("tableBuilt", () => {
       // Tabulator scrolls .tabulator-tableholder internally; the host div
       // itself never moves, so the FPS run must be pointed here.
@@ -99,6 +101,7 @@ export const tables = {
 
 export const source = build;
 
+// #region edit test (not counted in lines written)
 /** The edit test. `editor: "number"` alone makes Price editable on a click
  *  or double-click. Pasting a column needs the range-selection and clipboard
  *  options from Tabulator's own spreadsheet example; without them Ctrl/Cmd-V
@@ -120,5 +123,6 @@ export function edit(host, data, ctx) {
     { price: { editor: "number" } }
   );
 }
+// #endregion
 
 mountDemo({ meta, tables, source, edit });
