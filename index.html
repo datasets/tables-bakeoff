@@ -51,17 +51,35 @@
 </nav>
 <div class="wrap">
 
-  <header class="hero">
-    <h1>Which JavaScript table library should you use?</h1>
-    <p class="lede">
-      It depends what the table is for. We built the same table nine ways: eight libraries and a
-      plain <code>&lt;table&gt;</code>, with 1,000 to 500,000 rows of UK house sales. We timed render,
-      scroll and sort, and checked what each can do. We needed one for
-      <a href="https://datahub.io" target="_blank" rel="noopener">DataHub</a>. Three jobs, and what we
-      would use for each.
-    </p>
+  <header class="hero hero--split">
+    <div class="hero__text">
+      <h1>Which JavaScript table library should you use?</h1>
+      <p class="lede">
+        We built the same table nine times: eight libraries and a plain <code>&lt;table&gt;</code>. We timed
+        them from 1,000 to 500,000 rows, compared what each can do, and picked one for each job.
+      </p>
+      <p class="hero__facts">
+        <span><b data-library-count-digit>8</b> libraries + plain <code>&lt;table&gt;</code></span>
+        <span><b>1,000</b> to <b>500,000</b> rows</span>
+        <span><b>13</b> features</span>
+        <span>Nov 2026</span>
+      </p>
+      <p class="hero__links">
+        <a class="btn btn--primary" href="#picks">See the picks</a>
+        <a class="btn" href="/why.html">Why we did this</a>
+      </p>
+    </div>
+    <figure class="hero__figure">
+      <img class="hero__img hero__img--light" src="/hero/hero-light.webp" width="1400" height="1000" fetchpriority="high"
+           alt="AG Grid Community showing UK house sales: a search box, column filters, grouped Sale and Address columns, row checkboxes and a bar beside each price">
+      <img class="hero__img hero__img--dark" src="/hero/hero-dark.webp" width="1400" height="1000" loading="lazy"
+           alt="AG Grid Community showing UK house sales in dark mode: a search box, column filters, grouped Sale and Address columns, row checkboxes and a bar beside each price">
+      <figcaption>Our big-grid pick on 50,000 rows, with search, filters, grouped columns and editing. <a href="/demos/showcase.html">Try it</a>.</figcaption>
+    </figure>
   </header>
 
+  <h2 id="picks" class="picks-head">What to use</h2>
+  <p class="caption">It depends what the table is for. Three jobs, a pick and a runner-up for each.</p>
   <table class="verdict" aria-label="Picks by job">
     <thead><tr><th>The job</th><th>Use</th><th>Runner-up</th><th>Why</th></tr></thead>
     <tbody>

@@ -238,6 +238,27 @@ test.describe("baseline 500,000 rows", () => {
 });
 
 test.describe("landing v2", () => {
+  test("the front page opens with a hero: what we did, two links and a real grid", async ({ page }) => {
+    await page.goto("/index.html");
+    await expect(page.locator(".hero h1")).toContainText("table library");
+    await expect(page.locator('.hero__links a[href="#picks"]')).toBeVisible();
+    await expect(page.locator('.hero__links a[href="/why.html"]')).toBeVisible();
+    await expect(page.locator("#picks")).toBeAttached();
+    // The hero image is a real file in both themes, with alt text.
+    for (const theme of ["light", "dark"]) {
+      const img = page.locator(`.hero__img--${theme}`);
+      await expect(img).toHaveAttribute("alt", /AG Grid/);
+      const res = await page.request.get(`/hero/hero-${theme}.webp`);
+      expect(res.ok(), `hero-${theme}.webp`).toBe(true);
+    }
+    // Only one of the two is shown, and the site's own toggle switches it.
+    await expect(page.locator(".hero__img--light")).toBeVisible();
+    await expect(page.locator(".hero__img--dark")).toBeHidden();
+    await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+    await expect(page.locator(".hero__img--dark")).toBeVisible();
+    await expect(page.locator(".hero__img--light")).toBeHidden();
+  });
+
   test("the front page names a pick and a runner-up for each job", async ({ page }) => {
     await page.goto("/index.html");
     const rows = page.locator("table.verdict tbody tr");
