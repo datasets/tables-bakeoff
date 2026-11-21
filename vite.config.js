@@ -72,6 +72,9 @@ export default {
         // — built and measured separately from the seven DEMOS-driven cards.
         "duckdb-query": resolve(process.cwd(), "demos/duckdb-query.html"),
         "tanstack-summary": resolve(process.cwd(), "demos/tanstack-summary.html"),
+        // The AG Grid feature showcase: one page, not a contender, so it is
+        // neither measured nor shown in the gallery.
+        showcase: resolve(process.cwd(), "demos/showcase.html"),
       },
       output: {
         /* Rollup already hoists React into a chunk shared by the two React
