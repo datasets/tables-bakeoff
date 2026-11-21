@@ -91,6 +91,7 @@
  *     card; an entry with a result but no `edit` export (DataTables, whose
  *     editing is the paid Editor) gets the card with the result only. */
 
+import "./analytics.js";
 import { DATASETS, DATASET_KEYS } from "../data/datasets.js";
 import { loadDataset, formatCell } from "../data/load.js";
 import { time, formatMs, measureScrollFps, peakMemoryMB } from "./metrics.js";
@@ -519,6 +520,7 @@ export function footer() {
     <div class="wrap" style="text-align:center">
       Built by <a href="https://datahub.io" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">DataHub</a>, which needed a table and picked one.
       Verdict and numbers on the <a href="/index.html" style="color:var(--text-secondary);font-weight:500">front page</a>.
+      We count visits with Google Analytics.
     </div>
   </footer>`;
 }

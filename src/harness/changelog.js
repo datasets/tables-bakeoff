@@ -1,6 +1,7 @@
 /* Renders changelog/*.md into the changelog page. The entry files are the
  * single source of truth — this page is a view of the folder, nothing more.
  * See AGENTS.md for the entry convention. */
+import "./analytics.js";
 import { restoreTheme, installThemeToggle } from "./theme.js";
 import { parseFrontmatter } from "./frontmatter.js";
 import { renderMarkdown } from "./markdown.js";

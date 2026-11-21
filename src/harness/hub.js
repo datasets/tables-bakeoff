@@ -2,6 +2,7 @@
  * from src/harness/results.js (one place for every typed-in number), then
  * fills bundle size and lines written from the real build output in
  * /bundles.json, so those cannot drift from what shipped. */
+import "./analytics.js";
 import { restoreTheme, installThemeToggle, onThemeChange } from "./theme.js";
 import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS } from "./results.js";
 
