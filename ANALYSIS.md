@@ -8,7 +8,7 @@ which library is better.
 ## The datasets
 
 Real HM Land Registry Price Paid data, converted to Parquet and served as static
-files, loaded identically by all seven demos through `src/data/load.js`.
+files, loaded identically by all nine demos through `src/data/load.js`.
 
 | Dataset | Rows | Columns | Stresses |
 |---|---|---|---|
@@ -47,7 +47,7 @@ deferring the layout read would have hidden it.
 
 **What this means for reading render numbers:** a library that appears fast may
 not have triggered layout yet in its own use. This
-harness always forces it, so all seven numbers are on equal footing with each
+harness always forces it, so all nine numbers are on equal footing with each
 other, even though a page that never reads a geometry property could see a
 render "finish" faster than the number shown here.
 
@@ -69,7 +69,7 @@ Perspective) mark an inner element; libraries that use the page's own scroll
 
 **Caveat:** a demo that omits `data-scroller` gets scrolled at an element that
 never moves, and reports a flat 60fps that means nothing. This was checked by hand for
-each of the seven demos, not by an automated assertion; see "Known gaps" below.
+each of the nine demos, not by an automated assertion; see "Known gaps" below.
 Perspective's scroller sits two open shadow roots inside a web component; the
 lookup descends into shadow roots to find it.
 

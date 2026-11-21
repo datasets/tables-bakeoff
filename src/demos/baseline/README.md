@@ -3,7 +3,7 @@ name: Plain <table>
 version: —
 license: n/a
 docs: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
-tagline: No library. Hand-built DOM, sticky header, ~20 lines.
+tagline: No library. Hand-built DOM, sticky header, 39 lines.
 ---
 
 - No library: the whole table is one HTML string assigned with `innerHTML`, with a sticky header and the site's CSS.

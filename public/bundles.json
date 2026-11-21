@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T09:35:51.265Z",
+  "generatedAt": "2026-11-21T09:41:32.180Z",
   "method": {
     "compression": "gzip at node:zlib's default level, 1 kB = 1000 bytes — the same conventions as Vite's build reporter, so every figure can be checked against a line of the build log",
     "totalKB": "gzipped JS + CSS the demo page downloads on first load",
@@ -45,7 +45,7 @@
       "loc": 39,
       "files": {
         "js": [
-          "assets/baseline-BVKr-74v.js",
+          "assets/baseline-I4eKMy1r.js",
           "assets/snippets-Dc1vs0kw.js",
           "assets/markdown-B_sAtjw3.js",
           "assets/frontmatter-BYBBUU76.js",
