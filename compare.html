@@ -40,8 +40,7 @@
       <a href="/demos/perspective.html">Perspective</a>
       <a href="/demos/datatables.html">DataTables</a>
       <a href="/demos/revogrid.html">RevoGrid</a>
-      <a class="nav__sep" href="/index.html#experiments">Experiments</a>
-      <a href="/changelog.html">Changelog</a>
+      <a class="nav__sep" href="/changelog.html">Changelog</a>
     </div>
     <div class="nav__tools">
       <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
@@ -63,16 +62,16 @@
       Bundle sizes and line counts are read from the build, the rest from one scripted run.
     </p>
     <p class="links">
-      <a href="#measured">Measured</a>
+      <a href="#measured-section">Measured</a>
       <a href="#edit-test">Edit test</a>
-      <a href="#features">Features</a>
-      <a href="#scorecard">Scorecard</a>
+      <a href="#features-section">Features</a>
+      <a href="#scorecard-section">Scorecard</a>
       <a href="#surprised">What surprised us</a>
       <a href="#method">Method</a>
     </p>
   </header>
 
-  <h2 id="measured">What we measured</h2>
+  <h2 id="measured-section">What we measured</h2>
   <p class="caption">
     Own code is gzipped JS + CSS with the shared harness netted out, read from the build. Render
     time and scroll FPS are typed in from one scripted run (<span data-measured-machine>one laptop, headless
@@ -136,11 +135,12 @@
   </table>
   </div>
 
-  <h2 id="features">What each can do</h2>
+  <h2 id="features-section">What each can do</h2>
   <p class="caption">
-    All nine, feature by feature. "Yes" means it works as installed; "config" means it works once you
-    set an option its docs show; "paid" means the free tier does not have it; "yours to write" means the
-    library leaves it to you. Hover a feature for what we checked. Checked <span data-features-checked>21 Nov 2026</span>.
+    All nine, feature by feature. "Built in" means it works as installed or with one column flag; "needs
+    config" means an option or a few lines its docs show; "free plugin" is an official extension; "paid
+    tier" means the free package does not have it; "you write it" means the library leaves it to you.
+    Read from the docs and types, and from our own tests where we ran one. Checked <span data-features-checked>21 Nov 2026</span>.
   </p>
   <p class="scroll-hint">The table scrolls sideways.</p>
   <div class="scroll">
@@ -150,10 +150,9 @@
   </table>
   </div>
 
-  <h2 id="scorecard">How they felt to build</h2>
+  <h2 id="scorecard-section">How they felt to build</h2>
   <p class="caption">
-    1 to 5, where 5 is best. Subjective, from writing the demos. The last column is the reason, and
-    it matters more than the digits.
+    1 to 5, where 5 is best. Subjective, from writing the demos. The last column says why.
   </p>
   <div class="scroll">
   <table class="scores" id="scorecard">
@@ -165,8 +164,8 @@
   <h2 id="surprised">Four things that surprised us</h2>
   <ol class="findings">
     <li>
-      <strong>Render time does not separate the fast grids. Layout cost separates the grids from a
-      <code>&lt;table&gt;</code>.</strong> Five virtualizers land between 17 and 233 ms at 500,000
+      <strong>Render time does not separate the fast grids. The gap is between any virtualized grid and a
+      plain <code>&lt;table&gt;</code>.</strong> Five virtualizers land between 17 and 233 ms at 500,000
       rows; Perspective takes 1.9 s and DataTables 8.5 s. The plain table goes superlinear instead: 2.5 s at 50,000, 6.3 s at 100,000, about 27 s
       at 200,000, and we stopped waiting for 500,000 after ten minutes.
     </li>
@@ -174,15 +173,15 @@
       <strong>The most dangerous line of code came from a library's own docs.</strong> Tabulator's
       <code>height: "100%"</code>, the option its docs give for filling a container, renders every
       row when the parent has no resolved height: 88 seconds at 50,000 rows instead of 36 ms, with
-      nothing logged. AG Grid fails visibly on the same mistake. Tabulator is a good library; the
-      failure is the silence.
+      nothing logged. AG Grid fails visibly on the same mistake. Tabulator is a good library. The
+      problem is that it fails without a warning.
     </li>
     <li>
       <strong>Glide draws 500,000 rows as fast as it draws 1,000, and RevoGrid is not far behind
       in real DOM.</strong> Glide is canvas: it paints a fixed viewport, so browser Ctrl-F and text
       selection cannot see the cells. Its own range copy works once you set
       <code>getCellsForSelection</code>, which the quick start does not mention. Its last
-      release was February 2024, which is why it is only a runner-up. RevoGrid, a web component few shortlists include, rendered 500,000
+      release was February 2024, which is why it is not a pick. RevoGrid, a web component, rendered 500,000
       rows in 62 ms with real cells, in any framework.
     </li>
     <li>

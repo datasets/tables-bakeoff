@@ -40,8 +40,7 @@
       <a href="/demos/perspective.html">Perspective</a>
       <a href="/demos/datatables.html">DataTables</a>
       <a href="/demos/revogrid.html">RevoGrid</a>
-      <a class="nav__sep" href="/index.html#experiments">Experiments</a>
-      <a href="/changelog.html">Changelog</a>
+      <a class="nav__sep" href="/changelog.html">Changelog</a>
     </div>
     <div class="nav__tools">
       <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
@@ -70,12 +69,12 @@
       DataHub shows a preview of every dataset: the first rows, sometimes all of them, in a table. We needed
       a library for that table and we wanted to pick it on evidence. The comparison pages online did not
       help. They are lists: ten libraries, a logo each, a bullet list of features copied from the README,
-      and no opinion about which to use. Nobody had put the same data through all of them on the same page.
+      and no opinion about which to use. We could not find one that put the same data through all of them on one page.
     </p>
     <p>
-      So we did. The question we started with is the one most people arrive with: which one should I use?
-      The answer we ended with is that different jobs get different picks, and that most of the time the
-      right answer is a plain <code>&lt;table&gt;</code>.
+      So we did. We started with the obvious question: which one should I use?
+      The answer we ended with is that different jobs get different picks, and that up to a few thousand rows
+      the answer is a plain <code>&lt;table&gt;</code>.
     </p>
 
     <h2 id="how">How</h2>
@@ -84,7 +83,7 @@
       datasets: 1,000 rows in 16 columns; the same 1,000 rows with 64 extra numeric columns, 80 in all; 50,000
       rows; and a 500,000-row sample of one year, loaded on demand. Every library gets the same
       <code>Array&lt;Object&gt;</code> from the same loader. That is the best input for a plain table and the
-      worst for a columnar engine like Perspective, and we say so where it matters.
+      worst for a columnar engine like Perspective.
     </p>
     <p>
       <strong>Same harness.</strong> Every demo is the same page shell, the same theme tokens and the same
@@ -108,7 +107,7 @@
       and typed a new one, then pasted three lines onto a price cell, and counted a value only if it reached
       the data. With Playwright we dragged the mouse across a cell to see if browser text selection works, and
       pressed Tab from the top of each page until a column header had focus, then Enter, to see if the rows
-      sorted. Those are the feature checks behind the <a href="/compare.html#features">feature table</a>.
+      sorted. Those are the feature checks behind the <a href="/compare.html#features-section">feature table</a>.
     </p>
     <p>
       <strong>Who did what.</strong> Agents built and measured the demos under our direction. We set the
@@ -127,7 +126,7 @@
     <h2 id="datahub">What DataHub chose</h2>
     <p>
       <strong>TanStack Table with react-virtual, wrapped once as a <code>&lt;DataTable&gt;</code> component in
-      PortalJS.</strong> This is the "build your own" pick, and it is not the pick for most people.
+      PortalJS.</strong> This is the "build your own" pick. Most people should not start here.
     </p>
     <p>
       DataHub pages already ship React, so the table costs 24 kB, not 333. We want to own the markup and the
@@ -166,7 +165,7 @@
       <li><strong>react-data-grid</strong>: still a beta after years, and React 19 only. The TanStack demo already answers "a virtualized <code>&lt;table&gt;</code> in React".</li>
       <li><strong>SlickGrid</strong>: 6.0 (Nov 2026) is real and MIT, and it shows what AG Grid and Tabulator already show here.</li>
       <li><strong>Grid.js</strong>: no release since March 2024.</li>
-      <li><strong>Kendo, DevExtreme, Syncfusion, Bryntum</strong>: commercial. This is about libraries you can adopt without a procurement conversation.</li>
+      <li><strong>Kendo, DevExtreme, Syncfusion, Bryntum</strong>: commercial.</li>
       <li><strong>Vue, Svelte, Angular grids</strong>: TanStack has adapters for all three, and the vanilla entries work anywhere. Glide is React only.</li>
     </ul>
 

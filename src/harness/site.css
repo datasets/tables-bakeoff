@@ -270,7 +270,7 @@ button:disabled { opacity: 0.5; cursor: default; }
 .nav__inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .nav__brand { font-size: 16px; font-weight: 600; color: var(--text-primary); text-decoration: none; }
 /* The link row shrinks and scrolls sideways before it ever wraps the bar. */
-.nav__links { display: flex; gap: 2px; align-items: center; font-size: 12.5px; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.nav__links { display: flex; gap: 2px; align-items: center; font-size: 12.5px; flex: 1 1 0%; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .nav__links a { color: var(--text-secondary); text-decoration: none; padding: 4px 6px; white-space: nowrap; }
 .nav__links a.nav__sep { color: var(--text-muted); border-left: 1px solid var(--border); margin-left: 4px; padding-left: 12px; }
 .nav__links a.is-current { color: var(--text-primary); font-weight: 600; }

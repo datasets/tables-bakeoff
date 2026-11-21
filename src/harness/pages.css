@@ -94,7 +94,7 @@ table#features td.feat { white-space: normal; min-width: 16ch; max-width: 30ch; 
 table#features td.feat[title] { cursor: help; }
 table#features td b { font-weight: 600; }
 table#features td.f-yes b { color: var(--good); }
-table#features td.f-config b { color: var(--text-secondary); }
+table#features td.f-config b, table#features td.f-plugin b { color: var(--text-secondary); }
 table#features td.f-diy b { color: var(--text-secondary); font-weight: 500; }
 table#features td.f-paid b { color: var(--series-2); }
 table#features td.f-no b { color: var(--text-muted); font-weight: 500; }
@@ -129,7 +129,7 @@ details.notes li:target { color: var(--text-secondary); }
 .snippet pre { margin: 0; padding: 10px 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--text-secondary); tab-size: 2; }
 .snippet__install { border-bottom: 1px solid var(--border); color: var(--text-primary) !important; background: color-mix(in srgb, var(--text-primary) 3%, var(--surface)); }
 .snippet__install code::before { content: "$ "; color: var(--text-muted); }
-.snippet__code { flex: 1; background: color-mix(in srgb, var(--text-primary) 4%, var(--surface)); }
+.snippet__code { flex: 1; max-height: 400px; overflow: auto; background: color-mix(in srgb, var(--text-primary) 4%, var(--surface)); }
 .snippet__foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 14px; border-top: 1px solid var(--border); font-size: 12.5px; }
 .snippet__missing { margin: 0; padding: 14px; font-size: 13px; color: var(--text-secondary); }
 

@@ -501,8 +501,7 @@ export function navbar() {
       <a href="/demos/perspective.html">Perspective</a>
       <a href="/demos/datatables.html">DataTables</a>
       <a href="/demos/revogrid.html">RevoGrid</a>
-      <a class="nav__sep" href="/index.html#experiments">Experiments</a>
-      <a href="/changelog.html">Changelog</a>
+      <a class="nav__sep" href="/changelog.html">Changelog</a>
     </div>
     <div class="nav__tools">
       <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">

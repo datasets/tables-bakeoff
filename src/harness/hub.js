@@ -8,7 +8,7 @@
 import "./analytics.js";
 import { restoreTheme, installThemeToggle, onThemeChange } from "./theme.js";
 import { ENTRIES, AXES, MEASURED, NUMBER_WORDS, EDIT_STATUS, CHECKED } from "./results.js";
-import { FEATURES, SUPPORT, FEATURES_CHECKED } from "./features.js";
+import { FEATURES, SUPPORT, SUPPORT_LABELS, FEATURES_CHECKED } from "./features.js";
 import { SNIPPETS } from "./snippets.js";
 
 restoreTheme();
@@ -124,18 +124,21 @@ if (measuredTable && measured) {
 
 /* ---- feature table ----------------------------------------------------------- */
 /* Rows are features, columns are libraries. data-libs="a,b,c" limits the
- * columns (the front page shows the picks); without it every entry is a
- * column. data-notes prints each cell's note under its verdict. */
-const SUPPORT_LABEL = { yes: "yes", config: "config", paid: "paid", no: "no", diy: "yours to write" };
+ * columns and data-features="sort,edit" the rows (the front page shows the
+ * picks and the features that decide them); without them every entry and
+ * every feature is shown. data-notes prints each cell's note under its
+ * verdict; without it the note is the cell's tooltip. */
 const features = document.getElementById("features");
 if (features) {
   const libs = (features.dataset.libs ? features.dataset.libs.split(",") : ENTRIES.map((d) => d.key))
     .map((k) => entry(k.trim())).filter(Boolean);
+  const wanted = features.dataset.features?.split(",").map((k) => k.trim());
+  const rows = wanted ? wanted.map((k) => FEATURES.find((f) => f.key === k)).filter(Boolean) : FEATURES;
   const notes = features.hasAttribute("data-notes");
   const head = features.querySelector("thead tr");
   const body = features.querySelector("tbody");
   head.innerHTML = `<th>Feature</th>` + libs.map((d) => `<th><a href="${demoHref(d.key)}">${e(d.name)}</a></th>`).join("");
-  body.innerHTML = FEATURES.map((f) => `
+  body.innerHTML = rows.map((f) => `
     <tr>
       <td class="feat"${f.help ? ` title="${e(f.help)}"` : ""}>${e(f.label)}${notes && f.help ? `<span class="sub">${e(f.help)}</span>` : ""}</td>
       ${libs.map((d) => {
@@ -143,7 +146,7 @@ if (features) {
         if (!s) return `<td class="f-unknown">—</td>`;
         const note = s.note ? (notes ? `<span class="sub">${e(s.note)}</span>` : "") : "";
         const title = s.note && !notes ? ` title="${e(s.note)}"` : "";
-        return `<td class="f-${e(s.v)}"${title}><b>${e(SUPPORT_LABEL[s.v] || s.v)}</b>${note}</td>`;
+        return `<td class="f-${e(s.v)}"${title}><b>${e(SUPPORT_LABELS[s.v] || s.v)}</b>${note}</td>`;
       }).join("")}
     </tr>`).join("");
 }

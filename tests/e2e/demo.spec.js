@@ -175,3 +175,57 @@ for (const key of BUILT) {
     });
   });
 }
+
+test.describe("landing v2", () => {
+  test("the front page names a pick and a runner-up for each job", async ({ page }) => {
+    await page.goto("/index.html");
+    const rows = page.locator("table.verdict tbody tr");
+    await expect(rows).toHaveCount(4);
+    for (const key of ["baseline", "aggrid", "tabulator", "tanstack"]) {
+      await expect(page.locator(`table.verdict td.use a[href="/demos/${key}.html"]`)).toHaveCount(1);
+    }
+    await expect(page.locator('table.verdict td.alt a[href="/demos/revogrid.html"]')).toHaveCount(2);
+    await expect(page.locator('a[href="/compare.html"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/why.html"]').first()).toBeVisible();
+  });
+
+  test("the front page shows a feature summary and starter code for every pick", async ({ page }) => {
+    await page.goto("/index.html");
+    await expect(page.locator("#features tbody tr").first()).toContainText("Sort");
+    await expect(page.locator("#features thead th")).toHaveCount(6);
+    for (const key of ["baseline", "aggrid", "tabulator", "tanstack"]) {
+      await expect(page.locator(`#snippets .snippet[data-lib="${key}"] .snippet__code code`)).not.toBeEmpty();
+    }
+    // The plain table has nothing to install, so no install line.
+    await expect(page.locator('#snippets .snippet[data-lib="baseline"] .snippet__install')).toHaveCount(0);
+    await expect(page.locator('#snippets .snippet[data-lib="aggrid"] .snippet__install')).toContainText("npm i");
+  });
+
+  test("compare.html has the full tables for all nine", async ({ page }) => {
+    await page.goto("/compare.html");
+    await expect(page.locator("#measured tbody tr")).toHaveCount(ALL_DEMO_KEYS.length);
+    await expect(page.locator("#measured thead th")).toHaveCount(12);
+    await expect(page.locator("#features thead th")).toHaveCount(ALL_DEMO_KEYS.length + 1);
+    await expect(page.locator("#scorecard tbody tr")).toHaveCount(ALL_DEMO_KEYS.length);
+    await expect(page.locator('#measured [data-bundle="aggrid"]')).not.toHaveText("—", { timeout: 10000 });
+    await expect(page.locator("table.scores td:empty")).toHaveCount(0);
+  });
+
+  test("why.html and the demo pages link to Compare and Why", async ({ page }) => {
+    await page.goto("/why.html");
+    await expect(page.locator("h1")).toContainText("Why we did this");
+    await expect(page.locator("#datahub")).toBeAttached();
+    await page.goto("/demos/aggrid.html");
+    await expect(page.locator('.nav__links a[href="/compare.html"]')).toHaveCount(1);
+    await expect(page.locator('.nav__links a[href="/why.html"]')).toHaveCount(1);
+  });
+
+  test("no horizontal overflow at phone width", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    for (const url of ["/index.html", "/compare.html", "/why.html"]) {
+      await page.goto(url);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(overflow, url).toBe(0);
+    }
+  });
+});

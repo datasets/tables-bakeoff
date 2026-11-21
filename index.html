@@ -37,8 +37,7 @@
       <a href="/demos/perspective.html">Perspective</a>
       <a href="/demos/datatables.html">DataTables</a>
       <a href="/demos/revogrid.html">RevoGrid</a>
-      <a class="nav__sep" href="#experiments">Experiments</a>
-      <a href="/changelog.html">Changelog</a>
+      <a class="nav__sep" href="/changelog.html">Changelog</a>
     </div>
     <div class="nav__tools">
       <a href="https://github.com/datasets/tables-bakeoff" target="_blank" rel="noopener" title="GitHub repository">
@@ -79,7 +78,7 @@
         <td class="why"><b>233 ms</b> for 500,000 rows at 60 fps, sort and filter built in, <span data-loc="aggrid">40</span> lines, <span data-bundle-round="aggrid">333 kB</span>. <a class="more" href="/demos/showcase.html">See it do more</a></td>
       </tr>
       <tr>
-        <td class="job"><b>An editable grid</b><span>Edit cells, paste ranges. The spreadsheet feel.</span></td>
+        <td class="job"><b>An editable grid</b><span>Edit cells, paste ranges. Spreadsheet-like.</span></td>
         <td class="use"><a href="/demos/tabulator.html">Tabulator</a><small>MIT, vanilla</small></td>
         <td class="alt"><a href="/demos/revogrid.html">RevoGrid</a>, passed the edit test with no config.</td>
         <td class="why"><b>Edit and paste both pass</b>, free, no framework, <span data-bundle-round="tabulator">112 kB</span>. Give its parent a height.</td>
@@ -97,7 +96,7 @@
     <span><b data-library-count-digit>8</b> libraries + plain <code>&lt;table&gt;</code></span>
     <span><b>1,000</b> to <b>500,000</b> rows</span>
     <span>render, scroll and sort timed</span>
-    <span><a href="/compare.html#features">features compared</a>, edit and paste tested</span>
+    <span><a href="/compare.html#features-section">features compared</a>, edit and paste tested</span>
     <span>same data, same page, same formatter</span>
   </p>
   <p class="links">
@@ -135,21 +134,22 @@
     <tbody><tr><td colspan="6">Loading from results.js and bundles.json…</td></tr></tbody>
   </table>
   </div>
-  <p class="after"><a href="/compare.html#measured">The full table: 50,000 rows, scroll FPS, text selection, keyboard sort, licences, footnotes</a></p>
+  <p class="after"><a href="/compare.html#measured-section">The full table: 50,000 rows, scroll FPS, text selection, keyboard sort, licences, footnotes</a></p>
 
   <h2 id="features-summary">What each can do</h2>
   <p class="caption">
-    The picks and the runner-up, feature by feature. "Config" means it works once you set an option its
-    docs show; "paid" means the free tier does not have it. Checked <span data-features-checked>21 Nov 2026</span>.
+    The picks and the runner-up, feature by feature. "Needs config" means it works once you set an option
+    its docs show; "paid tier" means the free package does not have it; "you write it" means the library
+    leaves it to you. Hover a feature for what it means.
   </p>
   <p class="scroll-hint">The table scrolls sideways.</p>
   <div class="scroll">
-  <table class="scores" id="features" data-libs="baseline,aggrid,tabulator,revogrid,tanstack">
+  <table class="scores" id="features" data-libs="baseline,aggrid,tabulator,revogrid,tanstack" data-features="sort,filter,search,edit,paste,group,pin,export,rowVirt,keyboard">
     <thead><tr><th>Feature</th></tr></thead>
     <tbody><tr><td>Loading from features.js…</td></tr></tbody>
   </table>
   </div>
-  <p class="after"><a href="/compare.html#features">All nine libraries, with notes</a></p>
+  <p class="after"><a href="/compare.html#features-section">All nine libraries, every feature, with notes</a></p>
 
   <h2 id="start">Start with the pick</h2>
   <p class="caption">
