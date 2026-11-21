@@ -24,7 +24,7 @@ export const meta = { ...frontmatter, notes };
 function build(host, data, ctx) {
   applyTheme(host, ctx.theme);
   const table = document.createElement("table");
-  table.className = "display compact";
+  table.className = "display";
   host.append(table);
 
   return new Promise((resolve) => {
@@ -90,6 +90,30 @@ function applyTheme(host, theme) {
   for (const [k, v] of Object.entries(vars)) host.style.setProperty(k, v);
   host.style.color = theme.text;
   host.style.padding = "8px";
+  host.style.fontFamily = theme.fontSans;
+  host.style.fontSize = "13px";
+
+  // The variables cover colors; sizes and the header look are plain class
+  // rules in the stock stylesheet, so they are overridden by class, scoped to
+  // this host (and so to this one demo) by an attribute selector.
+  host.setAttribute("data-dt-themed", "");
+  let style = host.querySelector(":scope > style");
+  if (!style) host.prepend((style = document.createElement("style")));
+  style.textContent = `
+    [data-dt-themed] .dt-container { font-size: inherit; font-family: inherit; }
+    [data-dt-themed] table.dataTable { font-size: inherit; }
+    [data-dt-themed] table.dataTable th, [data-dt-themed] table.dataTable td {
+      padding: 7px 10px; line-height: 1.3;
+    }
+    [data-dt-themed] table.dataTable thead th, [data-dt-themed] table.dataTable thead td {
+      font-weight: 600; background: ${theme.surface};
+      border-bottom: 1px solid ${theme.grid}; white-space: nowrap;
+    }
+    [data-dt-themed] table.dataTable tbody td { border-top: 1px solid ${theme.grid}; font-variant-numeric: tabular-nums; }
+    [data-dt-themed] .dt-search, [data-dt-themed] .dt-info { font-size: 12px; color: ${theme.textSecondary}; }
+    [data-dt-themed] .dt-search input { font: inherit; color: ${theme.text}; border-radius: 4px; }
+    [data-dt-themed] .dt-scroll-headInner, [data-dt-themed] .dt-scroll-head { background: ${theme.surface}; }
+  `;
 }
 
 export const tables = { small: build, wide: build, medium: build, large: build };

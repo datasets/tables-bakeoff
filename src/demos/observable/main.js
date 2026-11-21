@@ -34,19 +34,27 @@ function table(host, data, ctx) {
   });
   el.setAttribute("data-scroller", "");
 
-  // No theming hook exists, so patch the handful of hardcoded colors
-  // (header background, borders, text) by the table's own id rather than
-  // leaving a permanently-light table sitting in a dark page.
-  if (ctx.theme.dark) {
-    const style = document.createElement("style");
-    style.textContent = `
-      #${el.id} { color: ${ctx.theme.text}; }
-      #${el.id} thead th { background: ${ctx.theme.surface}; }
-      #${el.id} tr:not(:last-child) td, #${el.id} tr:not(:last-child) th,
-      #${el.id} thead tr td, #${el.id} thead tr th { border-bottom-color: ${ctx.theme.grid}; }
-    `;
-    el.prepend(style);
-  }
+  // The stylesheet is hardcoded light and has no theming hook, but every rule
+  // in it is wrapped in :where(), so any plain selector overrides it. Scoped
+  // by the table's own id, in both modes: the shared look (font, 13px text,
+  // 600-weight header, 5px 10px cells, hairline row borders) plus the dark
+  // colors the stylesheet lacks.
+  const t = ctx.theme;
+  const style = document.createElement("style");
+  style.textContent = `
+    #${el.id} { color: ${t.text}; font-family: ${t.fontSans}; font-size: 13px; }
+    #${el.id} table { font-family: inherit; }
+    #${el.id} td, #${el.id} th { padding: 5px 10px; }
+    #${el.id} tr > :first-of-type { width: auto; }
+    #${el.id} thead th {
+      background: ${t.surface}; color: ${t.text}; font-weight: 600; cursor: pointer;
+    }
+    #${el.id} tr:not(:last-child) td, #${el.id} tr:not(:last-child) th,
+    #${el.id} thead tr td, #${el.id} thead tr th { border-bottom: 1px solid ${t.grid}; }
+    #${el.id} tbody tr:first-child td { padding-top: 5px; }
+    #${el.id} tbody tr:hover td { background: color-mix(in srgb, ${t.text} 5%, transparent); }
+  `;
+  el.prepend(style);
 
   host.append(el);
 
