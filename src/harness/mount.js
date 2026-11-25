@@ -599,7 +599,7 @@ export function footer() {
     <div class="wrap" style="text-align:center">
       Built by <a href="https://datahub.io" target="_blank" rel="noopener" style="color:var(--text-secondary);text-decoration:none;font-weight:500">DataHub</a>, which needed a table and picked one.
       The picks are on the <a href="/index.html" style="color:var(--text-secondary);font-weight:500">front page</a>, every number on <a href="/compare.html" style="color:var(--text-secondary);font-weight:500">Compare</a>.
-      We count visits with Google Analytics.
+      We count visits with Umami, which sets no cookies.
     </div>
   </footer>`;
 }

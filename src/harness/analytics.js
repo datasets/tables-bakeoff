@@ -1,14 +1,15 @@
-/* datahub.io's Google Tag Manager container. It feeds the same GA4 property
- * as the rest of datahub.io, split by hostname (bead tables-sck).
+/* Umami on umami.lifeitself.org ("Tables Bake-off", Datopian team), kept
+ * apart from datahub.io's own GA4. `data-domains` limits counting to the
+ * live host, so local dev and branch previews don't log visits.
  *
  * Two cases are skipped on purpose:
  * - `?bare=1`, the gallery embeds: the front page loads nine of them, and
  *   each would count as a page view.
  * - `navigator.webdriver`, which Playwright sets: the e2e tests and every
  *   measurement script (measure-all, measure-sort, edit-test,
- *   screenshot-front) would otherwise log visits and load GTM into the pages
- *   they time. */
-const GTM_ID = "GTM-TLRT3HLR";
+ *   screenshot-front) would otherwise log visits and load the tracker into
+ *   the pages they time. */
+const UMAMI_WEBSITE_ID = "a54bd59b-a2b1-4aee-b05f-44e57c467507";
 
 const skip =
   typeof window === "undefined" ||
@@ -16,10 +17,10 @@ const skip =
   new URLSearchParams(location.search).get("bare") === "1";
 
 if (!skip) {
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
   const s = document.createElement("script");
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  s.defer = true;
+  s.src = "https://umami.lifeitself.org/script.js";
+  s.dataset.websiteId = UMAMI_WEBSITE_ID;
+  s.dataset.domains = "tables.datahub.io";
   document.head.appendChild(s);
 }
